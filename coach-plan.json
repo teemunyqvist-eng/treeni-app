@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "updatedAt": "2026-10-21T22:37:14+03:00",
+  "version": 4,
+  "updatedAt": "2026-10-22T02:34:07+03:00",
   "days": [
     {
       "date": "2026-10-22",
@@ -41,18 +41,18 @@
     {
       "date": "2026-10-24",
       "type": "koti",
-      "title": "Kotikuntopiiri ~30 min",
+      "title": "Jalka- ja keskivartalopiiri (olkapää säästössä)",
+      "details": "3 kierrosta: askelkyykky 10/jalka, step-up 10/jalka, lantionnosto 15, seinäistunta 40 s, yhden jalan pohjenousu 15/jalka, dead bug 10/puoli (kädet rintaa vasten), simpukka kuminauhalla 15/puoli. EI leukoja, punnerruksia, soutuja, face pullia, ab wheeliä eikä lankkua käsien varassa.",
       "durationMin": 30,
-      "warmup": "5 min: kävely paikallaan / hyppynaru kevyesti, käsien pyöritykset, kyykyt ilman painoa, lantion pyöritykset.",
-      "details": "Kotikuntopiiri ~30 min ennen saunaa – 3 kierrosta:\n• Leuanveto 3–5\n• Punnerrus 12–15\n• Käsipainosoutu 10 / puoli\n• Askelkyykky tai step-up 10 / jalka\n• Kuminauha face pull 15\n• Ab wheel 8–10\n• Lankku 40 s\nLepo kierrosten välissä 1–2 min.",
-      "cooldown": "Venyttely ~5–10 min: rinta, selkä, lonkankoukistajat, takareidet.",
+      "warmup": "5 min kävely + lonkan ja nilkan liikkuvuus",
+      "cooldown": "Olkapään kevyet heilurit ja kiertoliikkeet ilman kipua 2–3 min + venyttely",
+      "note": "Oikea olkapää lepää. Jalat ei. Piiri ensin, sitten sauna.",
       "options": [
         {
           "label": "Kevennetty",
-          "details": "2 kierrosta samaa piiriä. Lämmittely ja venyttely kuten normaalisti."
+          "details": "2 kierrosta"
         }
-      ],
-      "note": "Piiri ensin, sitten sauna ja kaljat."
+      ]
     },
     {
       "date": "2026-10-25",
@@ -117,13 +117,15 @@
     {
       "date": "2026-10-29",
       "type": "koti",
-      "title": "Lyhyt kotipiiri ennen yövuoroa",
-      "details": "2–3 kierrosta: leuat 3–5, punnerrukset 12–15, käsipainosoutu 10/puoli, askelkyykky 10/jalka, face pull 15, lankku 40 s. Iltapäivällä torkut ennen yövuoroa 22–06.",
+      "title": "Lyhyt jalkapiiri ennen yövuoroa (olkapää säästössä)",
+      "details": "2–3 kierrosta: askelkyykky 10/jalka, lantionnosto 15, seinäistunta 40 s, pohjenousu 15/jalka, dead bug 10/puoli. Päiväunet ennen yövuoroa 22–06.",
       "durationMin": 25,
+      "cooldown": "Olkapään heilurit + kipurajan alla tehtävät liikeradat 3 min",
+      "note": "Ei mitään olkapään yläpuolista eikä punttia oikealle kädelle.",
       "options": [
         {
           "label": "Kevennetty",
-          "details": "Pelkkä 20 min liikkuvuus"
+          "details": "20 min liikkuvuus (ei olkapäälle kipua)"
         }
       ]
     },
