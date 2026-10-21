@@ -1,6 +1,9 @@
 {
-  "version": 4,
-  "updatedAt": "2026-10-22T02:34:07+03:00",
+  "version": 5,
+  "updatedAt": "2026-10-22T02:45:49+03:00",
+  "flags": {
+    "shoulderRehab": true
+  },
   "days": [
     {
       "date": "2026-10-22",
