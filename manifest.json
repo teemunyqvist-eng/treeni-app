@@ -1,0 +1,19 @@
+{
+  "name": "Treeni – Maraton & Voima",
+  "short_name": "Treeni",
+  "description": "Joustava maraton- ja voimaharjoittelu 3-vuorotyöhön",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f1419",
+  "theme_color": "#1a7f5a",
+  "lang": "fi",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

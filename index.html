@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a7f5a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="Joustava maraton- ja voimaharjoittelu – Paavo Nurmi Marathon 2027" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <title>Treeni – Paavo Nurmi Marathon 2027</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Treeni</h1>
+    <div class="sub" id="header-sub">Paavo Nurmi Marathon 2027 · 21.08.2027</div>
+    <div class="phase-pill" id="phase-pill">Peruskunto</div>
+  </header>
+
+  <main class="main">
+    <!-- Tänään -->
+    <section class="view active" id="view-today" aria-label="Tänään">
+      <div id="today-content"></div>
+    </section>
+
+    <!-- Viikko -->
+    <section class="view" id="view-week" aria-label="Viikko">
+      <div class="week-nav">
+        <button class="btn sm" id="week-prev" aria-label="Edellinen viikko">←</button>
+        <div style="text-align:center;flex:1">
+          <h2 id="week-label">Viikko</h2>
+          <button class="btn sm ghost" id="week-today">Tämä viikko</button>
+        </div>
+        <button class="btn sm" id="week-next" aria-label="Seuraava viikko">→</button>
+      </div>
+      <div class="week-list" id="week-list"></div>
+    </section>
+
+    <!-- Edistyminen -->
+    <section class="view" id="view-progress" aria-label="Edistyminen">
+      <div id="progress-content"></div>
+    </section>
+
+    <!-- Liikkeet -->
+    <section class="view" id="view-exercises" aria-label="Liikkeet">
+      <div id="exercises-content"></div>
+    </section>
+
+    <!-- Asetukset -->
+    <section class="view" id="view-settings" aria-label="Asetukset">
+      <div id="settings-content"></div>
+    </section>
+  </main>
+
+  <nav class="nav" aria-label="Päänavigaatio">
+    <button data-view="today" class="active"><span class="ico">☀️</span>Tänään</button>
+    <button data-view="week"><span class="ico">📅</span>Viikko</button>
+    <button data-view="exercises"><span class="ico">💪</span>Liikkeet</button>
+    <button data-view="progress"><span class="ico">📈</span>Edistyminen</button>
+    <button data-view="settings"><span class="ico">⚙️</span>Asetukset</button>
+  </nav>
+
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal" id="modal"></div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="plan.js"></script>
+  <script src="exercises.js"></script>
+  <script src="garmin.js"></script>
+  <script src="progress.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
