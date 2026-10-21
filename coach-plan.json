@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "updatedAt": "2026-10-21T19:00:14+03:00",
+  "version": 3,
+  "updatedAt": "2026-10-21T22:37:14+03:00",
   "days": [
     {
       "date": "2026-10-22",
@@ -73,22 +73,73 @@
     {
       "date": "2026-10-26",
       "type": "kavely",
-      "title": "Kävely / lepo",
-      "details": "Aamuvuoro. Kevyt kävely tai vapaa.",
-      "note": "Vuoropäivä. Palaudu, syö kunnolla, nuku – viikko jatkuu."
+      "title": "Aamuvuoro 06–14: kävely tai vapaa",
+      "details": "Vuoron jälkeen 30–40 min reipas kävely + 10 min liikkuvuus. Ei tekosyitä sohvalle.",
+      "note": "Kevyt päivä ennen kahta iltavuoroa."
     },
     {
       "date": "2026-10-27",
-      "type": "lihashuolto",
-      "title": "Salibandy illalla – viikon kova päivä",
-      "details": "Säbä on tämän päivän treeni. Ennen peliä 10 min lämmittely: kevyt hölkkä, lonkka- ja nilkkaliikkuvuus, muutama vauhdinlisäys. Pelin jälkeen 10 min venyttely: pohkeet, takareidet, lonkankoukistajat.",
-      "note": "Täysillä mutta fiksusti. Huomenna kevyttä.",
+      "type": "juoksu",
+      "title": "Kevyt 6 km + 4 vetoa ennen iltavuoroa",
+      "details": "Aamulla/aamupäivällä 6 km rauhallisesti ~6:45/km, syke ~135–140. Lopuksi 4 × 20 s rennot vedot.",
+      "distanceKm": 6,
+      "warmup": "5 min kävely + dynaamiset liikkeet",
+      "cooldown": "5 min kävely + venyttely",
+      "note": "Säbä jää väliin (iltavuoro 14–22). Tää lenkki EI jää.",
       "options": [
         {
-          "label": "Ei pääse säbään",
-          "details": "Kevyt 6 km ~6:45/km tai 30 min kotipiiri."
+          "label": "Kevennetty",
+          "details": "30 min kotipiiri 2 kierrosta"
         }
       ]
+    },
+    {
+      "date": "2026-10-28",
+      "type": "juoksu",
+      "subtype": "tempo",
+      "title": "Viikon kova: 3 × 8 min kynnys ennen iltavuoroa",
+      "details": "15 min verryttely, 3 × 8 min kynnysvauhti (~5:20–5:30/km, syke ~160–165), palautus 2 min hölkkä, 10 min loppuverkka. Yhteensä ~8–9 km.",
+      "distanceKm": 9,
+      "warmup": "15 min verryttely + 3 vetoa",
+      "cooldown": "10 min hölkkä + venyttely",
+      "note": "Säbän tilalla. Tää korvaa sen kovan päivän, joten älä lepsuile.",
+      "options": [
+        {
+          "label": "Kevennetty",
+          "details": "2 × 8 min kynnys"
+        },
+        {
+          "label": "Kovennettu",
+          "details": "4 × 8 min kynnys"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "type": "koti",
+      "title": "Lyhyt kotipiiri ennen yövuoroa",
+      "details": "2–3 kierrosta: leuat 3–5, punnerrukset 12–15, käsipainosoutu 10/puoli, askelkyykky 10/jalka, face pull 15, lankku 40 s. Iltapäivällä torkut ennen yövuoroa 22–06.",
+      "durationMin": 25,
+      "options": [
+        {
+          "label": "Kevennetty",
+          "details": "Pelkkä 20 min liikkuvuus"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "type": "lepo",
+      "title": "Yövuorojen välissä: unta + lyhyt kävely",
+      "details": "Nuku kunnolla. Halutessa 20–30 min kävely. Toinen yövuoro 22–06.",
+      "note": "Uni on treeniä. Ei sohvalla vaan sängyssä."
+    },
+    {
+      "date": "2026-10-31",
+      "type": "kavely",
+      "title": "Palautuskävely yövuoron jälkeen",
+      "details": "Unet ensin, sitten 40–60 min kävely + 10 min liikkuvuus.",
+      "note": "Pitkä lenkki siirtyy sunnuntaille 1.11. jos vuorot sallii."
     }
   ]
 }
