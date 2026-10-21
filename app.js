@@ -50,7 +50,9 @@
       pains: [], // { id, area, side, severity, notes, status: 'active'|'history', condition }
       kneeCheck: {}, // iso -> 'ok'|'aristaa'|'kipea' (legacy; mirrored into conditionCheck.runners_knee)
       conditionCheck: {}, // iso -> { conditionId: 'ok'|'aristaa'|'kipea' }
-      pendingPainFeedback: false
+      pendingPainFeedback: false,
+      shoulderRehab: null, // olkapään kuntoutustila (paikallinen valinta); valmentajan lippu voittaa
+      shoulderLog: {} // iso -> { cold1, cold2, routine }
     },
     // Kuukausiseuranta: paino + vyötärö + 1–2 progress-kuvaa / merkintä
     monthlyCheckins: []
@@ -137,6 +139,38 @@
 
   function coachDayFor(iso) {
     return coachPlan ? P.findCoachDay(coachPlan, iso) : null;
+  }
+
+  // ---------- Olkapään (kiertäjäkalvo) kuntoutustila ----------
+  /** Valmentajan coach-plan.json flags.shoulderRehab voittaa, jos se on asetettu; muuten paikallinen valinta. */
+  function shoulderRehabState() {
+    const flags = (coachPlan && coachPlan.flags) || {};
+    const coach = typeof flags.shoulderRehab === 'boolean' ? flags.shoulderRehab : null;
+    const local = !!(state.health && state.health.shoulderRehab);
+    return { active: coach !== null ? coach : local, coach, local, source: coach !== null ? 'coach' : 'local' };
+  }
+  function shoulderRehabActive() { return shoulderRehabState().active; }
+  function setShoulderRehabLocal(on) {
+    state.health.shoulderRehab = !!on;
+    saveState();
+  }
+  function shoulderLogFor(iso) {
+    const log = state.health.shoulderLog || {};
+    return Object.assign({ cold1: false, cold2: false, routine: false }, log[iso] || {});
+  }
+  function setShoulderLog(iso, key, val) {
+    state.health.shoulderLog = state.health.shoulderLog || {};
+    state.health.shoulderLog[iso] = Object.assign(shoulderLogFor(iso), { [key]: !!val });
+    saveState();
+  }
+  if (typeof window !== 'undefined') {
+    window.TreeniShoulder = {
+      state: () => shoulderRehabState(),
+      isActive: () => shoulderRehabActive(),
+      setLocal: (on) => setShoulderRehabLocal(on),
+      log: (iso) => shoulderLogFor(iso),
+      setLog: (iso, k, v) => setShoulderLog(iso, k, v)
+    };
   }
 
   function formatFiDateTime(isoStr) {
@@ -369,8 +403,11 @@
       const ansMap = answersForDay(iso);
       const softened = P.applyPainSoftening(session, state.health.pains, ansMap);
       if (softened && softened.painSoftened) session = softened;
-    } else if (session && override.session && !session.painSoftened) {
-      // leave explicit user override as-is
+    }
+    // Olkapäätila: suodata kaikki sessiot (automaattinen, valmentajan, vaihdettu, kevennetty/kovennettu)
+    const shoulder = shoulderRehabActive();
+    if (session && shoulder && P.applyShoulderRehab) {
+      session = P.applyShoulderRehab(session, EX);
     }
     return {
       ...found.day,
@@ -382,6 +419,7 @@
       completed: !!override.completed,
       note: override.note || '',
       completedAt: override.completedAt || null,
+      shoulderRehab: shoulder,
       week: found.week
     };
   }
@@ -487,6 +525,7 @@
     if (s.durationMin && (s.type === 'strength' || s.type === 'mobility' || s.type === 'other')) html += `<span class="badge">~${s.durationMin} min</span>`;
     if (s.location === 'sali' || s.location === 'koti') html += `<span class="badge">${s.location === 'sali' ? 'Sali' : 'Koti'}</span>`;
     if (s.painSoftened) html += '<span class="badge warn-pain">Kipu huomioitu</span>';
+    if (s.shoulderRehab && (s.type === 'strength' || s.type === 'mobility')) html += '<span class="badge warn-pain">Olkapää huomioitu</span>';
     if (s.preferCrossTrain) html += '<span class="badge warn-pain">Pyörä/krossi</span>';
     return html;
   }
@@ -548,13 +587,15 @@
     let badge = '';
     if (kind === 'warmup') {
       badge = '<span class="badge warmup">Lämmittely</span>';
+    } else if (kind === 'rehab') {
+      badge = '<span class="badge rehab">Olkapää</span>';
     } else if (optional) {
       badge = '<span class="badge optional">Vapaaehtoinen</span>';
     }
     const teeMyos = optional && block.teeMyos
       ? '<div class="block-kicker">Tee myös <span class="hint-inline">(voit ohittaa)</span></div>'
       : '';
-    let html = `<div class="session-block${optional ? ' is-optional' : ' is-warmup'}">`;
+    let html = `<div class="session-block${optional ? ' is-optional' : (kind === 'rehab' ? ' is-rehab' : ' is-warmup')}">`;
     html += `<div class="block-head"><div class="block-title">${esc(title)}${esc(dur)}</div><div class="block-badges">${badge}</div></div>`;
     html += teeMyos;
     if (block.note) html += `<div class="hint" style="margin-bottom:8px">${esc(block.note)}</div>`;
@@ -625,6 +666,8 @@
       html += '</div>';
     }
 
+    if (s.shoulderNote) html += `<div class="alert warn shoulder-note">🩹 ${esc(s.shoulderNote)}</div>`;
+    if (s.rehabBlock) html += renderPrepBlock(s.rehabBlock, 'rehab');
     // Optional mobility / cooldown / gentle
     if (s.mobility) html += renderPrepBlock(s.mobility, 'mobility');
     return html;
@@ -712,6 +755,8 @@
     openModal(
       ex.name,
       `<div class="session-meta"><span class="badge ${catBadge}">${cat}</span>${tags}</div>
+       ${ex.rehab === 'shoulder' ? '<div class="alert info">🩹 Olkapään kuntoutusliike: kevyt kuorma, 2–3×10–15. <strong>Tee vain kivuttomalla alueella.</strong></div>' : ''}
+       ${ex.loadsShoulder ? `<div class="alert warn">⚠ Kuormittaa olkapäätä${shoulderRehabActive() ? ' – ei käytössä olkapään kuntoutustilassa.' : '.'}</div>` : ''}
        <div class="ex-detail-section"><h3>Hyödyt</h3>${bullets(ex.benefits)}</div>
        <div class="ex-detail-section"><h3>Tekniikkavihjeet</h3>${bullets(ex.cues)}</div>
        <div class="ex-detail-section"><h3>Yleiset virheet</h3>${bullets(ex.mistakes)}</div>
@@ -725,7 +770,10 @@
     updateHeader();
     const el = document.getElementById('exercises-content');
     const all = EX.listExercises();
-    const filtered = exLibFilter === 'kaikki' ? all : all.filter((e) => e.category === exLibFilter);
+    const filtered = exLibFilter === 'kaikki' ? all
+      : exLibFilter === 'olkapaa' ? all.filter((e) => e.rehab === 'shoulder')
+      : all.filter((e) => e.category === exLibFilter);
+    const shoulderOn = shoulderRehabActive();
     const voima = all.filter((e) => e.category === 'voima').length;
     const juoksu = all.filter((e) => e.category === 'juoksu').length;
     const liikk = all.filter((e) => e.category === 'liikkuvuus').length;
@@ -740,6 +788,7 @@
           <button class="btn sm${exLibFilter==='voima'?' active':''}" data-filter="voima">Voima</button>
           <button class="btn sm${exLibFilter==='juoksu'?' active':''}" data-filter="juoksu">Juoksu</button>
           <button class="btn sm${exLibFilter==='liikkuvuus'?' active':''}" data-filter="liikkuvuus">Liikkuvuus</button>
+          <button class="btn sm${exLibFilter==='olkapaa'?' active':''}" data-filter="olkapaa">🩹 Olkapää</button>
         </div>
         <div class="alert info" style="margin-top:8px;margin-bottom:0">Videot ovat ulkoisia YouTube-demoja. Offline-tilassa näet silti vihjeet.</div>
       </div>
@@ -750,6 +799,8 @@
           <div class="meta">${catLabel[e.category] || e.category}
             · ${(e.equipment || []).length ? esc(e.equipment.join(', ')) : 'ei välineitä'}
             · ${hasEmbed ? 'upotus' : 'ulkoinen linkki'}</div>
+          ${e.rehab === 'shoulder' ? '<div class="meta rehab-meta">🩹 Olkapään kuntoutus · vain kivuttomalla alueella</div>' : ''}
+          ${shoulderOn && e.loadsShoulder ? '<div class="meta warn-meta">⚠ Kuormittaa olkapäätä – ei olkapäätilassa</div>' : ''}
         </div>`;
       }).join('')}
     `;
@@ -773,6 +824,10 @@
     {
       title: 'Vaihda treeni',
       body: 'Juoksu · Sali · Koti · Lihashuolto · Kävely · Muu laji vaihtavat päivän tyypin. Muu tilanne -kohdasta: sairas (= lepo), salibandy (huominen kevyeksi), siirrä tai lyhyt versio.'
+    },
+    {
+      title: 'Olkapään kuntoutustila',
+      body: 'Kun tila on päällä (Asetukset → Kivut tai valmentajan asetus), olkapäätä kuormittavat liikkeet korvataan jalka-/keskivartaloliikkeillä ja voimapäiviin lisätään kevyt olkapääblokki. Tänään-kortissa: kylmähoito 2× ja 10 min rutiini.'
     },
     {
       title: 'Liikkeet',
@@ -977,11 +1032,33 @@
       ? '<button class="btn block" data-act="voice-coach" style="margin-top:10px">🎙 Ääniohjattu treeni</button>'
       : '';
 
+    let shoulderCard = '';
+    if (day.shoulderRehab) {
+      const lg = shoulderLogFor(iso);
+      const shs = shoulderRehabState();
+      const chk = (key, label) =>
+        `<label class="sh-check${lg[key] ? ' on' : ''}"><input type="checkbox" data-sh="${key}"${lg[key] ? ' checked' : ''} /> ${label}</label>`;
+      shoulderCard = `<div class="card shoulder-card" id="shoulder-card">
+        <div class="shoulder-title">🩹 Olkapää (oikea kiertäjäkalvo) – kuntoutustila${shs.source === 'coach' ? ' <span class="badge coach">valmentajalta</span>' : ''}</div>
+        <p class="shoulder-text">Olkapää: kylmä 15 min 2×/pv · kevyet heilurit ja liikeradat ilman kipua</p>
+        <div class="sh-checks">
+          ${chk('cold1', '❄️ Kylmä 1')}
+          ${chk('cold2', '❄️ Kylmä 2')}
+          ${chk('routine', '✓ Rutiini')}
+        </div>
+        <button type="button" class="btn block" id="sh-routine-btn">10 min olkapäärutiini ›</button>
+      </div>`;
+      if (s && (s.salibandyDay || s.subtype === 'salibandy') && !day.completed) {
+        guidance += '<div class="alert warn">🩹 Salibandy: mailankäsittely ja kaatumiset kuormittavat olkapäätä – pelaa vain, jos olkapää on kivuton.</div>';
+      }
+    }
+
     const swapBtn = (act, ico, label, active) =>
       `<button type="button" class="swap-btn${active ? ' active' : ''}" data-act="${act}"><span class="swap-ico">${ico}</span><span class="swap-label">${label}</span></button>`;
 
     el.innerHTML = `
       ${renderMotivationLine(iso, day)}
+      ${shoulderCard}
       <div class="card today-main${day.completed ? ' is-done' : ''}">
         <div class="today-date">Tänään · ${dow} ${formatFiDate(iso)}</div>
         <div class="session-title today-title">${esc(s.name)}</div>
@@ -1025,6 +1102,14 @@
     el.querySelectorAll('[data-act]').forEach(btn => {
       btn.addEventListener('click', () => handleAction(iso, btn.getAttribute('data-act')));
     });
+    el.querySelectorAll('[data-sh]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        setShoulderLog(iso, cb.getAttribute('data-sh'), cb.checked);
+        rerenderActive();
+      });
+    });
+    const shBtn = el.querySelector('#sh-routine-btn');
+    if (shBtn) shBtn.addEventListener('click', () => openShoulderRoutineModal(iso));
     el.querySelectorAll('[data-cond-ans]').forEach(btn => {
       btn.addEventListener('click', () => {
         const ans = btn.getAttribute('data-cond-ans');
@@ -1349,6 +1434,7 @@
     }
     pushBlock(session.warmup, 'warmup');
     pushBlock({ exercises: session.exercises }, 'main');
+    if (session.rehabBlock) pushBlock(session.rehabBlock, 'mobility');
     if (session.mobility) pushBlock(session.mobility, 'mobility');
     return items;
   }
@@ -1575,6 +1661,25 @@
     coachBeginWork();
   }
 
+  function openShoulderRoutineModal(iso) {
+    const lg = shoulderLogFor(iso);
+    openModal('Olkapäärutiini ~10 min', `
+      <div class="alert info">Tee 1–2× päivässä. <strong>Vain kivuttomalla alueella</strong> – kevyt venytys ok, kipu ei. Kylmä 15 min rutiinin jälkeen rauhoittaa.</div>
+      ${renderExList(P.SHOULDER_REHAB_DAILY)}
+      <div class="hint" style="margin:6px 0 10px">Napauta liikettä: tekniikka, hyödyt ja video. Kun liikkeet ovat kivuttomia, voimapäivien olkapääblokki (kuminauha ulko-/sisäkierto, kylkimakuu-ulkokierto, matala soutu) vahvistaa.</div>
+      <button type="button" class="btn primary block" id="sh-routine-done"${lg.routine ? ' disabled' : ''}>${lg.routine ? '✓ Rutiini tehty tänään' : '✓ Merkitse rutiini tehdyksi'}</button>
+    `, (root) => {
+      bindExerciseTaps(root);
+      const b = root.querySelector('#sh-routine-done');
+      if (b) b.onclick = () => {
+        setShoulderLog(iso, 'routine', true);
+        closeModal();
+        toast('Olkapäärutiini tehty');
+        rerenderActive();
+      };
+    });
+  }
+
   function openRescheduleModal(iso) {
     const day = getEffectiveDay(iso);
     if (!day) return;
@@ -1714,6 +1819,7 @@
 
     function listHtml(cat, q) {
       let items = cat === 'all' ? EX.listExercises() : EX.listExercises(cat);
+      if (shoulderRehabActive()) items = items.filter((ex) => !ex.loadsShoulder);
       const qq = (q || '').trim().toLowerCase();
       if (qq) items = items.filter((ex) => (ex.name || '').toLowerCase().includes(qq) || (ex.id || '').includes(qq));
       items = items.slice().sort((a, b) => (a.name || '').localeCompare(b.name || '', 'fi'));
@@ -2448,6 +2554,7 @@
   function renderSettings() {
     updateHeader();
     const s = state.settings;
+    const shs = shoulderRehabState();
     const b = state.baseline;
     const dowOpt = (v, label) => {
       const sel = v === 'none'
@@ -2519,8 +2626,16 @@
               <input type="number" id="bl-pushups" min="0" max="200" value="${b.pushUpsApprox ?? ''}" /></div>
           </div>
         </details>
-        <details class="settings-fold">
-          <summary>Kivut &amp; vammat${activePains().length ? ` <span class="badge warn-pain">${activePains().length} aktiivinen</span>` : ''}</summary>
+        <details class="settings-fold" id="pains-fold">
+          <summary>Kivut &amp; vammat${activePains().length ? ` <span class="badge warn-pain">${activePains().length} aktiivinen</span>` : ''}${shs.active ? ' <span class="badge rehab">🩹 olkapäätila</span>' : ''}</summary>
+          <div class="shoulder-toggle">
+            <label class="toggle-row"><input type="checkbox" id="set-shoulder-rehab"${shs.local ? ' checked' : ''} />
+              <span><strong>Olkapää (oikea kiertäjäkalvo) – kuntoutustila</strong><br/>
+              <span class="hint">Poistaa olkapäätä kuormittavat liikkeet, lisää kevyen kuntoutusblokin ja päivän muistutuksen.</span></span></label>
+            ${shs.source === 'coach'
+              ? `<div class="alert ${shs.coach ? 'warn' : 'info'}" style="margin-top:8px">Valmentaja on asettanut tilan: <strong>${shs.coach ? 'PÄÄLLÄ' : 'POIS'}</strong>. Valmentajan asetus on voimassa; oma valintasi otetaan käyttöön, jos valmentaja poistaa asetuksen.</div>`
+              : ''}
+          </div>
           <div class="hint" style="margin:6px 0 8px">Aktiivinen kipu pehmentää treeniä automaattisesti ja näyttää päivittäisen kysymyksen.</div>
           <div id="pain-list">${renderPainList()}</div>
           <div class="form-row">
@@ -2580,6 +2695,17 @@
     `;
 
     document.getElementById('save-settings').onclick = saveSettingsFromForm;
+    const shT = document.getElementById('set-shoulder-rehab');
+    if (shT) shT.onchange = () => {
+      setShoulderRehabLocal(shT.checked);
+      const st = shoulderRehabState();
+      toast(st.source === 'coach'
+        ? 'Oma valinta tallennettu – valmentajan asetus (' + (st.coach ? 'päällä' : 'pois') + ') on voimassa'
+        : (shT.checked ? 'Olkapäätila päällä' : 'Olkapäätila pois'));
+      renderSettings();
+      const pf = document.getElementById('pains-fold');
+      if (pf) pf.open = true;
+    };
     bindBackupControls();
     const painAdd = document.getElementById('pain-add');
     if (painAdd) painAdd.onclick = () => {

@@ -20,6 +20,7 @@
     // ---- Voima: sali ----
     back_squat: {
       id: 'back_squat',
+      loadsShoulder: true,
       name: 'Takakyykky',
       category: 'voima',
       equipment: ['tanko', 'teline'],
@@ -44,6 +45,7 @@
     },
     front_squat: {
       id: 'front_squat',
+      loadsShoulder: true,
       name: 'Etukyykky',
       category: 'voima',
       equipment: ['tanko', 'teline'],
@@ -67,6 +69,7 @@
     },
     goblet_squat: {
       id: 'goblet_squat',
+      loadsShoulder: true,
       name: 'Goblet-kyykky',
       category: 'voima',
       equipment: ['käsipaino', 'kettlebell'],
@@ -90,6 +93,7 @@
     },
     band_squat: {
       id: 'band_squat',
+      loadsShoulder: true,
       name: 'Kuminauhakyykky',
       category: 'voima',
       equipment: ['kuminauha'],
@@ -113,6 +117,7 @@
     },
     deadlift: {
       id: 'deadlift',
+      loadsShoulder: true,
       name: 'Maastaveto',
       category: 'voima',
       equipment: ['tanko'],
@@ -137,6 +142,7 @@
     },
     rdl: {
       id: 'rdl',
+      loadsShoulder: true,
       name: 'Romanian maastaveto',
       category: 'voima',
       equipment: ['tanko'],
@@ -161,6 +167,7 @@
     },
     rdl_db: {
       id: 'rdl_db',
+      loadsShoulder: true,
       name: 'Romanian maastaveto (käsipainot)',
       category: 'voima',
       equipment: ['käsipainot', 'kuminauha'],
@@ -184,6 +191,7 @@
     },
     bench_press: {
       id: 'bench_press',
+      loadsShoulder: true,
       name: 'Penkkipunnerrus',
       category: 'voima',
       equipment: ['tanko', 'käsipainot', 'penkki'],
@@ -208,6 +216,7 @@
     },
     incline_bench: {
       id: 'incline_bench',
+      loadsShoulder: true,
       name: 'Vinopenkki',
       category: 'voima',
       equipment: ['tanko', 'käsipainot', 'penkki'],
@@ -231,6 +240,7 @@
     },
     cable_chest_press: {
       id: 'cable_chest_press',
+      loadsShoulder: true,
       name: 'Kaapelipunnerrus',
       category: 'voima',
       equipment: ['kaapeli'],
@@ -254,6 +264,7 @@
     },
     floor_press: {
       id: 'floor_press',
+      loadsShoulder: true,
       name: 'Lattia-/korokepunnerrus',
       category: 'voima',
       equipment: ['käsipainot', 'step-lauta'],
@@ -277,6 +288,7 @@
     },
     band_press: {
       id: 'band_press',
+      loadsShoulder: true,
       name: 'Kuminauhapunnerrus',
       category: 'voima',
       equipment: ['kuminauha'],
@@ -300,6 +312,7 @@
     },
     overhead_press: {
       id: 'overhead_press',
+      loadsShoulder: true,
       name: 'Pystypunnerrus',
       category: 'voima',
       equipment: ['käsipainot', 'kuminauha', 'tanko'],
@@ -323,6 +336,7 @@
     },
     lat_pulldown: {
       id: 'lat_pulldown',
+      loadsShoulder: true,
       name: 'Ylätalja',
       category: 'voima',
       equipment: ['kaapeli', 'talja'],
@@ -346,6 +360,7 @@
     },
     seated_cable_row: {
       id: 'seated_cable_row',
+      loadsShoulder: true,
       name: 'Istuva kaapelisoutu / alatalja',
       category: 'voima',
       equipment: ['kaapeli'],
@@ -369,6 +384,7 @@
     },
     bent_over_row: {
       id: 'bent_over_row',
+      loadsShoulder: true,
       name: 'Kulmasoutu',
       category: 'voima',
       equipment: ['tanko', 'käsipainot'],
@@ -392,6 +408,7 @@
     },
     pullup: {
       id: 'pullup',
+      loadsShoulder: true,
       name: 'Leuanveto',
       category: 'voima',
       equipment: ['leuanvetotanko'],
@@ -415,6 +432,7 @@
     },
     push_up: {
       id: 'push_up',
+      loadsShoulder: true,
       name: 'Punnerrus',
       category: 'voima',
       equipment: ['kehonpaino'],
@@ -438,6 +456,7 @@
     },
     scap_pull: {
       id: 'scap_pull',
+      loadsShoulder: true,
 
       name: 'Scapular pull (lapaluuveto)',
       category: 'voima',
@@ -462,6 +481,7 @@
     },
     band_assisted_pullup: {
       id: 'band_assisted_pullup',
+      loadsShoulder: true,
       name: 'Kuminauha-avusteinen leuanveto',
       category: 'voima',
       equipment: ['leuanvetotanko', 'kuminauha'],
@@ -485,6 +505,7 @@
     },
     band_row: {
       id: 'band_row',
+      loadsShoulder: true,
       name: 'Kuminauhasoutu',
       category: 'voima',
       equipment: ['kuminauha'],
@@ -508,6 +529,7 @@
     },
     inverted_row: {
       id: 'inverted_row',
+      loadsShoulder: true,
       name: 'Inverted row (kulmasoutu tangolla)',
       category: 'voima',
       equipment: ['leuanvetotanko', 'tanko'],
@@ -531,6 +553,7 @@
     },
     plank: {
       id: 'plank',
+      loadsShoulder: true,
       name: 'Lankku',
       category: 'voima',
       equipment: [],
@@ -554,6 +577,7 @@
     },
     ab_wheel: {
       id: 'ab_wheel',
+      loadsShoulder: true,
       name: 'Ab wheel -rullaus',
       category: 'voima',
       equipment: ['ab wheel'],
@@ -600,6 +624,7 @@
     },
     ball_rollout: {
       id: 'ball_rollout',
+      loadsShoulder: true,
       name: 'Pallorullaus',
       category: 'voima',
       equipment: ['jumppapallo'],
@@ -763,6 +788,7 @@
     },
     worlds_greatest_stretch: {
       id: 'worlds_greatest_stretch',
+      loadsShoulder: true,
       name: "World's greatest stretch",
       category: 'liikkuvuus',
       equipment: [],
@@ -809,6 +835,7 @@
     },
     thoracic_opener: {
       id: 'thoracic_opener',
+      loadsShoulder: true,
       name: 'Rintarangan avaukset',
       category: 'liikkuvuus',
       equipment: [],
@@ -832,6 +859,7 @@
     },
     arm_circles: {
       id: 'arm_circles',
+      loadsShoulder: true,
       name: 'Käsien pyöritykset',
       category: 'liikkuvuus',
       equipment: [],
@@ -901,6 +929,7 @@
     },
     cat_cow: {
       id: 'cat_cow',
+      loadsShoulder: true,
       name: 'Kissa–lehmä',
       category: 'liikkuvuus',
       equipment: [],
@@ -1039,6 +1068,7 @@
     },
     childs_pose: {
       id: 'childs_pose',
+      loadsShoulder: true,
       name: 'Lapsen asento',
       category: 'liikkuvuus',
       equipment: [],
@@ -1178,6 +1208,400 @@
       video: { type: 'link', url: ytSearch('running strides form drill'), label: 'Katso video (YouTube-haku)' }
     },
 
+    // ---- Olkapään (kiertäjäkalvo) kuntoutus: kevyt kuorma, kivuton liikerata ----
+    codman_pendulum: {
+      id: 'codman_pendulum',
+      name: 'Codman-heilurit',
+      category: 'liikkuvuus',
+      rehab: 'shoulder',
+      equipment: ['pöytä/tuoli tueksi'],
+      benefits: [
+        'Liikuttaa olkaniveltä lähes ilman lihastyötä – rauhoittaa ärtynyttä kiertäjäkalvoa',
+        'Ylläpitää liikerataa ja nivelen ravitsemusta tulehdusvaiheessa',
+        'Hyvä aloitus jokaiseen kuntoutusrutiiniin ja kylmähoidon jälkeen'
+      ],
+      cues: [
+        'Tue terve käsi pöytään, kumarru eteen ~45–90°, kipeä käsi roikkuu rentona',
+        'Anna käden heilua kehon liikkeen avulla: eteen–taakse, sivulta sivulle, pienet ympyrät',
+        'Olkapää täysin rento – liike tulee vartalosta, ei olkalihaksista',
+        '30–60 s / suunta, 2–3 kierrosta',
+        'Tee vain kivuttomalla alueella – pienennä liikettä, jos tuntuu kipua'
+      ],
+      mistakes: [
+        'Heiluttaa kättä olkalihaksilla (aktiivinen liike)',
+        'Liian iso liike tai painon pitäminen kädessä',
+        'Hartia nousee korviin'
+      ],
+      video: { type: 'link', url: ytSearch('codman pendulum exercise shoulder'), label: 'Katso video (YouTube-haku)' }
+    },
+    wall_circles: {
+      id: 'wall_circles',
+      name: 'Pallo/käsi seinää vasten – pyöritykset',
+      category: 'liikkuvuus',
+      rehab: 'shoulder',
+      equipment: ['pieni pallo (valinnainen)', 'seinä'],
+      benefits: [
+        'Aktivoi kiertäjäkalvoa ja lapaluun tukilihaksia kevyesti, nivel tuettuna',
+        'Parantaa olkapään hallintaa ja asentotuntoa',
+        'Matala kuorma – sopii kun liikkeet alkavat olla kivuttomia'
+      ],
+      cues: [
+        'Seiso seinän edessä, kämmen tai pieni pallo seinää vasten hartian korkeudella tai alempana',
+        'Paina kevyesti (~20–30 %) ja tee pieniä ympyröitä myötä- ja vastapäivään',
+        'Lapaluu hieman taakse ja alas, niska rentona',
+        '2×10 ympyrää / suunta',
+        'Tee vain kivuttomalla alueella – laske käden korkeutta, jos tuntuu kipua'
+      ],
+      mistakes: [
+        'Liian kova painallus tai liian korkealla',
+        'Ympyrät tehdään vartalolla, ei olkapäällä',
+        'Hartia kohoaa'
+      ],
+      video: { type: 'link', url: ytSearch('ball on wall circles shoulder rehab'), label: 'Katso video (YouTube-haku)' }
+    },
+    wall_walk: {
+      id: 'wall_walk',
+      name: 'Seinäkävely sormilla',
+      category: 'liikkuvuus',
+      rehab: 'shoulder',
+      equipment: ['seinä'],
+      benefits: [
+        'Palauttaa olkapään nostoliikerataa (fleksio) avustetusti',
+        'Seinä kantaa käden painon – vähän kuormaa kiertäjäkalvolle',
+        'Konkreettinen mittari edistymiselle (kuinka korkealle kivutta)'
+      ],
+      cues: [
+        'Seiso seinän edessä käsivarren mitan päässä, sormet seinälle vyötärön korkeudelle',
+        '"Kävele" sormilla ylöspäin hitaasti, vain niin korkealle kuin kivutta pääsee',
+        'Pidä 2–3 s, kävele sormet takaisin alas – älä pudota kättä',
+        '2×10 toistoa; voit tehdä myös sivuttain seinään (abduktio)',
+        'Tee vain kivuttomalla alueella – ylin piste on kivun alapuolella'
+      ],
+      mistakes: [
+        'Kurottaa kipualueelle "venyttääkseen"',
+        'Hartia nousee korviin / selkä notkolle',
+        'Käsi pudotetaan alas yläasennosta'
+      ],
+      video: { type: 'link', url: ytSearch('finger wall walk shoulder exercise'), label: 'Katso video (YouTube-haku)' }
+    },
+    stick_external_rotation: {
+      id: 'stick_external_rotation',
+      name: 'Passiivinen ulkokierto kepillä',
+      category: 'liikkuvuus',
+      rehab: 'shoulder',
+      equipment: ['keppi/harjanvarsi'],
+      benefits: [
+        'Palauttaa ulkokiertoa ilman, että kipeä olkapää tekee työtä',
+        'Terve käsi tekee liikkeen – kiertäjäkalvo saa levätä',
+        'Vähentää jäykkyyttä tulehdusvaiheessa'
+      ],
+      cues: [
+        'Selinmakuu tai seisten, kipeän käden kyynärpää kyljessä 90° kulmassa (pyyhe kyynärpään alle)',
+        'Pidä keppiä molemmin käsin; terve käsi työntää kipeää kättä ulospäin',
+        'Kipeä käsi on rento – vain mukana',
+        'Pidä 3–5 s ääriasennossa, 2×10–15',
+        'Tee vain kivuttomalla alueella – kevyt venytys ok, kipu ei'
+      ],
+      mistakes: [
+        'Kyynärpää irtoaa kyljestä',
+        'Kipeä käsi jännittää ja tekee työtä',
+        'Pakottaa kipualueelle'
+      ],
+      video: { type: 'link', url: ytSearch('passive external rotation stick shoulder supine'), label: 'Katso video (YouTube-haku)' }
+    },
+    stick_flexion: {
+      id: 'stick_flexion',
+      name: 'Fleksio kepillä (selinmakuu)',
+      category: 'liikkuvuus',
+      rehab: 'shoulder',
+      equipment: ['keppi/harjanvarsi'],
+      benefits: [
+        'Avustettu nostoliike – palauttaa liikerataa ylös turvallisesti',
+        'Selinmakuu tukee lapaluuta ja vähentää kompensointia',
+        'Terve käsi kantaa kuorman'
+      ],
+      cues: [
+        'Selinmakuu polvet koukussa, keppi molemmissa käsissä hartioiden levyisellä otteella',
+        'Nosta keppiä suorin käsin kohti kattoa ja edelleen pään yli – terve käsi johtaa',
+        'Vain niin pitkälle kuin kivutta pääsee, laske hitaasti',
+        '2×10–15',
+        'Tee vain kivuttomalla alueella'
+      ],
+      mistakes: [
+        'Alaselkä nousee notkolle',
+        'Kipeä käsi tekee liikkeen yksin',
+        'Liian nopea tempo'
+      ],
+      video: { type: 'link', url: ytSearch('supine shoulder flexion with stick wand'), label: 'Katso video (YouTube-haku)' }
+    },
+    iso_external_rotation: {
+      id: 'iso_external_rotation',
+      name: 'Isometrinen ulkokierto seinää vasten',
+      category: 'voima',
+      rehab: 'shoulder',
+      equipment: ['seinä/ovenkarmi', 'pyyhe'],
+      benefits: [
+        'Aktivoi ulkokiertäjiä ilman nivelliikettä – usein kivuton jo alkuvaiheessa',
+        'Isometria voi lievittää jännekipua',
+        'Pohja myöhemmälle kuminauhatyölle'
+      ],
+      cues: [
+        'Seiso kylki seinää/karmia vasten, kyynärpää kyljessä 90°, rullattu pyyhe kyynärpään ja kyljen väliin',
+        'Paina käden ulkosyrjällä kevyesti seinää vasten (~20–30 % voimasta) – käsi ei liiku',
+        'Pidä 5–10 s, rentouta',
+        '2–3×10 toistoa',
+        'Tee vain kivuttomalla alueella – painalluksen pitää olla kivuton'
+      ],
+      mistakes: [
+        'Liian kova painallus',
+        'Hartia nousee tai vartalo kiertyy',
+        'Hengityksen pidättäminen'
+      ],
+      video: { type: 'link', url: ytSearch('isometric shoulder external rotation wall'), label: 'Katso video (YouTube-haku)' }
+    },
+    iso_internal_rotation: {
+      id: 'iso_internal_rotation',
+      name: 'Isometrinen sisäkierto seinää vasten',
+      category: 'voima',
+      rehab: 'shoulder',
+      equipment: ['seinä/ovenkarmi', 'pyyhe'],
+      benefits: [
+        'Aktivoi sisäkiertäjiä (lapaluunalainen lihas) ilman nivelliikettä',
+        'Tasapainottaa ulkokiertoharjoittelua',
+        'Matala kuorma – sopii tulehdusvaiheeseen'
+      ],
+      cues: [
+        'Seiso ovenkarmin kulmassa, kyynärpää kyljessä 90°, kämmen karmia vasten',
+        'Paina kämmenellä kevyesti sisäänpäin (~20–30 %) – käsi ei liiku',
+        'Pidä 5–10 s, rentouta',
+        '2–3×10 toistoa',
+        'Tee vain kivuttomalla alueella'
+      ],
+      mistakes: [
+        'Liian kova painallus',
+        'Kyynärpää karkaa kyljestä',
+        'Vartalo kiertyy mukaan'
+      ],
+      video: { type: 'link', url: ytSearch('isometric shoulder internal rotation doorway'), label: 'Katso video (YouTube-haku)' }
+    },
+    band_internal_rotation: {
+      id: 'band_internal_rotation',
+      name: 'Sisäkierto kuminauhalla (kevyt)',
+      category: 'voima',
+      rehab: 'shoulder',
+      equipment: ['kuminauha (kevyin)'],
+      benefits: [
+        'Vahvistaa sisäkiertäjiä kevyellä vastuksella',
+        'Tasapainottaa olkanivelen lihaksistoa ulkokierron pariksi',
+        'Hallittu, pieni liike – vähän ärsytystä'
+      ],
+      cues: [
+        'Nauha ankkuroituna kyynärpään korkeudelle sivulle, kyynärpää kyljessä 90° (pyyhe väliin)',
+        'Vedä kyynärvarsi hitaasti vatsaa kohti, palauta hitaammin (2–3 s)',
+        'Kevyin nauha: 2–3×12–15 ilman kipua',
+        'Hartia alas, rinta auki',
+        'Tee vain kivuttomalla alueella'
+      ],
+      mistakes: [
+        'Liian jäykkä nauha',
+        'Kyynärpää irtoaa kyljestä',
+        'Nopea, nykivä tempo'
+      ],
+      video: { type: 'link', url: ytSearch('band internal rotation shoulder rehab'), label: 'Katso video (YouTube-haku)' }
+    },
+    side_lying_external_rotation: {
+      id: 'side_lying_external_rotation',
+      name: 'Kylkimakuu-ulkokierto (0–1 kg)',
+      category: 'voima',
+      rehab: 'shoulder',
+      equipment: ['käsipaino 0,5–1 kg (valinnainen)', 'pyyhe'],
+      benefits: [
+        'Yksi tehokkaimmista ulkokiertäjien (infraspinatus) vahvistajista',
+        'Painovoima antaa kevyen, tasaisen vastuksen',
+        'Aloita ilman painoa – nosta vasta kun 3×15 on kivuton'
+      ],
+      cues: [
+        'Makaa terveen puolen kyljellä, kipeän käden kyynärpää kyljessä 90°, rullattu pyyhe kyynärpään alle',
+        'Kierrä kyynärvarsi hitaasti ylös kohti kattoa, laske 3 s',
+        'Ensin ilman painoa, sitten 0,5–1 kg; 2–3×10–15',
+        'Älä makaa kipeän olkapään päällä',
+        'Tee vain kivuttomalla alueella'
+      ],
+      mistakes: [
+        'Liian painava käsipaino',
+        'Vartalo kiertyy taaksepäin',
+        'Kyynärpää nousee kyljestä'
+      ],
+      video: { type: 'link', url: ytSearch('side lying external rotation rotator cuff'), label: 'Katso video (YouTube-haku)' }
+    },
+    band_row_low: {
+      id: 'band_row_low',
+      name: 'Kevyt kuminauhasoutu matalalta',
+      category: 'voima',
+      rehab: 'shoulder',
+      equipment: ['kuminauha (kevyt)'],
+      benefits: [
+        'Vahvistaa lapaluun tukilihaksia (keski-/alaosan epäkäs, vinoneliöt)',
+        'Hyvä lapaluun asento keventää kiertäjäkalvon kuormaa',
+        'Matala vetokulma – ei käsiä pään yli'
+      ],
+      cues: [
+        'Ankkuroi kevyt nauha vyötärön korkeudelle tai alemmas, kädet edessä alhaalla',
+        'Vedä lapaluut ensin taakse ja alas, sitten kyynärpäät kylkien viereen',
+        'Hidas palautus 2–3 s; 2–3×12–15',
+        'Kyynärpäät alhaalla vartalon vieressä – ei hartian korkeudelle',
+        'Tee vain kivuttomalla alueella'
+      ],
+      mistakes: [
+        'Liian kova vastus → hartiat nousevat',
+        'Vetää vain käsillä ilman lapaluita',
+        'Kyynärpäät nousevat sivuille'
+      ],
+      video: { type: 'link', url: ytSearch('low row resistance band scapular retraction'), label: 'Katso video (YouTube-haku)' }
+    },
+    cross_body_stretch: {
+      id: 'cross_body_stretch',
+      name: 'Olkapään venytys rinnan yli (kevyt)',
+      category: 'liikkuvuus',
+      rehab: 'shoulder',
+      equipment: [],
+      benefits: [
+        'Venyttää olkapään takaosaa ja nivelkapselia pehmeästi',
+        'Vähentää takaosan kireyttä, joka voi ahtauttaa olkaniveltä',
+        'Helppo tehdä missä tahansa'
+      ],
+      cues: [
+        'Tuo kipeä käsi suorana rinnan yli, terve käsi tukee kyynärpään yläpuolelta',
+        'Vedä vain kevyesti – tunne pehmeä venytys olkapään takaosassa',
+        'Hartia alas, älä kierrä vartaloa',
+        '20–30 s, 2–3 kertaa',
+        'Tee vain kivuttomalla alueella – nipistävä tunne olkapään etuosassa = kevennä heti'
+      ],
+      mistakes: [
+        'Vetää voimalla',
+        'Hartia nousee korviin',
+        'Venyttää kipuun asti'
+      ],
+      video: { type: 'link', url: ytSearch('gentle cross body shoulder stretch'), label: 'Katso video (YouTube-haku)' }
+    },
+
+    // ---- Olkapäätä säästävät jalka-/keskivartalovaihtoehdot ----
+    leg_press: {
+      id: 'leg_press',
+      name: 'Jalkaprässi',
+      category: 'voima',
+      equipment: ['jalkaprässi (sali)'],
+      benefits: [
+        'Raskas jalkatyö ilman tankoa hartioilla – olkapää lepää',
+        'Kehittää etureisiä ja pakaroita juoksun tueksi',
+        'Helppo säätää kuormaa'
+      ],
+      cues: [
+        'Selkä ja lantio tiukasti selkänojaa vasten',
+        'Jalat hartioiden levyisesti, polvet varpaiden suuntaan',
+        'Laske kunnes polvi ~90°, työnnä koko jalkapohjalla',
+        'Älä nojaa käsillä kahvoihin – kädet rennosti'
+      ],
+      mistakes: [
+        'Lantio irtoaa penkistä pohjalla',
+        'Polvet lukkoon yläasennossa',
+        'Polvet romahtavat sisään'
+      ],
+      video: { type: 'link', url: ytSearch('leg press proper form'), label: 'Katso video (YouTube-haku)' }
+    },
+    wall_sit: {
+      id: 'wall_sit',
+      name: 'Seinäistunta',
+      category: 'voima',
+      equipment: ['seinä'],
+      benefits: [
+        'Isometrinen etureisityö ilman välineitä ja ilman käsiä',
+        'Vahvistaa polven tukilihaksia (juoksijan polvi -ystävällinen kivun rajoissa)',
+        'Ei kuormita olkapäitä'
+      ],
+      cues: [
+        'Selkä seinää vasten, laskeudu kunnes polvet ~90° (tai korkeammalle)',
+        'Paino kantapäillä, polvet nilkkojen päällä',
+        'Kädet rennosti reisillä tai sivuilla – älä paina seinää',
+        '3×30–60 s'
+      ],
+      mistakes: [
+        'Polvet varpaiden yli eteen',
+        'Kädet työntävät reisistä',
+        'Hengityksen pidättäminen'
+      ],
+      video: { type: 'link', url: ytSearch('wall sit exercise form'), label: 'Katso video (YouTube-haku)' }
+    },
+    sl_rdl_bw: {
+      id: 'sl_rdl_bw',
+      name: 'Yhden jalan RDL ilman painoja',
+      category: 'voima',
+      equipment: [],
+      benefits: [
+        'Takareidet, pakarat ja nilkan tasapaino ilman käsiin otettavaa kuormaa',
+        'Juoksulle tärkeä yhden jalan hallinta',
+        'Olkapää lepää – kädet lantiolla'
+      ],
+      cues: [
+        'Seiso yhdellä jalalla, polvi pehmeänä, kädet lantiolla',
+        'Kallistu lonkasta eteen, vapaa jalka suorana taakse – selkä suorana',
+        'Palaa pakaralla ylös; 3×8–10 / jalka',
+        'Tukeudu tarvittaessa kevyesti terveellä kädellä seinään'
+      ],
+      mistakes: [
+        'Selkä pyöristyy',
+        'Lantio kiertyy auki',
+        'Tukipolvi lukossa'
+      ],
+      video: { type: 'link', url: ytSearch('single leg romanian deadlift bodyweight'), label: 'Katso video (YouTube-haku)' }
+    },
+    step_up_bw: {
+      id: 'step_up_bw',
+      name: 'Step-up ilman painoja',
+      category: 'voima',
+      equipment: ['step-lauta / porras'],
+      benefits: [
+        'Yhden jalan voima ja polven hallinta',
+        'Juoksuspesifi työntö ylöspäin',
+        'Ei käsiin otettavaa kuormaa'
+      ],
+      cues: [
+        'Koko jalkapohja korokkeelle, nouse etujalan voimalla',
+        'Polvi varpaiden suuntaan, vartalo pystyssä',
+        'Laske hallitusti; 3×10 / jalka',
+        'Kädet rennosti – ei käsipainoja olkapäätilassa'
+      ],
+      mistakes: [
+        'Ponnistaa takajalalla',
+        'Polvi romahtaa sisään',
+        'Liian korkea koroke'
+      ],
+      video: { type: 'link', url: ytSearch('bodyweight step up form'), label: 'Katso video (YouTube-haku)' }
+    },
+    reverse_crunch: {
+      id: 'reverse_crunch',
+      name: 'Käänteinen vatsarutistus',
+      category: 'voima',
+      equipment: [],
+      benefits: [
+        'Alavatsa ja lantion hallinta selinmakuulla',
+        'Kädet lattialla rentoina – ei olkapääkuormaa',
+        'Korvaa ab wheelin ja lankun olkapäätilassa'
+      ],
+      cues: [
+        'Selinmakuu, kädet kyljillä lattialla rentoina, polvet 90°',
+        'Kierrä lantio irti lattiasta vatsalihaksilla, polvet kohti rintaa',
+        'Laske hitaasti 3 s; 3×10–12',
+        'Älä paina käsillä lattiaan'
+      ],
+      mistakes: [
+        'Heilauttaa jaloilla vauhtia',
+        'Painaa käsillä',
+        'Liian nopea lasku'
+      ],
+      video: { type: 'link', url: ytSearch('reverse crunch proper form'), label: 'Katso video (YouTube-haku)' }
+    },
+
     // ---- Kuntoutus-/vinkkiliikkeet (konservatiiviset treenivinkit) ----
     calf_raise_eccentric: {
       id: 'calf_raise_eccentric',
@@ -1204,8 +1628,9 @@
     },
     band_external_rotation: {
       id: 'band_external_rotation',
-      name: 'Ulkokierto kuminauhalla',
+      name: 'Ulkokierto kuminauhalla (kevyt)',
       category: 'voima',
+      rehab: 'shoulder',
       equipment: ['kuminauha'],
       benefits: [
         'Vahvistaa kiertäjäkalvon ulkokiertäjiä',
@@ -1215,8 +1640,10 @@
       cues: [
         'Kyynärpää kyljessä ~90°',
         'Kierrä kyynärvarsi ulos nauhaa vasten',
-        'Hidas tempo, pieni liike riittää',
-        'Hartia alas – älä kohota olkapäätä'
+        'Hidas tempo, pieni liike riittää – kevyin nauha, 2–3×12–15',
+        'Hartia alas – älä kohota olkapäätä',
+        'Rullattu pyyhe kyynärpään ja kyljen väliin helpottaa asentoa',
+        'Tee vain kivuttomalla alueella'
       ],
       mistakes: [
         'Kyynärpää irtoaa kyljestä',
@@ -1227,8 +1654,9 @@
     },
     scap_squeeze: {
       id: 'scap_squeeze',
-      name: 'Lapaluun puristus',
+      name: 'Lapaluiden puristus',
       category: 'liikkuvuus',
+      rehab: 'shoulder',
       equipment: [],
       benefits: [
         'Aktivoi yläselän ja lapaluun tukilihaksia',
@@ -1237,9 +1665,10 @@
       ],
       cues: [
         'Seisten tai istuen: purista lapaluut yhteen',
-        'Pidä 2–3 s, rentouta',
-        '10–12 toistoa',
-        'Rinta auki, niska rentona'
+        'Lapaluut taakse ja hieman alas, pidä 3–5 s, rentouta',
+        '2–3×12–15 toistoa',
+        'Rinta auki, niska rentona',
+        'Tee vain kivuttomalla alueella'
       ],
       mistakes: [
         'Kohottaa hartioita korviin',
@@ -1308,6 +1737,17 @@
     return Object.keys(EXERCISES);
   }
 
+  /** Kuormittaako liike olkapäätä (kiertäjäkalvo)? Tuntematon id → false. */
+  function loadsShoulder(id) {
+    const e = EXERCISES[id];
+    return !!(e && e.loadsShoulder);
+  }
+
+  /** Olkapään kuntoutusliikkeet (rehab: 'shoulder'). */
+  function shoulderRehabExercises() {
+    return Object.values(EXERCISES).filter((e) => e.rehab === 'shoulder');
+  }
+
   function embedUrl(ex) {
     if (!ex || !ex.video || ex.video.type !== 'embed' || !ex.video.youtubeId) return null;
     return ytEmbed(ex.video.youtubeId);
@@ -1324,6 +1764,8 @@
     getExercise,
     listExercises,
     allIds,
+    loadsShoulder,
+    shoulderRehabExercises,
     embedUrl,
     externalUrl,
     ytEmbed,

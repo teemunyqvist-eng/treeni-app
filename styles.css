@@ -1165,3 +1165,19 @@ details.today-fold-card[open] > .today-fold-sum::before { content: '▾ '; }
 .settings-fold > summary { cursor: pointer; font-weight: 700; font-size: 0.92rem; padding: 6px 0; }
 .file-drop { display: block; }
 .form-row > *, .form-row-2 > * { min-width: 0; }
+
+/* Olkapään kuntoutustila */
+.badge.rehab { background: rgba(232, 160, 64, 0.2); color: #f0b866; }
+.shoulder-card { border: 1px solid #a0702a; border-left: 4px solid #e8a040; background: linear-gradient(135deg, rgba(232,160,64,0.12), var(--bg-card)); padding: 12px 14px; }
+.shoulder-title { font-weight: 700; font-size: 0.95rem; }
+.shoulder-text { margin: 4px 0 10px; font-size: 0.9rem; color: #f0d2a0; }
+.sh-checks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+.sh-check { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-elevated); font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+.sh-check.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-light); }
+.sh-check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.session-block.is-rehab { border-left: 3px solid #e8a040; }
+.shoulder-note { margin-top: 10px; font-size: 0.85rem; }
+.toggle-row { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; margin: 8px 0 4px; }
+.toggle-row input { width: 22px; height: 22px; flex: none; margin-top: 2px; accent-color: #e8a040; }
+.ex-lib-card .rehab-meta { color: #f0b866; }
+.ex-lib-card .warn-meta { color: #e88a8a; }

@@ -1283,8 +1283,8 @@
       tipTitle: 'Kiertäjäkalvo / olkapää – vinkit',
       tipClass: 'condition-tip',
       exerciseIds: [
-        'band_external_rotation', 'scap_squeeze', 'scap_pull',
-        'arm_circles', 'thoracic_opener', 'band_row'
+        'codman_pendulum', 'wall_walk', 'stick_external_rotation', 'iso_external_rotation',
+        'band_external_rotation', 'scap_squeeze', 'cross_body_stretch'
       ],
       bullets: [
         'Kuormanhallinta: vältä raskaita pystypunnerruksia ja kivuliaita yläasentoja.',
@@ -1754,6 +1754,190 @@
   }
 
   /** Validoi ja siistii coach-plan-objektin. Palauttaa null jos ei kelpaa. */
+  // --- Olkapään (kiertäjäkalvo) kuntoutustila ---
+
+  /** Päivittäinen ~10 min liikerata-/kuntoutusrutiini (kivuton alue). */
+  const SHOULDER_REHAB_DAILY = [
+    { id: 'codman_pendulum', label: 'Codman-heilurit', sets: '2×30–60 s / suunta' },
+    { id: 'wall_walk', label: 'Seinäkävely sormilla', sets: '2×10' },
+    { id: 'stick_flexion', label: 'Fleksio kepillä', sets: '2×10–15' },
+    { id: 'stick_external_rotation', label: 'Passiivinen ulkokierto kepillä', sets: '2×10–15' },
+    { id: 'scap_squeeze', label: 'Lapaluiden puristus', sets: '2×15' },
+    { id: 'iso_external_rotation', label: 'Isometrinen ulkokierto', sets: '2×10 × 5 s (~30 %)' },
+    { id: 'iso_internal_rotation', label: 'Isometrinen sisäkierto', sets: '2×10 × 5 s (~30 %)' },
+    { id: 'cross_body_stretch', label: 'Venytys rinnan yli', sets: '2×30 s' }
+  ];
+
+  /** Voimapäivien loppuun lisättävä kevyt vahvistava olkapääblokki. */
+  const SHOULDER_REHAB_STRENGTH = [
+    { id: 'codman_pendulum', label: 'Codman-heilurit', sets: '60 s' },
+    { id: 'band_external_rotation', label: 'Ulkokierto kuminauhalla (kevyt)', sets: '2–3×12–15' },
+    { id: 'band_internal_rotation', label: 'Sisäkierto kuminauhalla (kevyt)', sets: '2–3×12–15' },
+    { id: 'side_lying_external_rotation', label: 'Kylkimakuu-ulkokierto (0–1 kg)', sets: '2–3×10–15' },
+    { id: 'band_row_low', label: 'Kevyt kuminauhasoutu matalalta', sets: '2–3×12–15' },
+    { id: 'wall_circles', label: 'Pallo seinää vasten – pyöritykset', sets: '2×10 / suunta' }
+  ];
+
+  const SHOULDER_SAFE_POOLS = {
+    sali: [
+      { id: 'leg_press', label: 'Jalkaprässi', sets: '3×8–10 · RPE 6–7' },
+      { id: 'sl_rdl_bw', label: 'Yhden jalan RDL ilman painoja', sets: '3×8/jalka' },
+      { id: 'step_up_bw', label: 'Step-up ilman painoja', sets: '3×10/jalka' },
+      { id: 'reverse_crunch', label: 'Käänteinen vatsarutistus', sets: '3×10–12' },
+      { id: 'dead_bug', label: 'Dead bug – vain jalat, kädet rinnalla', sets: '3×8/puoli' },
+      { id: 'calf_raise', label: 'Pohjenosto', sets: '3×12' }
+    ],
+    koti: [
+      { id: 'wall_sit', label: 'Seinäistunta', sets: '3×30–60 s' },
+      { id: 'lunge', label: 'Askelkyykky ilman painoja', sets: '3×10/jalka' },
+      { id: 'sl_rdl_bw', label: 'Yhden jalan RDL ilman painoja', sets: '3×8/jalka' },
+      { id: 'single_leg_hip_thrust', label: 'Yhden jalan lantionnosto (kädet rennosti)', sets: '3×10/jalka' },
+      { id: 'reverse_crunch', label: 'Käänteinen vatsarutistus', sets: '3×10–12' },
+      { id: 'dead_bug', label: 'Dead bug – vain jalat, kädet rinnalla', sets: '3×8/puoli' },
+      { id: 'step_up_bw', label: 'Step-up ilman painoja', sets: '3×10/jalka' },
+      { id: 'calf_raise', label: 'Pohjenosto step-laudalla', sets: '3×15' }
+    ],
+    mobility: [
+      { id: 'hip_flexor_stretch', label: 'Lonkan koukistajan venytys', sets: '2×30 s/puoli' },
+      { id: 'hamstring_stretch', label: 'Takareiden venytys', sets: '2×30 s/puoli' },
+      { id: 'figure4_stretch', label: 'Figure-4 / piriformis', sets: '2×30 s/puoli' },
+      { id: 'quad_stretch', label: 'Etureiden venytys', sets: '2×30 s/puoli' },
+      { id: 'calf_stretch', label: 'Pohjevenytys', sets: '2×30 s/puoli' },
+      { id: 'cross_body_stretch', label: 'Venytys rinnan yli (kevyt)', sets: '2×30 s' }
+    ],
+    warmup: [
+      { id: 'codman_pendulum', label: 'Codman-heilurit', sets: '30 s / suunta' },
+      { id: 'scap_squeeze', label: 'Lapaluiden puristus', sets: '10' },
+      { id: 'leg_swings', label: 'Jalanheilautukset', sets: '10/puoli' },
+      { id: 'bw_squat_warmup', label: 'Kehonpainokyykky', sets: '10' }
+    ]
+  };
+
+  const SHOULDER_NOTE =
+    'Olkapäätila (oikea kiertäjäkalvo): olkapäätä kuormittavat liikkeet poistettu ja korvattu jalka-/keskivartaloliikkeillä.';
+  const SHOULDER_COACH_NOTE =
+    'Olkapäätila: jätä tekstistä pois leuanvedot, punnerrukset, kaikki punnerrus-/pystyliikkeet, soudut painolla, face pullit, ab wheel ' +
+    'ja lankut/kylkilankut käsillä. Tee tilalle seinäistunta, askelkyykky ja step-up ilman painoja, yhden jalan lantionnosto ja dead bug (vain jalat).';
+
+  function shoulderLoader(lib) {
+    lib = lib || (global && global.TreeniExercises) || null;
+    return function (id) {
+      if (!id) return false;
+      if (lib && typeof lib.loadsShoulder === 'function') return lib.loadsShoulder(id);
+      const e = lib && lib.getExercise ? lib.getExercise(id) : null;
+      return !!(e && e.loadsShoulder);
+    };
+  }
+
+  function filterShoulderList(list, loads, pool, minLen) {
+    const src = Array.isArray(list) ? list : [];
+    const kept = [];
+    let removed = 0;
+    src.forEach(function (ex) {
+      if (!ex || loads(ex.id)) { removed++; return; }
+      const e = Object.assign({}, ex);
+      if (e.altId && loads(e.altId)) { delete e.altId; delete e.alt; }
+      // Käsiin otettava kuorma (käsipainot / kahvakuula) kuormittaa olkapäätä → ilman painoja
+      if (/käsipaino|kahvakuula|kettlebell/i.test(e.label || '')) {
+        e.label = String(e.label).replace(/\s*\([^)]*(käsipaino|kahvakuula|kettlebell)[^)]*\)/gi, '')
+          .replace(/\s*(käsipainoilla|kahvakuulalla)/gi, '').trim() + ' (ilman painoja)';
+      }
+      kept.push(e);
+    });
+    const target = Math.max(src.length, minLen || 0);
+    if (removed && pool) {
+      const have = {};
+      kept.forEach(function (e) { have[e.id] = true; });
+      for (let i = 0; i < pool.length && kept.length < target; i++) {
+        if (!have[pool[i].id]) { kept.push(Object.assign({ shoulderSwap: true }, pool[i])); have[pool[i].id] = true; }
+      }
+    }
+    return { list: kept, removed: removed };
+  }
+
+  /**
+   * Olkapään kuntoutustila: poistaa olkapäätä kuormittavat liikkeet (exercises.js loadsShoulder),
+   * korvaa jalka-/keskivartaloliikkeillä ja lisää kevyen kuntoutusblokin voima-/liikkuvuuspäiviin.
+   * Idempotentti – voidaan ajaa uudelleen samalle sessiolle.
+   */
+  function applyShoulderRehab(session, lib) {
+    if (!session) return session;
+    const loads = shoulderLoader(lib);
+    let s = JSON.parse(JSON.stringify(session));
+
+    // Uinti kuormittaa olkapäätä → kävely
+    if (s.type === 'other' && (s.subtype === 'uinti' || s.activityKind === 'uinti')) {
+      const walk = buildOtherActivitySession('kavely');
+      walk.name = 'Kävely (uinnin tilalle – olkapää)';
+      walk.details = 'Uinti kuormittaa olkapäätä – tänään kävely tai pyöräily kevyesti.\n' + walk.details;
+      s = walk;
+    }
+
+    let changed = false;
+    if (s.warmup && Array.isArray(s.warmup.exercises)) {
+      const r = filterShoulderList(s.warmup.exercises, loads, null, 0);
+      if (r.removed) {
+        const add = SHOULDER_SAFE_POOLS.warmup.filter(function (p) {
+          return !r.list.some(function (e) { return e.id === p.id; });
+        }).slice(0, Math.max(2, r.removed));
+        s.warmup.exercises = add.map(function (x) { return Object.assign({}, x); }).concat(r.list);
+        changed = true;
+      }
+    }
+    if (s.mobility && Array.isArray(s.mobility.exercises)) {
+      const r = filterShoulderList(s.mobility.exercises, loads, SHOULDER_SAFE_POOLS.mobility, 0);
+      if (r.removed) { s.mobility.exercises = r.list; changed = true; }
+      if (!s.mobility.exercises.length) s.mobility = null;
+    }
+
+    const isStrength = s.type === 'strength';
+    const isMobility = s.type === 'mobility';
+    if ((isStrength || isMobility) && Array.isArray(s.exercises) && s.exercises.length) {
+      const pool = isMobility ? SHOULDER_SAFE_POOLS.mobility
+        : (s.location === 'koti' ? SHOULDER_SAFE_POOLS.koti : SHOULDER_SAFE_POOLS.sali);
+      const r = filterShoulderList(s.exercises, loads, pool, isStrength ? 4 : 0);
+      if (r.removed) { s.exercises = r.list; changed = true; }
+    }
+
+    if (isStrength || isMobility) {
+      s.rehabBlock = {
+        id: 'shoulder_rehab',
+        label: 'Olkapään kuntoutus (oikea kiertäjäkalvo)',
+        durationMin: 10,
+        note: 'Kevyt kuorma, 2–3×10–15. Tee vain kivuttomalla alueella – jos kipu nousee, tee pelkät heilurit ja liikeradat.',
+        exercises: (isStrength ? SHOULDER_REHAB_STRENGTH : SHOULDER_REHAB_DAILY).map(function (x) { return Object.assign({}, x); })
+      };
+      if (s.coach && !(s.exercises && s.exercises.length)) {
+        s.shoulderNote = SHOULDER_COACH_NOTE;
+      }
+    }
+
+    if (changed) {
+      if (isStrength && s.exercises && s.exercises.length) {
+        s.notes = SHOULDER_NOTE; // alkuperäiset punnerrus-/leuanvetovinkit eivät päde olkapäätilassa
+        if (s.equipmentNote) s.equipmentNote = s.location === 'koti'
+          ? 'Välineet: step-lauta, seinä, kevyt kuminauha (kuntoutus).'
+          : 'Välineet: jalkaprässi, step-lauta, kevyt kuminauha (kuntoutus).';
+        s.details = formatStrengthDetails(s);
+      } else if (isMobility && s.exercises) {
+        s.details = (s.headline || s.name || 'Liikkuvuus') + '\n' +
+          s.exercises.map(function (e) { return '• ' + (e.label || e.id) + (e.sets ? ' – ' + e.sets : ''); }).join('\n');
+      }
+    }
+    s.shoulderRehab = true;
+    return s;
+  }
+
+  /** coach-plan.json flags → { shoulderRehab: true|false } (vain tunnetut boolean-liput). */
+  function parseCoachFlags(raw) {
+    const out = {};
+    if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+      if (typeof raw.shoulderRehab === 'boolean') out.shoulderRehab = raw.shoulderRehab;
+    }
+    return out;
+  }
+
+
   function parseCoachPlan(obj) {
     if (typeof obj === 'string') {
       try { obj = JSON.parse(obj); } catch (e) { return null; }
@@ -1789,6 +1973,7 @@
     return {
       version: typeof obj.version === 'number' ? obj.version : 0,
       updatedAt: coachStr(obj.updatedAt, 40),
+      flags: parseCoachFlags(obj.flags),
       days: days
     };
   }
@@ -1917,6 +2102,10 @@
     TIP_DISCLAIMER,
     buildOtherActivitySession,
     OTHER_ACTIVITY_KINDS,
-    applySalibandyRecovery
+    applySalibandyRecovery,
+    applyShoulderRehab,
+    parseCoachFlags,
+    SHOULDER_REHAB_DAILY,
+    SHOULDER_REHAB_STRENGTH
   };
 })(typeof window !== 'undefined' ? window : global);
