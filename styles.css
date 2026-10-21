@@ -710,7 +710,6 @@ a { color: var(--accent-light); }
 
 .badge.salibandy { background: rgba(80, 140, 200, 0.25); color: #8ec5ef; }
 .status-btn.salibandy { border-color: #3a6a90; color: #8ec5ef; }
-.plan-tip { border-left: 3px solid var(--accent); }
 .garmin-stats {
   list-style: none;
   padding: 0;
@@ -983,38 +982,6 @@ a { color: var(--accent-light); }
 }
 
 
-/* Vuorokalenteri & matkatreenit */
-.shift-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-.shift-btn {
-  border: 1px solid var(--border);
-  background: var(--bg-input);
-  color: var(--text);
-  border-radius: var(--radius-sm);
-  padding: 10px 6px;
-  font-size: 0.78rem;
-  cursor: pointer;
-}
-.shift-btn.active {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  color: var(--accent-light);
-  font-weight: 600;
-}
-.shift-btn.ghost.active {
-  border-color: var(--border);
-  background: var(--bg-elevated);
-  color: var(--text-muted);
-}
-.badge.shift-aamu { background: rgba(230, 180, 60, 0.22); color: #e6c35c; }
-.badge.shift-ilta { background: rgba(120, 100, 200, 0.22); color: #b8a6ef; }
-.badge.shift-yo { background: rgba(60, 80, 140, 0.35); color: #9eb6ef; }
-.week-day.shift-yo { box-shadow: inset 3px 0 0 #5a6fb0; }
-.shift-banner .status-grid { margin-top: 0; }
-.readiness-card .progress-bar { margin-top: 10px; }
 button.linkish {
   background: none;
   border: none;
@@ -1094,7 +1061,7 @@ button.linkish {
   padding-top: 8px;
 }
 .today-fold > .today-fold-sum,
-details.shift-card > .today-fold-sum {
+details.today-fold-card > .today-fold-sum {
   list-style: none;
   cursor: pointer;
   display: flex;
@@ -1107,17 +1074,16 @@ details.shift-card > .today-fold-sum {
   user-select: none;
 }
 .today-fold > .today-fold-sum::-webkit-details-marker,
-details.shift-card > .today-fold-sum::-webkit-details-marker { display: none; }
+details.today-fold-card > .today-fold-sum::-webkit-details-marker { display: none; }
 .today-fold > .today-fold-sum::before,
-details.shift-card > .today-fold-sum::before {
+details.today-fold-card > .today-fold-sum::before {
   content: '▸ ';
   color: var(--text-muted);
   font-weight: 700;
 }
 .today-fold[open] > .today-fold-sum::before,
-details.shift-card[open] > .today-fold-sum::before { content: '▾ '; }
+details.today-fold-card[open] > .today-fold-sum::before { content: '▾ '; }
 .today-fold .swap-grid { margin-top: 8px; }
-.tip-card.app-tips { border-left: 3px solid var(--info); }
 .app-tip-list li { margin-bottom: 8px; }
 .app-tip-list strong { color: var(--text); }
 
@@ -1150,3 +1116,52 @@ details.shift-card[open] > .today-fold-sum::before { content: '▾ '; }
 .coach-options .btn.sm { margin-left: 6px; }
 .coach-note { margin-top: 8px; }
 .coach-updated { margin-top: 6px; font-size: 0.75rem; }
+
+/* --- Selkeämpi äppi: hierarkia --- */
+.header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.header-btn {
+  appearance: none; border: 1px solid var(--border); background: var(--bg-elevated);
+  border-radius: 999px; width: 40px; height: 40px; font-size: 1.1rem; cursor: pointer; flex: none;
+}
+.header-btn.active { border-color: var(--accent); background: var(--accent-soft); }
+.nav button { font-size: 0.72rem; }
+
+.moti-card {
+  border: 0; border-left: 4px solid var(--danger);
+  background: transparent; box-shadow: none;
+  padding: 2px 0 2px 12px; margin: 2px 0 14px;
+}
+.moti-text { font-size: 1.02rem; font-weight: 700; font-style: italic; }
+.moti-card.moti-done { border-left-color: var(--accent-light); }
+.moti-card.moti-sick, .moti-card.moti-rest { border-left-color: var(--info); }
+
+.today-main {
+  border: 2px solid var(--accent);
+  padding: 18px 16px;
+  background: linear-gradient(180deg, rgba(26,127,90,0.12), var(--bg-card) 120px);
+}
+.today-main.is-done { border-color: var(--border); }
+.today-main .today-date {
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--accent-light); margin-bottom: 4px;
+}
+.today-title { font-size: 1.6rem; line-height: 1.2; }
+.today-main .session-details, .today-main .coach-block .session-details { font-size: 0.98rem; }
+.done-btn { margin-top: 16px; min-height: 54px; font-size: 1.1rem; font-weight: 700; }
+.done-btn:disabled { opacity: 0.55; }
+.status-grid.two { grid-template-columns: 1fr 1fr; margin-top: 8px; }
+.status-grid.three { grid-template-columns: 1fr 1fr 1fr; margin-top: 0; }
+.status-grid.two .status-btn.primary, .status-grid.three .status-btn.primary { grid-column: auto; }
+.swap-grid { grid-template-columns: repeat(3, 1fr); }
+.swap-btn { min-height: 60px; padding: 8px 4px; }
+.swap-label { font-size: 0.82rem; }
+
+.today-fold-card .tip-block + .tip-block { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 4px; }
+
+.week-summary { margin: 0 2px 4px; }
+.week-day.coach { border-left: 3px solid var(--accent-light); }
+
+.settings-fold { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 8px; }
+.settings-fold > summary { cursor: pointer; font-weight: 700; font-size: 0.92rem; padding: 6px 0; }
+.file-drop { display: block; }
+.form-row > *, .form-row-2 > * { min-width: 0; }

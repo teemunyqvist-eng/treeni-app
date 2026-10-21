@@ -22,9 +22,7 @@
       reminders: false,
       salibandyDow: 'none', // kova joukkuelaji-ilta, asetetaan Asetuksista
       marathonGoal: '',
-      raceTime: '',
-      postShiftBanner: true, // in-app banner vuoron jälkeen (ei WhatsApp)
-      sleepDebt: null // 0–5 subjektiivinen univelka
+      raceTime: ''
     },
     baseline: {
       manualWeeklyKm: null,
@@ -39,7 +37,7 @@
       pushUpsApprox: null,
       injuryNotes: ''
     },
-    garmin: null, // Garmin CSV -tuonti tai varmuuskopio täyttää
+    garmin: null, // täyttyy varmuuskopion tuonnista (vanha Garmin-yhteenveto)
     dayOverrides: {}, // iso -> { status, completed, session, note, completedAt }
     log: [],
     planCache: null,
@@ -54,12 +52,10 @@
       conditionCheck: {}, // iso -> { conditionId: 'ok'|'aristaa'|'kipea' }
       pendingPainFeedback: false
     },
-    // Kuukausiseuranta: paino + mittarit + 1–2 progress-kuvaa / merkintä
-    monthlyCheckins: [],
-    // Vuorokalenteri: iso -> 'aamu'|'ilta'|'yo'
-    shifts: {},
-    // Dismissed in-app banners: key -> iso date dismissed
-    dismissedBanners: {}
+    // Kuukausiseuranta: paino + vyötärö + 1–2 progress-kuvaa / merkintä
+    monthlyCheckins: []
+    // Vanhat avaimet (vuorokalenteri, bannerit, univelka-asetukset)
+    // säilyvät tallennetussa tilassa, mutta sovellus ei enää käytä niitä.
   };
 
   const BODY_AREAS = [
@@ -121,7 +117,7 @@
         const changed = JSON.stringify(plan) !== JSON.stringify(coachPlan);
         coachPlan = plan;
         storeCoachPlan(plan);
-        if (changed) rerenderCoachViews();
+        if (changed) rerenderActive();
         return changed;
       })
       .catch(() => false) // hiljaa: välimuistissa oleva suunnitelma jää käyttöön
@@ -129,14 +125,14 @@
     return coachInflight;
   }
 
-  function rerenderCoachViews() {
+  function rerenderActive() {
     if (typeof document === 'undefined' || !document.getElementById) return;
     const active = document.querySelector && document.querySelector('.view.active');
     if (!active) return;
     try {
       if (active.id === 'view-today') renderToday();
       else if (active.id === 'view-week') renderWeek();
-    } catch (e) { /* ei kaadeta sovellusta */ }
+    } catch (e) { if (typeof console !== 'undefined') console.error(e); }
   }
 
   function coachDayFor(iso) {
@@ -435,11 +431,10 @@
   // ---------- Views ----------
   function showView(name) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('active', b.getAttribute('data-view') === name));
     const view = document.getElementById('view-' + name);
-    const btn = document.querySelector('.nav button[data-view="' + name + '"]');
     if (view) view.classList.add('active');
-    if (btn) btn.classList.add('active');
+    if (typeof window !== 'undefined' && window.scrollTo) window.scrollTo(0, 0);
     if (name === 'today') renderToday();
     if (name === 'week') renderWeek();
     if (name === 'exercises') renderExerciseLibrary();
@@ -485,7 +480,6 @@
     if (s.coach) html += '<span class="badge coach">Valmentajalta</span>';
     if (day.completed) html += '<span class="badge done">Tehty</span>';
     if (day.status === 'sairas') html += '<span class="badge skip">Sairas</span>';
-    if (day.status === 'toissa') html += '<span class="badge mod">Vuoro</span>';
     if (day.status === 'salibandy' || s.salibandyDay || s.modified === 'salibandy')
       html += '<span class="badge salibandy">Salibandy</span>';
     if (s.modified && s.modified !== 'salibandy') html += '<span class="badge mod">Muokattu</span>';
@@ -769,40 +763,24 @@
   // ---------- App usage tips + rotating motivation (Today) ----------
   const APP_USAGE_TIPS = [
     {
-      title: 'Kevennä / Kovenna',
-      body: 'Kevennä tiputtaa kuormaa (lyhyempi / kevyempi). Kovenna nostaa, kun fiilis ja keho sallivat. Treeni säilyy – vain taso muuttuu.'
+      title: 'Valmentajan suunnitelma',
+      body: 'Valmentajan päivät (🧭 Valmentajalta) haetaan automaattisesti, kun avaat sovelluksen tai yhteys palaa. Ne korvaavat automaattisen treenin. Muut päivät tulevat varasuunnitelmasta.'
+    },
+    {
+      title: 'Valmis · Kevennä · Kovenna',
+      body: '✓ Valmis kirjaa treenin. Kevennä/Kovenna käyttää valmentajan kevennettyä/kovennettua versiota, jos sellainen on – muuten kuormaa säädetään ~30 % / 10–15 %.'
     },
     {
       title: 'Vaihda treeni',
-      body: 'Koti · Sali · Juoksu · Lihashuolto vaihtavat päivän tyypin heti. Käytä kun suunnitelma ei sovi paikkaan tai energiaan.'
+      body: 'Juoksu · Sali · Koti · Lihashuolto · Kävely · Muu laji vaihtavat päivän tyypin. Muu tilanne -kohdasta: sairas (= lepo), salibandy (huominen kevyeksi), siirrä tai lyhyt versio.'
     },
     {
-      title: 'Vuorokalenteri',
-      body: 'Merkitse Aamu / Ilta / Yö Tänään-näkymässä. Saat ajoitusvinkin, varoituksen yövuoron jälkeen ja tarvittaessa 20 min minimi-paketin.'
-    },
-    {
-      title: 'Kipu & sairaus',
-      body: 'Merkitse kipu (alue) Asetuksista tai pehmennä Tänään-vastauksilla. Sairas = lepo, ei automaattista korvausta. Palaa kevyesti (kävely + venyttely).'
-    },
-    {
-      title: 'Ääniohjattu treeni',
-      body: 'Kotivoimassa: 🎙 Ääniohjattu treeni. Sovellus lukee liikkeet ja ajat ääneen – kädet vapaana.'
-    },
-    {
-      title: 'Edistyminen & kuvat',
-      body: 'Edistyminen-välilehti: paino, energia, progress-kuvat (1–2 / kk). Vertaa kuukausia rinnakkain.'
-    },
-    {
-      title: 'Valmentajan suunnitelma',
-      body: 'Valmentajan sopimat päivät haetaan automaattisesti (avatessa ja kun yhteys palaa). Ne näkyvät merkinnällä 🧭 Valmentajalta ja korvaavat automaattisen treenin. Kevennä/Kovenna käyttää valmentajan vaihtoehtoja, Valmis kirjaa treenin. Muut päivät tulevat automaattisesta suunnitelmasta.'
+      title: 'Liikkeet',
+      body: 'Napauta liikettä: tekniikka, hyödyt, virheet ja video. Lämmittely ja liikkuvuus näkyvät treenin yhteydessä. Kotivoimassa 🎙 ääniohjaus.'
     },
     {
       title: 'Varmuuskopio',
-      body: 'Asetukset → Varmuuskopio: Vie JSON tallentaa kaikki tiedot tiedostoksi. Tuo JSON (tiedosto tai liitetty teksti) palauttaa ne – myös uudelle laitteelle tai osoitteelle. Tee vienti säännöllisesti.'
-    },
-    {
-      title: 'Kilpailu',
-      body: 'Paavo Nurmi Marathon · Turku · 21.8.2027. Päivämäärä ja vaihe näkyvät yläpalkissa; muuta Asetuksista.'
+      body: 'Asetukset → Vie JSON tallentaa kaikki tiedot tiedostoksi. Tuo JSON palauttaa ne – myös uudelle laitteelle. Tee vienti säännöllisesti.'
     }
   ];
 
@@ -834,7 +812,7 @@
     'Tee se, mitä sun mukavuudenhaluinen versio vihaa eniten.',
     'Jokainen skipattu treeni on lupaus, jonka rikoit itsellesi. Lopeta lupausten rikkominen.',
     'Lyhyt tehty treeni voittaa täydellisen suunnitelman, jota et koskaan tee.',
-    'Yövuoron jälkeen ei kovaa laatua – se on fiksua, ei pehmeää. Mutta 20 min minimi? Ei tekosyitä.',
+    'Yövuoron jälkeen ei kovaa laatua – se on fiksua, ei pehmeää. Mutta 20 min kävely? Ei tekosyitä.',
     'Maratonin viimeinen kymppi juostaan nyt, näinä paskoina arki-iltoina.',
     'Stay hard. Ei siksi, että on kivaa – vaan koska kukaan muu ei tee sitä sun puolesta.',
     'Lopeta fiiliksen odottaminen. Fiilis tulee liikkeessä, ei sohvalla.',
@@ -902,26 +880,18 @@
     return 'default';
   }
 
-  function renderAppTipsCard() {
+  function renderAppTipsHtml() {
     const items = APP_USAGE_TIPS.map(t =>
       `<li><strong>${esc(t.title)}.</strong> ${esc(t.body)}</li>`
     ).join('');
-    return `<div class="card tip-card app-tips">
-      <h2>Näin käytät sovellusta</h2>
-      <ul class="tip-bullets app-tip-list">${items}</ul>
-      <p class="hint" style="margin:8px 0 0">Vuorotyö: käytä <strong>Siirrä treeni</strong> tai <strong>Korvaa lyhyemmällä</strong> (20–30 min). Sairaus → lepo.</p>
-    </div>`;
+    return `<ul class="tip-bullets app-tip-list">${items}</ul>`;
   }
 
-  function renderMotivationCard(iso, day) {
+  function renderMotivationLine(iso, day) {
     const ctx = motivationContext(day);
     const pools = { done: MOTIVATION_DONE, eased: MOTIVATION_EASED, sick: MOTIVATION_SICK, rest: MOTIVATION_REST };
-    const labels = { done: 'Tehty', eased: 'Kevennys', sick: 'Lepo', rest: 'Lepopäivä', default: 'Stay hard' };
     const line = motivationForDay(iso, pools[ctx]);
-    return `<div class="card moti-card moti-${ctx}" role="status">
-      <div class="moti-label">${esc((labels[ctx] || 'Tänään') + (state.settings.userName ? ', ' + state.settings.userName : ''))}</div>
-      <p class="moti-text">${esc(line)}</p>
-    </div>`;
+    return `<div class="moti-card moti-${ctx}" role="status"><p class="moti-text">${esc(line)}</p></div>`;
   }
 
   function renderToday() {
@@ -939,34 +909,15 @@
     const ansMap = answersForDay(iso);
     const tipConds = P.allTipCards ? P.allTipCards(state.health.pains) : [];
     const promptConds = (P.conditionsNeedingPrompt ? P.conditionsNeedingPrompt(pains) : []);
-    const showPrompts = !day.completed && day.status !== 'sairas' &&
-      s && (s.type === 'run' || s.type === 'strength') && promptConds.length;
-
-    const shiftToday = getShift(iso);
     const yIso = P.toISO(P.addDays(P.parseISO(iso), -1));
-    const shiftYesterday = getShift(yIso);
-    const timing = P.suggestTrainingTiming(shiftToday || (shiftYesterday === 'yo' ? 'yo' : null));
-    const vitals = latestEnergySleep();
-    const offerMinimi = P.shouldOfferMinimiPackage({
-      shiftToday,
-      shiftYesterday,
-      sleepDebt: vitals.sleepDebt,
-      energy: vitals.energy
-    });
-    const warnNight = P.shouldWarnQualityAfterNight(shiftToday, shiftYesterday, s);
-    const TP_local = typeof TreeniProgress !== 'undefined' ? TreeniProgress : null;
-    const trend = TP_local ? TP_local.rhrHrvTrend(getMonthlyCheckins()) : null;
 
-    // Auto-apply salibandy recovery if yesterday was salibandy and today not yet recovered
+    // Eilen salibandy → tämän päivän palautus (ellei jo tehty)
     const yOv = state.dayOverrides[yIso];
     if (yOv && yOv.status === 'salibandy' && !day.completed &&
         !(state.dayOverrides[iso] && state.dayOverrides[iso].note === 'Palautus salibandyn jälkeen')) {
       const cur = day.session || day.planned;
-      if (cur && !cur.salibandyRecovery &&
-          (cur.type === 'run' || cur.type === 'strength')) {
-        // ensure override exists for today
+      if (cur && !cur.salibandyRecovery && (cur.type === 'run' || cur.type === 'strength')) {
         applySalibandyNextDayRecovery(yIso);
-        // refresh session reference
         const refreshed = getEffectiveDay(iso);
         if (refreshed) {
           s = refreshed.session || refreshed.planned;
@@ -977,210 +928,102 @@
 
     let guidance = '';
     if (day.status === 'sairas') {
-      guidance = '<div class="alert warn">Sairas = lepo. Ei treeniä, ei korvausta, ei syyllisyyttä. Tämän päivän kova valinta on parantua.</div>';
+      guidance = '<div class="alert warn">Sairas = lepo. Ei treeniä, ei korvausta, ei syyllisyyttä.</div>';
     } else if (day.completed) {
-      guidance = '<div class="alert ok">Treeni tehty. Ansaittu – mutta huomenna lasketaan taas nollasta.</div>';
-    } else if (day.deload) {
-      guidance = '<div class="alert info">Deload-viikko: kevyempi volyymi tarkoituksella. Kevennys on taktiikka, ei lupa luovuttaa.</div>';
-    }
-    if (warnNight && !day.completed) {
-      guidance += '<div class="alert warn">⚠ Yövuoro lähellä – älä tee kovaa laatua tänään. Suosi helppoa tai minimi-pakettia.</div>';
+      guidance = '<div class="alert ok">✓ Tehty. Huomenna lasketaan taas nollasta.</div>';
     }
     if (s && s.salibandyRecovery && !day.completed) {
       guidance += '<div class="alert info">🏒 Palautuspäivä salibandyn jälkeen – pidä kevyenä.</div>';
     }
-    if (trend && trend.softSuggestion && !day.completed) {
-      guidance += `<div class="alert warn">${esc(trend.softSuggestion)}</div>`;
-    }
-
-    let painBanner = '';
     if (pains.length) {
       const labels = pains.map(p => {
         const sev = p.severity === 'mod' ? 'kohtalainen' : 'lievä';
-        const cond = p.condition ? ` · ${p.condition}` : '';
-        return `${p.area}${p.side ? ' (' + p.side + ')' : ''} · ${sev}${cond}`;
+        return `${p.area}${p.side ? ' (' + p.side + ')' : ''} · ${sev}`;
       }).join(', ');
-      painBanner = `<div class="alert warn">Aktiiviset kivut: ${esc(labels)}</div>`;
+      guidance += `<div class="alert warn">Aktiiviset kivut: ${esc(labels)}</div>`;
     }
-
-    // Vuoron jälkeinen in-app -muistutus (ei WhatsApp)
-    let shiftBanner = '';
-    const remShift = shiftYesterday === 'yo' || shiftYesterday === 'ilta' ? shiftYesterday
-      : (shiftToday === 'yo' || shiftToday === 'ilta' ? shiftToday : null);
-    const rem = remShift && state.settings.postShiftBanner !== false
-      ? P.postShiftReminderText(remShift) : null;
-    const remKey = 'postShift:' + iso;
-    if (rem && !(state.dismissedBanners && state.dismissedBanners[remKey]) && !day.completed) {
-      shiftBanner = `<div class="alert info shift-banner" id="shift-banner">
-        <strong>${esc(rem.title)}</strong>
-        <p style="margin:6px 0 10px">${esc(rem.body)}</p>
-        <div class="status-grid">
-          <button type="button" class="status-btn primary" data-act="minimi-yovuoro">20 min minimi</button>
-          <button type="button" class="status-btn" data-act="dismiss-shift-banner">Selvä</button>
-        </div>
-      </div>`;
-    }
-
-    const shiftOpen = !!(shiftToday || shiftYesterday === 'yo' || offerMinimi);
-    const shiftCard = `<details class="card shift-card today-fold"${shiftOpen ? ' open' : ''}>
-      <summary class="today-fold-sum">
-        <span>Vuorokalenteri</span>
-        <span class="hint">${shiftToday ? esc(P.SHIFT_LABELS[shiftToday] || shiftToday) : 'Ei vuoroa merkitty'}</span>
-      </summary>
-      <p class="hint" style="margin:0 0 8px">Merkitse päivän vuoro – saat ajoitusvinkin ja varoitukset.</p>
-      <div class="shift-grid" role="group" aria-label="Vuoro">
-        <button type="button" class="shift-btn${shiftToday==='aamu'?' active':''}" data-shift="aamu">☀️ Aamu</button>
-        <button type="button" class="shift-btn${shiftToday==='ilta'?' active':''}" data-shift="ilta">🌆 Ilta</button>
-        <button type="button" class="shift-btn${shiftToday==='yo'?' active':''}" data-shift="yo">🌙 Yö</button>
-        <button type="button" class="shift-btn ghost${!shiftToday?' active':''}" data-shift="">Ei vuoroa</button>
-      </div>
-      ${shiftToday || shiftYesterday === 'yo' ? `
-        <div class="hint" style="margin-top:10px">
-          <strong>${esc(timing.label)}</strong> · ${esc(timing.when)}<br/>
-          ${esc(timing.tip)}
-        </div>` : ''}
-      ${offerMinimi && !day.completed ? `
-        <button type="button" class="btn primary block" style="margin-top:10px" data-act="minimi-yovuoro">
-          🌙 Minimi yövuoro -paketti (20 min)
-        </button>` : ''}
-    </details>`;
-
-    function renderTipCard(tip) {
-      if (!tip) return '';
-      const cls = tip.tipClass || 'condition-tip';
-      return `<div class="card tip-card ${esc(cls)}">
-        <h2>${esc(tip.title)}</h2>
-        <ul class="tip-bullets">${tip.bullets.map(b => '<li>' + esc(b) + '</li>').join('')}</ul>
-        <div class="section-title">Liikkuvuus &amp; voima kirjastosta</div>
-        <div class="cue-chip-row">
-          ${tip.exerciseIds.map(id => {
-            const lib = EX.getExercise(id);
-            if (!lib) return '';
-            return `<button type="button" class="cue-chip" data-ex="${esc(id)}">${esc(lib.name)}</button>`;
-          }).join('')}
-        </div>
-      </div>`;
-    }
-
-    const tipCardsHtml = tipConds.map(renderTipCard).join('');
 
     let condPromptsHtml = '';
-    if (showPrompts || (promptConds.length && !day.completed)) {
+    if (promptConds.length && !day.completed && day.status !== 'sairas') {
       condPromptsHtml = promptConds.map(c => {
         const ans = ansMap[c.id] || null;
         return `<div class="card knee-check condition-check" data-cond="${esc(c.id)}">
           <h2>${esc(c.promptTitle)}</h2>
-          <p class="session-desc" style="margin:0 0 10px">${esc(c.promptHint || 'Valinta säätää treenin kuormaa.')}</p>
-          <div class="status-grid">
+          <div class="status-grid three">
             <button class="status-btn${ans==='ok'?' primary':''}" data-cond-ans="ok" data-cond-id="${esc(c.id)}">OK</button>
             <button class="status-btn warn${ans==='aristaa'?' primary':''}" data-cond-ans="aristaa" data-cond-id="${esc(c.id)}">Aristää</button>
             <button class="status-btn danger${ans==='kipea'?' primary':''}" data-cond-ans="kipea" data-cond-id="${esc(c.id)}">Kipeä</button>
           </div>
-          ${ans ? `<div class="hint" style="margin-top:8px">Tänään: ${esc(ans === 'ok' ? 'OK' : ans === 'aristaa' ? 'aristaa' : 'kipeä')}</div>` : ''}
         </div>`;
       }).join('');
     }
 
-    const coachBtn = (s.type === 'strength' && s.location === 'koti' && s.exercises && s.exercises.length && !day.completed)
-      ? '<button class="status-btn primary" data-act="voice-coach">🎙 Ääniohjattu treeni</button>'
+    let tipCardsHtml = '';
+    if (tipConds.length) {
+      tipCardsHtml = `<details class="card today-fold-card">
+        <summary class="today-fold-sum"><span>Kipuohjeet</span><span class="hint">${tipConds.length} kpl</span></summary>
+        ${tipConds.map(tip => `<div class="tip-block">
+          <h3>${esc(tip.title)}</h3>
+          <ul class="tip-bullets">${tip.bullets.map(b => '<li>' + esc(b) + '</li>').join('')}</ul>
+          <div class="cue-chip-row">${tip.exerciseIds.map(id => {
+            const lib = EX.getExercise(id);
+            return lib ? `<button type="button" class="cue-chip" data-ex="${esc(id)}">${esc(lib.name)}</button>` : '';
+          }).join('')}</div>
+        </div>`).join('')}
+      </details>`;
+    }
+
+    const voiceBtn = (s.type === 'strength' && s.location === 'koti' && s.exercises && s.exercises.length && !day.completed)
+      ? '<button class="btn block" data-act="voice-coach" style="margin-top:10px">🎙 Ääniohjattu treeni</button>'
       : '';
 
+    const swapBtn = (act, ico, label, active) =>
+      `<button type="button" class="swap-btn${active ? ' active' : ''}" data-act="${act}"><span class="swap-ico">${ico}</span><span class="swap-label">${label}</span></button>`;
+
     el.innerHTML = `
-      ${shiftBanner}
-      ${renderMotivationCard(iso, day)}
-      <div class="card today-main">
-        <div class="hint today-date">${dow} ${formatFiDate(iso)}</div>
-        <div class="session-title">${esc(s.name)}</div>
+      ${renderMotivationLine(iso, day)}
+      <div class="card today-main${day.completed ? ' is-done' : ''}">
+        <div class="today-date">Tänään · ${dow} ${formatFiDate(iso)}</div>
+        <div class="session-title today-title">${esc(s.name)}</div>
         <div class="session-meta">${sessionBadges(day)}</div>
         ${guidance}
-        ${painBanner}
         ${renderSessionBody(s, { editable: !day.completed && !s.coach && (s.type === 'strength' || s.type === 'mobility'), coachActions: !day.completed })}
+        ${voiceBtn}
 
-        <div class="today-primary-actions status-grid">
-          <button class="status-btn primary" data-act="done"${day.completed ? ' disabled' : ''}>✓ Valmis</button>
-          <button class="status-btn" data-act="keventa">Kevennä</button>
-          <button class="status-btn" data-act="koventa">Kovenna</button>
-          ${coachBtn}
+        <button class="btn primary block done-btn" data-act="done"${day.completed ? ' disabled' : ''}>${day.completed ? '✓ Tehty' : '✓ Valmis'}</button>
+        <div class="status-grid two">
+          <button class="status-btn" data-act="keventa">↓ Kevennä</button>
+          <button class="status-btn" data-act="koventa">↑ Kovenna</button>
         </div>
 
         <details class="today-fold">
-          <summary class="today-fold-sum"><span>Vaihda treeni</span><span class="hint">Koti · Sali · Juoksu · Lihashuolto</span></summary>
+          <summary class="today-fold-sum"><span>Vaihda treeni</span><span class="hint">sali · koti · juoksu · muu</span></summary>
           <div class="swap-grid" role="group" aria-label="Vaihda treenityyppi">
-            <button type="button" class="swap-btn${s.type === 'strength' && s.location === 'koti' ? ' active' : ''}" data-act="swap-koti">
-              <span class="swap-ico">🏠</span>
-              <span class="swap-label">Koti</span>
-              <span class="swap-hint">kotivoima</span>
-            </button>
-            <button type="button" class="swap-btn${s.type === 'strength' && s.location === 'sali' ? ' active' : ''}" data-act="swap-sali">
-              <span class="swap-ico">🏋️</span>
-              <span class="swap-label">Sali</span>
-              <span class="swap-hint">salivoima</span>
-            </button>
-            <button type="button" class="swap-btn${s.type === 'run' || s.type === 'race' ? ' active' : ''}" data-act="swap-juoksu">
-              <span class="swap-ico">🏃</span>
-              <span class="swap-label">Juoksu</span>
-              <span class="swap-hint">helppo / laatu</span>
-            </button>
-            <button type="button" class="swap-btn${s.type === 'mobility' || s.subtype === 'lihashuolto' ? ' active' : ''}" data-act="swap-lihashuolto">
-              <span class="swap-ico">🧘</span>
-              <span class="swap-label">Lihashuolto</span>
-              <span class="swap-hint">~25 min</span>
-            </button>
+            ${swapBtn('swap-juoksu', '🏃', 'Juoksu', s.type === 'run' || s.type === 'race')}
+            ${swapBtn('swap-sali', '🏋️', 'Sali', s.type === 'strength' && s.location === 'sali')}
+            ${swapBtn('swap-koti', '🏠', 'Koti', s.type === 'strength' && s.location === 'koti')}
+            ${swapBtn('swap-lihashuolto', '🧘', 'Lihashuolto', s.type === 'mobility' || s.subtype === 'lihashuolto')}
+            ${swapBtn('swap-kavely', '🚶', 'Kävely', s.type === 'other' && s.subtype === 'kavely')}
+            ${swapBtn('swap-muu', '✨', 'Muu laji', s.type === 'other' && s.subtype !== 'kavely' && s.subtype !== 'salibandy')}
           </div>
-          <div class="section-title">Muu liikunta</div>
-          <div class="swap-grid" role="group" aria-label="Muu liikunta">
-            <button type="button" class="swap-btn${s.type === 'other' && s.subtype === 'kavely' ? ' active' : ''}" data-act="swap-kavely">
-              <span class="swap-ico">🚶</span>
-              <span class="swap-label">Kävely</span>
-              <span class="swap-hint">kevyt</span>
-            </button>
-            <button type="button" class="swap-btn${s.type === 'other' && s.subtype === 'pyoraily' ? ' active' : ''}" data-act="swap-pyoraily">
-              <span class="swap-ico">🚴</span>
-              <span class="swap-label">Pyöräily</span>
-              <span class="swap-hint">ristiin</span>
-            </button>
-            <button type="button" class="swap-btn${s.type === 'other' && s.subtype === 'uinti' ? ' active' : ''}" data-act="swap-uinti">
-              <span class="swap-ico">🏊</span>
-              <span class="swap-label">Uinti</span>
-              <span class="swap-hint">kevyt</span>
-            </button>
-            <button type="button" class="swap-btn${s.type === 'other' && s.subtype === 'muu' ? ' active' : ''}" data-act="swap-muu">
-              <span class="swap-ico">✨</span>
-              <span class="swap-label">Muu</span>
-              <span class="swap-hint">oma nimi</span>
-            </button>
-          </div>
-          <div class="hint" style="margin-top:6px">Salibandy: käytä alla <strong>🏒 Salibandy / kova</strong>. Kävelyä ei lasketa kovaksi juoksuksi.</div>
         </details>
 
         <details class="today-fold">
-          <summary class="today-fold-sum"><span>Päivän tila</span><span class="hint">Sairas · vuoro · siirrä · lyhyt</span></summary>
-          <div class="status-grid">
-            <button class="status-btn danger" data-act="sairas">Sairas</button>
-            <button class="status-btn warn" data-act="toissa">Töissä / vuoro</button>
-            <button class="status-btn salibandy" data-act="salibandy">🏒 Salibandy / kova</button>
-            <button class="status-btn" data-act="ei-fiilista">Ei fiilistä</button>
-            <button class="status-btn info" data-act="siirra">Siirrä treeni</button>
-            <button class="status-btn info" data-act="lyhyt">Korvaa lyhyemmällä</button>
+          <summary class="today-fold-sum"><span>Muu tilanne</span><span class="hint">sairas · salibandy · siirrä</span></summary>
+          <div class="status-grid two">
+            <button class="status-btn danger" data-act="sairas">🤒 Sairas</button>
+            <button class="status-btn salibandy" data-act="salibandy">🏒 Salibandy</button>
+            <button class="status-btn" data-act="siirra">Siirrä päivälle…</button>
+            <button class="status-btn" data-act="lyhyt">Lyhyt versio</button>
           </div>
         </details>
       </div>
-      ${shiftCard}
       ${condPromptsHtml}
       ${tipCardsHtml}
-      ${renderAppTipsCard()}
     `;
 
     el.querySelectorAll('[data-act]').forEach(btn => {
       btn.addEventListener('click', () => handleAction(iso, btn.getAttribute('data-act')));
-    });
-    el.querySelectorAll('[data-shift]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const v = btn.getAttribute('data-shift') || null;
-        setShift(iso, v || null);
-        toast(v ? ('Vuoro: ' + (P.SHIFT_LABELS[v] || v)) : 'Vuoro poistettu');
-        renderToday();
-      });
     });
     el.querySelectorAll('[data-cond-ans]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1199,7 +1042,7 @@
         const label = (P.CONDITIONS[cid] && P.CONDITIONS[cid].label) || 'Kipu';
         toast(ans === 'ok' ? (label + ' OK – treeni normaalisti') :
           ans === 'aristaa' ? (label + ' aristaa – kuormaa kevennetty') : (label + ' kipeä – suosi kevennystä / krossia'));
-        renderToday();
+        rerenderActive();
       });
     });
     bindExerciseTaps(el);
@@ -1243,7 +1086,7 @@
       kavely: 'Kävely', pyoraily: 'Pyöräily', uinti: 'Uinti', salibandy: 'Salibandy', muu: session.name || 'Muu'
     };
     toast('Vaihdettu: ' + (labels[kind] || kind));
-    renderToday();
+    rerenderActive();
   }
 
   function handleAction(iso, act) {
@@ -1272,7 +1115,7 @@
       }
       saveState();
       toast('Tehty. Yksi vene kannettu.');
-      renderToday();
+      rerenderActive();
       if (state.health.pendingPainFeedback) {
         setTimeout(() => openPainFeedbackModal(iso), 400);
       }
@@ -1288,17 +1131,7 @@
       session = P.applySick(session);
       setOverride(iso, { status: 'sairas', session, completed: false, note: 'Sairas' });
       toast('Lepo merkitty – parane kunnolla, ei sankarointia');
-      renderToday();
-      return;
-    }
-
-    if (act === 'toissa') {
-      openWorkModal(iso);
-      return;
-    }
-
-    if (act === 'ei-fiilista') {
-      openMoodModal(iso);
+      rerenderActive();
       return;
     }
 
@@ -1308,7 +1141,7 @@
       if (chosen) {
         setOverride(iso, { status: chosen.modified === 'keventa' ? 'keventa' : chosen.modified === 'koventa' ? 'koventa' : 'coach-option', session: chosen, completed: false });
         toast('Valittu: ' + chosen.coach.selected);
-        renderToday();
+        rerenderActive();
       }
       return;
     }
@@ -1317,7 +1150,7 @@
       if (day.planned && day.planned.coach) {
         setOverride(iso, { status: null, session: day.planned, completed: false });
         toast('Valmentajan alkuperäinen treeni');
-        renderToday();
+        rerenderActive();
       }
       return;
     }
@@ -1328,7 +1161,7 @@
         const chosen = P.applyCoachOption(day.planned, idx);
         setOverride(iso, { status: act, session: chosen });
         toast(act === 'keventa' ? 'Valmentajan kevennetty versio – taktiikka, ei luovutus' : 'Valmentajan kovennettu versio');
-        renderToday();
+        rerenderActive();
         return;
       }
     }
@@ -1337,7 +1170,7 @@
       session = P.applyKeventa(session);
       setOverride(iso, { status: 'keventa', session });
       toast('Kevennetty ≈30 % – taktiikka, ei luovutus');
-      renderToday();
+      rerenderActive();
       return;
     }
 
@@ -1350,7 +1183,7 @@
         setOverride(iso, { status: 'koventa', session });
         toast('Hieman kovennettu (+10–15 %)');
       }
-      renderToday();
+      rerenderActive();
       return;
     }
 
@@ -1359,7 +1192,7 @@
       session = P.swapLocation(session);
       setOverride(iso, { session, status: day.status || 'sijainti' });
       toast(session.location === 'koti' ? 'Vaihdettu kotitreeniksi' : 'Vaihdettu salitreeniksi');
-      renderToday();
+      rerenderActive();
       return;
     }
 
@@ -1383,7 +1216,7 @@
       session = P.applyShortSwap(session);
       setOverride(iso, { status: 'lyhyt', session });
       toast('Korvattu lyhyellä 20–30 min versiolla');
-      renderToday();
+      rerenderActive();
       return;
     }
 
@@ -1397,30 +1230,10 @@
       });
       applySalibandyNextDayRecovery(iso);
       toast('Salibandy merkitty – huominen palautuspäivä');
-      renderToday();
+      rerenderActive();
       return;
     }
 
-    if (act === 'minimi-yovuoro') {
-      const pack = P.buildMinimiYovuoroPackage();
-      setOverride(iso, {
-        status: 'minimi',
-        session: pack,
-        note: 'Minimi yövuoro -paketti',
-        completed: false
-      });
-      toast('Minimi-paketti (20 min) valittu');
-      renderToday();
-      return;
-    }
-
-    if (act === 'dismiss-shift-banner') {
-      state.dismissedBanners = state.dismissedBanners || {};
-      state.dismissedBanners['postShift:' + iso] = iso;
-      saveState();
-      renderToday();
-      return;
-    }
   }
 
   /** Salibandyn jälkeinen päivä → automaattinen palautus (juoksu + voima) */
@@ -1453,35 +1266,6 @@
     }
   }
 
-  function getShift(iso) {
-    return (state.shifts && state.shifts[iso]) || null;
-  }
-
-  function setShift(iso, shift) {
-    state.shifts = state.shifts || {};
-    if (!shift) delete state.shifts[iso];
-    else state.shifts[iso] = shift;
-    saveState();
-  }
-
-
-  function latestEnergySleep() {
-    const TP = typeof TreeniProgress !== 'undefined' ? TreeniProgress : null;
-    const list = getMonthlyCheckins();
-    let energy = null, sleep = null;
-    if (TP) {
-      const sorted = TP.sortEntriesDesc(list);
-      for (const e of sorted) {
-        if (energy == null && e.energy != null) energy = e.energy;
-        if (sleep == null && e.sleepHours != null) sleep = e.sleepHours;
-        if (energy != null && sleep != null) break;
-      }
-    }
-    return { energy, sleep, sleepDebt: state.settings.sleepDebt };
-  }
-
-
-
   function openPainFeedbackModal(iso) {
     state.health.pendingPainFeedback = false;
     saveState();
@@ -1507,7 +1291,7 @@
           }
           closeModal();
           toast(msg);
-          renderToday();
+          rerenderActive();
         };
         root.querySelector('#pf-ok').onclick = () => finish('Kiva kuulla – jatka kuormanhallintaa');
         root.querySelector('#pf-same').onclick = () => finish('Merkitty – pidä kevennys tarvittaessa');
@@ -1791,84 +1575,6 @@
     coachBeginWork();
   }
 
-  function openWorkModal(iso) {
-    openModal(
-      'Töissä / vuoro',
-      `<p>Vuoro haittaa treeniä. Valitse:</p>
-       <div class="action-row" style="flex-direction:column">
-         <button class="btn primary block" id="m-lyhyt">Korvaa lyhyemmällä (20–30 min)</button>
-         <button class="btn block" id="m-siirra">Siirrä toiseen päivään tällä viikolla</button>
-         <button class="btn block" id="m-skip">Jätä väliin tänään (ei korvausta)</button>
-       </div>`,
-      (root) => {
-        root.querySelector('#m-lyhyt').onclick = () => {
-          closeModal();
-          handleAction(iso, 'lyhyt');
-          setOverride(iso, { status: 'toissa', ...(state.dayOverrides[iso] || {}) });
-        };
-        root.querySelector('#m-siirra').onclick = () => {
-          closeModal();
-          openRescheduleModal(iso);
-        };
-        root.querySelector('#m-skip').onclick = () => {
-          const day = getEffectiveDay(iso);
-          setOverride(iso, {
-            status: 'toissa',
-            session: {
-              type: 'rest',
-              subtype: 'shift-skip',
-              name: 'Vuoro – treeni siirretty / väliin',
-              details: 'Vuorotyö esti treenin. Ei automaattista korvausta. Voit siirtää myöhemmin.',
-              modified: 'toissa',
-              original: day.planned
-            },
-            completed: false,
-            note: 'Vuoro'
-          });
-          closeModal();
-          toast('Merkitty vuoroksi');
-          renderToday();
-        };
-      }
-    );
-  }
-
-  function openMoodModal(iso) {
-    openModal(
-      'Ei fiilistä',
-      `<p>Fiilis on yliarvostettu – rehellisyys ei. Jos oikeasti olet loppu tai jokin on vialla, valitse kevyempi tai lepo. Jos tämä on vain sohvan ääni, sulje ikkuna ja tee treeni.</p>
-       <div class="action-row" style="flex-direction:column">
-         <button class="btn primary block" id="m-easy">Keveämpi / lyhyempi treeni</button>
-         <button class="btn block" id="m-rest">Lepopäivä tänään</button>
-       </div>`,
-      (root) => {
-        root.querySelector('#m-easy').onclick = () => {
-          const day = getEffectiveDay(iso);
-          const session = P.applyNoMood(day.session || day.planned);
-          setOverride(iso, { status: 'ei-fiilista', session });
-          closeModal();
-          toast('Keveämpi valittu – tee se kunnolla');
-          renderToday();
-        };
-        root.querySelector('#m-rest').onclick = () => {
-          setOverride(iso, {
-            status: 'ei-fiilista',
-            session: {
-              type: 'rest',
-              subtype: 'mood-rest',
-              name: 'Lepo – ei fiilistä',
-              details: 'Palautumispäivä. Huomenna ei neuvotella.',
-              modified: 'ei-fiilista'
-            }
-          });
-          closeModal();
-          toast('Lepopäivä merkitty – huomenna ei tekosyitä');
-          renderToday();
-        };
-      }
-    );
-  }
-
   function openRescheduleModal(iso) {
     const day = getEffectiveDay(iso);
     if (!day) return;
@@ -1913,7 +1619,7 @@
             });
             closeModal();
             toast('Treeni siirretty → ' + formatFiDate(to));
-            renderToday();
+            rerenderActive();
           };
         });
       }
@@ -1982,7 +1688,7 @@
             return list;
           });
           toast('Liike poistettu');
-          renderToday();
+          rerenderActive();
           return;
         }
         if (act === 'vaihda') {
@@ -2063,7 +1769,7 @@
               toast('Lisätty: ' + lib.name);
             }
             closeModal();
-            renderToday();
+            rerenderActive();
           };
         });
       }
@@ -2101,123 +1807,65 @@
   }
 
   // ---------- Week ----------
+  function weekDayIcon(eff, s) {
+    if (eff.completed) return '✓';
+    if (eff.status === 'sairas') return '🤒';
+    if (eff.status === 'siirretty-pois') return '↪';
+    if (eff.status === 'salibandy' || (s && s.salibandyDay)) return '🏒';
+    if (!s) return '•';
+    if (s.type === 'rest') return '💤';
+    if (s.type === 'run') return '🏃';
+    if (s.type === 'strength') return s.location === 'koti' ? '🏠' : '🏋️';
+    if (s.type === 'race') return '🏁';
+    if (s.type === 'mobility') return '🧘';
+    if (s.type === 'other') return s.subtype === 'kavely' ? '🚶' : s.subtype === 'salibandy' ? '🏒' : '✨';
+    return '•';
+  }
+
   function renderWeek() {
     updateHeader();
     const plan = ensurePlan();
-    const today = new Date();
-    const base = P.startOfWeek(today);
-    const ws = P.addDays(base, weekOffset * 7);
+    const ws = P.addDays(P.startOfWeek(new Date()), weekOffset * 7);
     const wsISO = P.toISO(ws);
-
     let week = plan.weeks.find(w => w.weekStart === wsISO);
-    // If outside cache, build on the fly
     if (!week) {
-      const fitness = plan.fitness;
-      const raceDate = P.parseISO(state.settings.raceDate);
-      const totalWeeksToRace = Math.max(1, Math.ceil(P.daysBetween(P.startOfWeek(today), raceDate) / 7));
-      const baseWeekOffset = Math.max(0, 20 - totalWeeksToRace);
-      const idx = Math.round(P.daysBetween(P.startOfWeek(today), ws) / 7);
-      week = TreeniPlan.generatePlan(state.settings, garminForPlan()).weeks.find(w => w.weekStart === wsISO);
-      if (!week) {
-        // synthesize
-        const wIdx = baseWeekOffset + idx;
-        week = null;
-      }
+      week = P.generatePlan(state.settings, garminForPlan()).weeks.find(w => w.weekStart === wsISO) || null;
     }
-
-    const title = `Vk ${formatFiDate(wsISO).replace(/\.\d{4}$/, '')}–${formatFiDate(P.toISO(P.addDays(ws, 6)))}`;
-    document.getElementById('week-label').textContent = week
-      ? `${week.phaseName}${week.deload ? ' · deload' : ''} · tavoite ~${week.volumeTargetKm} km`
-      : title;
-
     const list = document.getElementById('week-list');
-    const todayI = todayISO();
-
-    // Prefer days from plan; if missing week, generate single week
-    let days;
-    if (week) {
-      days = week.days;
-    } else {
-      const tmp = P.generatePlan(state.settings, garminForPlan());
-      const found = tmp.weeks.find(w => w.weekStart === wsISO);
-      days = found ? found.days : [];
-    }
-
-    if (!days.length) {
+    const range = `${formatFiDate(wsISO).replace(/\d{4}$/, '')}–${formatFiDate(P.toISO(P.addDays(ws, 6))).replace(/\d{4}$/, '')}`;
+    if (!week || !week.days.length) {
+      document.getElementById('week-label').textContent = 'Vk ' + range;
       list.innerHTML = '<div class="empty">Ei treenejä tällä viikolla (tarkista kilpailupäivä).</div>';
       return;
     }
-
-    const shiftLegend = `<div class="card" style="margin-bottom:10px">
-      <div class="row-actions" style="align-items:center;gap:8px;flex-wrap:wrap">
-        <strong style="flex:1">Viikko</strong>
-      </div>
-      <div class="hint" style="margin-top:6px">Napauta päivää: avaa tiedot. Vuoro merkitään Tänään-näkymässä (aamu/ilta/yö). Kävely/pyörä/uinti: kevyt aktiivisuus.</div>
-    </div>`;
-
-    list.innerHTML = shiftLegend + days.map(d => {
+    const todayI = todayISO();
+    let km = 0, done = 0, coachDays = 0;
+    const rows = week.days.map(d => {
       const eff = getEffectiveDay(d.date) || d;
       const s = eff.session || eff.planned || d.planned;
-      const sh = getShift(d.date);
-      let ico = '•';
-      if (eff.completed) ico = '✓';
-      else if (eff.status === 'sairas') ico = '🤒';
-      else if (eff.status === 'toissa' || eff.status === 'siirretty-pois') ico = '🏭';
-      else if (eff.status === 'lyhyt' || eff.status === 'keventa') ico = '↓';
-      else if (eff.status === 'koventa') ico = '↑';
-      else if (eff.status === 'salibandy' || (s && s.salibandyDay)) ico = '🏒';
-      else if (s.type === 'rest') ico = '💤';
-      else if (s.type === 'run') ico = '🏃';
-      else if (s.type === 'strength') ico = '💪';
-      else if (s.type === 'race') ico = '🏁';
-      else if (s.type === 'mobility') ico = '🧘';
-      else if (s.type === 'other') {
-        if (s.subtype === 'kavely') ico = '🚶';
-        else if (s.subtype === 'pyoraily') ico = '🚴';
-        else if (s.subtype === 'uinti') ico = '🏊';
-        else if (s.subtype === 'salibandy') ico = '🏒';
-        else ico = '✨';
-      }
-
+      if (s && s.distanceKm && s.type !== 'other') km += s.distanceKm;
+      if (eff.completed) done++;
+      if (s && s.coach) coachDays++;
       const detail = s.distanceKm
         ? s.distanceKm + ' km'
-        : (s.durationMin ? '~' + s.durationMin + ' min' : (s.type === 'rest' ? 'Palautus' : ''));
-      const shiftBadge = sh
-        ? `<span class="badge shift-${esc(sh)}">${sh === 'aamu' ? 'Aamu' : sh === 'ilta' ? 'Ilta' : 'Yö'}</span> `
-        : '';
-
-      return `<div class="week-day${d.date === todayI ? ' today' : ''}${eff.completed ? ' done' : ''}${sh === 'yo' ? ' shift-yo' : ''}" data-date="${d.date}">
-        <div><div class="dow">${P.DOW_FI[d.dow]}</div><div class="date">${formatFiDate(d.date).replace(/\.\d{4}$/, '')}</div></div>
-        <div><div class="name">${shiftBadge}${s.coach ? '<span class="badge coach">Valmentaja</span> ' : ''}${esc(s.name)}</div><div class="detail">${esc(detail)}</div></div>
-        <div class="status-ico">${ico}</div>
+        : (s.durationMin ? '~' + s.durationMin + ' min' : '');
+      return `<div class="week-day${d.date === todayI ? ' today' : ''}${eff.completed ? ' done' : ''}${s.coach ? ' coach' : ''}" data-date="${d.date}">
+        <div><div class="dow">${P.DOW_FI[d.dow]}</div><div class="date">${formatFiDate(d.date).replace(/\d{4}$/, '')}</div></div>
+        <div><div class="name">${s.coach ? '🧭 ' : ''}${esc(s.name)}</div>${detail ? `<div class="detail">${esc(detail)}</div>` : ''}</div>
+        <div class="status-ico">${weekDayIcon(eff, s)}</div>
       </div>`;
     }).join('');
+    km = Math.round(km * 10) / 10;
+    document.getElementById('week-label').textContent = 'Vk ' + range;
+    list.innerHTML = `<div class="week-summary hint">${esc(week.phaseName || '')}${week.deload ? ' · kevyempi viikko' : ''} · juoksua ~${km} km · tehty ${done}/7${coachDays ? ' · 🧭 = valmentajalta' : ''}</div>` + rows;
 
     list.querySelectorAll('.week-day').forEach(el => {
       el.addEventListener('click', () => {
         const date = el.getAttribute('data-date');
-        if (date === todayISO()) {
-          showView('today');
-        } else {
-          openDayDetail(date);
-        }
+        if (date === todayISO()) showView('today');
+        else openDayDetail(date);
       });
     });
-
-    // 4 viikon ehdotus (Plan tip)
-    const tip = P.fourWeekSuggestion(plan.fitness || {}, state.settings);
-    let tipEl = document.getElementById('four-week-tip');
-    if (!tipEl) {
-      tipEl = document.createElement('div');
-      tipEl.id = 'four-week-tip';
-      list.parentNode.appendChild(tipEl);
-    }
-    tipEl.innerHTML = `
-      <div class="card plan-tip">
-        <h2>4 viikon ehdotus</h2>
-        <p class="session-desc" style="white-space:pre-wrap;margin:0">${esc(tip.textFi)}</p>
-        <div class="hint" style="margin-top:8px">Polarisoitu: suurin osa helpolla. Salibandy = kova päivä (ei laatua samaan / seuraavaan aamuun).</div>
-      </div>`;
   }
 
   function openDayDetail(iso) {
@@ -2226,27 +1874,22 @@
     const s = day.session || day.planned;
     openModal(
       day.dowLabel + ' ' + formatFiDate(iso),
-      `<div class="session-title" style="font-size:1.05rem">${esc(s.name)}</div>
+      `<div class="session-title">${esc(s.name)}</div>
        <div class="session-meta" style="margin:8px 0">${sessionBadges(day)}</div>
        ${renderSessionBody(s)}
-       <div class="action-row" style="margin-top:14px;flex-direction:column">
-         <button class="btn primary block" id="d-done">Merkitse tehdyksi</button>
-         <button class="btn block" id="d-keventa">Kevennä</button>
-         <button class="btn block" id="d-salibandy">🏒 Salibandy / kova</button>
-         <button class="btn block" id="d-lyhyt">Korvaa lyhyemmällä</button>
-         <button class="btn block" id="d-siirra">Siirrä treeni</button>
-         ${s.type === 'strength' ? '<button class="btn block" id="d-swap">Vaihda sali ↔ koti</button>' : ''}
-         <button class="btn block" id="d-sairas">Sairas</button>
+       <button class="btn primary block" id="d-done" style="margin-top:14px"${day.completed ? ' disabled' : ''}>✓ Merkitse tehdyksi</button>
+       <div class="status-grid two" style="margin-top:8px">
+         <button class="status-btn" id="d-keventa">↓ Kevennä</button>
+         <button class="status-btn" id="d-koventa">↑ Kovenna</button>
+         <button class="status-btn" id="d-siirra">Siirrä…</button>
+         <button class="status-btn danger" id="d-sairas">🤒 Sairas</button>
        </div>`,
       (root) => {
         const go = (act) => { closeModal(); handleAction(iso, act); showView('week'); };
         root.querySelector('#d-done').onclick = () => go('done');
         root.querySelector('#d-keventa').onclick = () => go('keventa');
-        root.querySelector('#d-salibandy').onclick = () => go('salibandy');
-        root.querySelector('#d-lyhyt').onclick = () => go('lyhyt');
+        root.querySelector('#d-koventa').onclick = () => go('koventa');
         root.querySelector('#d-siirra').onclick = () => { closeModal(); openRescheduleModal(iso); };
-        const sw = root.querySelector('#d-swap');
-        if (sw) sw.onclick = () => go('swap-loc');
         root.querySelector('#d-sairas').onclick = () => go('sairas');
         bindExerciseTaps(root);
       }
@@ -2308,9 +1951,6 @@
         const w = g.weightKg != null ? `${g.weightKg} kg` : '—';
         const meta = [];
         if (e.waistCm != null) meta.push(`vyötärö ${e.waistCm} cm`);
-        if (e.restingHr != null) meta.push(`HR ${e.restingHr}`);
-        if (e.hrv != null) meta.push(`HRV ${e.hrv}`);
-        if (e.energy != null) meta.push(`energia ${e.energy}/5`);
         const n = g.entries.length;
         return `<button type="button" class="mp-month-card" data-mp-month="${esc(g.key)}">
           ${thumb}
@@ -2330,7 +1970,7 @@
     return `
       <div class="card" id="mp-card">
         <h2>Kuukausiseuranta</h2>
-        <p class="hint" style="margin-bottom:10px">Paino, vyötärö, leposyke, energia + 1–2 progress-kuvaa. Kuvat pakataan JPEG-muotoon (~900 px).</p>
+        <p class="hint" style="margin-bottom:10px">Paino + 1–2 progress-kuvaa kerran kuussa. Kuvat pysyvät vain tällä laitteella.</p>
         ${warn}
         <button type="button" class="btn primary block" id="mp-add-btn">+ Lisää merkintä</button>
         <div class="section-title">Galleria kuukausittain</div>
@@ -2363,9 +2003,9 @@
           notesSide: '',
           photos: [],
           waistCm: '',
-          restingHr: state.baseline.restingHr != null ? state.baseline.restingHr : '',
+          restingHr: '',
           hrv: '',
-          sleepHours: state.health.sleepHours != null ? state.health.sleepHours : '',
+          sleepHours: '',
           energy: ''
         };
     // Keep photos in closure for edit
@@ -2394,51 +2034,15 @@
           value="${draft.weightKg != null && draft.weightKg !== '' ? esc(draft.weightKg) : ''}"
           placeholder="esim. 78.5" />
       </div>
-      <div class="form-row-2">
-        <div class="form-group">
-          <label>Vyötärö (cm)</label>
-          <input type="number" id="mp-waist" step="0.5" min="40" max="200"
-            value="${draft.waistCm != null && draft.waistCm !== '' ? esc(draft.waistCm) : ''}" />
-        </div>
-        <div class="form-group">
-          <label>Leposyke</label>
-          <input type="number" id="mp-hr" step="1" min="30" max="120"
-            value="${draft.restingHr != null && draft.restingHr !== '' ? esc(draft.restingHr) : ''}" />
-        </div>
-      </div>
-      <div class="form-row-2">
-        <div class="form-group">
-          <label>HRV (ms, valinnainen)</label>
-          <input type="number" id="mp-hrv" step="1" min="5" max="300"
-            value="${draft.hrv != null && draft.hrv !== '' ? esc(draft.hrv) : ''}"
-            placeholder="esim. 55" />
-        </div>
-        <div class="form-group">
-          <label>Uni (h)</label>
-          <input type="number" id="mp-sleep" step="0.1" min="0" max="16"
-            value="${draft.sleepHours != null && draft.sleepHours !== '' ? esc(draft.sleepHours) : ''}"
-            placeholder="7.5" />
-        </div>
+      <div class="form-group">
+        <label>Vyötärö (cm, valinnainen)</label>
+        <input type="number" id="mp-waist" step="0.5" min="40" max="200"
+          value="${draft.waistCm != null && draft.waistCm !== '' ? esc(draft.waistCm) : ''}" />
       </div>
       <div class="form-group">
-        <label>Energia (1–5)</label>
-        <select id="mp-energy">
-          <option value="">—</option>
-          ${[1,2,3,4,5].map(n =>
-            `<option value="${n}"${+draft.energy === n ? ' selected' : ''}>${n}${
-              n===1?' (väsynyt)':n===3?' (ok)':n===5?' (virkeä)':''}</option>`
-          ).join('')}
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Muistiinpanot (etu)</label>
+        <label>Muistiinpano</label>
         <input type="text" id="mp-notes-front" maxlength="500"
           value="${esc(draft.notesFront || '')}" placeholder="Valinnainen" />
-      </div>
-      <div class="form-group">
-        <label>Muistiinpanot (sivu)</label>
-        <input type="text" id="mp-notes-side" maxlength="500"
-          value="${esc(draft.notesSide || '')}" placeholder="Valinnainen" />
       </div>
       <div class="form-group">
         <label>Progress-kuvat (1–2)</label>
@@ -2503,27 +2107,28 @@
 
       root.querySelector('#mp-cancel').onclick = closeModal;
       root.querySelector('#mp-save').onclick = () => {
+        // Vanhat kentät (leposyke, HRV, uni, energia, sivumuistiinpano) säilyvät muokatessa
+        const keep = (v) => (v == null ? '' : v);
         const raw = {
           id: draft.id,
           date: root.querySelector('#mp-date').value || todayISO(),
           weightKg: root.querySelector('#mp-weight').value,
           notesFront: root.querySelector('#mp-notes-front').value,
-          notesSide: root.querySelector('#mp-notes-side').value,
+          notesSide: keep(draft.notesSide),
           photos,
           waistCm: root.querySelector('#mp-waist').value,
-          restingHr: root.querySelector('#mp-hr').value,
-          hrv: root.querySelector('#mp-hrv') ? root.querySelector('#mp-hrv').value : '',
-          sleepHours: root.querySelector('#mp-sleep') ? root.querySelector('#mp-sleep').value : '',
-          energy: root.querySelector('#mp-energy').value
+          restingHr: keep(draft.restingHr),
+          hrv: keep(draft.hrv),
+          sleepHours: keep(draft.sleepHours),
+          energy: keep(draft.energy)
         };
         const entry = TP.normalizeEntry(raw);
         if (!entry.date) {
           toast('Anna päivämäärä');
           return;
         }
-        if (entry.weightKg == null && !entry.photos.length &&
-            entry.restingHr == null && entry.hrv == null && entry.energy == null) {
-          toast('Lisää vähintään paino, kuva tai RHR/HRV');
+        if (entry.weightKg == null && !entry.photos.length && entry.waistCm == null) {
+          toast('Lisää vähintään paino tai kuva');
           return;
         }
         const list = getMonthlyCheckins();
@@ -2541,8 +2146,6 @@
           return;
         }
         syncWeightFromCheckins();
-        if (entry.restingHr != null) state.baseline.restingHr = entry.restingHr;
-        if (entry.sleepHours != null) state.health.sleepHours = entry.sleepHours;
         saveState();
         closeModal();
         if (TP.overPhotoSoftLimit(getMonthlyCheckins())) {
@@ -2580,8 +2183,6 @@
       const bits = [];
       if (e.weightKg != null) bits.push(`<strong>${e.weightKg} kg</strong>`);
       if (e.waistCm != null) bits.push(`vyötärö ${e.waistCm} cm`);
-      if (e.restingHr != null) bits.push(`HR ${e.restingHr}`);
-      if (e.energy != null) bits.push(`energia ${e.energy}/5`);
       const notes = [e.notesFront, e.notesSide].filter(Boolean).map(esc).join(' · ');
       return `<div class="mp-entry-row">
         <div class="mp-entry-thumbs">${thumbs}</div>
@@ -2785,182 +2386,56 @@
     });
   }
 
-  function renderReadinessAndTrend() {
-    const TP = typeof TreeniProgress !== 'undefined' ? TreeniProgress : null;
-    const entries = getMonthlyCheckins();
-    const now = new Date();
-    const monthPrefix = P.toISO(now).slice(0, 7);
-    const monthEntries = entries.filter(e => (e.date || '').slice(0, 7) === monthPrefix);
-
-    // Month km + strength from log / overrides (last ~30 days overlapping month)
-    let monthKm = 0;
-    let strengthDone = 0;
-    let strengthPlanned = 0;
-    const monthStart = monthPrefix + '-01';
-    const daysInScan = 31;
-    const start = P.parseISO(monthStart);
-    for (let i = 0; i < daysInScan; i++) {
-      const d = P.addDays(start, i);
-      if (P.toISO(d).slice(0, 7) !== monthPrefix) break;
-      if (d > now) break;
-      const iso = P.toISO(d);
-      const day = getEffectiveDay(iso);
-      if (!day) continue;
-      const planned = day.planned;
-      if (planned && planned.type === 'strength') strengthPlanned++;
-      if (day.completed) {
-        const s = day.session || planned;
-        if (s && s.distanceKm) monthKm += s.distanceKm;
-        if (s && s.type === 'strength') strengthDone++;
-      }
-    }
-    monthKm = Math.round(monthKm * 10) / 10;
-
-    const sleepAvg = TP ? TP.averageMetric(monthEntries.length ? monthEntries : entries.slice(0, 6), 'sleepHours') : null;
-    const energyAvg = TP ? TP.averageMetric(monthEntries.length ? monthEntries : entries.slice(0, 6), 'energy') : null;
-    // Also fall back to health.sleepHours
-    const sleepFallback = sleepAvg != null ? sleepAvg : state.health.sleepHours;
-
-    const plan = ensurePlan();
-    const weeklyTarget = (plan.weeks[0] && plan.weeks[0].volumeTargetKm) || 20;
-    const raceDate = P.parseISO(state.settings.raceDate || '2027-08-21');
-    const weeksToRace = Math.ceil(P.daysBetween(P.startOfWeek(now), raceDate) / 7);
-
-    const readiness = P.computeReadinessIndex({
-      monthKm,
-      targetMonthKm: weeklyTarget * 4,
-      strengthDone,
-      strengthPlanned: Math.max(strengthPlanned, 8),
-      sleepAvg: sleepFallback,
-      energyAvg,
-      weeksToRace
-    });
-
-    const trend = TP ? TP.rhrHrvTrend(entries) : null;
-    let trendHtml = '<div class="hint">Lisää leposyke / HRV kuukausimerkintään – trendi näkyy tässä.</div>';
-    if (trend && (trend.latestRhr != null || trend.latestHrv != null)) {
-      const elev = trend.elevatedRhr ? ' alert warn' : '';
-      trendHtml = `<div class="stats-grid" style="margin-top:8px">
-        <div class="stat-box"><div class="num">${trend.latestRhr != null ? trend.latestRhr : '—'}</div><div class="lbl">leposyke</div></div>
-        <div class="stat-box"><div class="num">${trend.latestHrv != null ? trend.latestHrv : '—'}</div><div class="lbl">HRV</div></div>
-        <div class="stat-box"><div class="num">${trend.rhrDelta != null ? ((trend.rhrDelta > 0 ? '+' : '') + trend.rhrDelta) : '—'}</div><div class="lbl">RHR-muutos</div></div>
-      </div>
-      ${trend.softSuggestion ? `<div class="alert warn" style="margin-top:8px">${esc(trend.softSuggestion)}</div>` : '<div class="hint" style="margin-top:6px">RHR vakaa – ei pehmennystä.</div>'}`;
-    }
-
-    return `
-      <div class="card readiness-card">
-        <h2>Valmiusindeksi</h2>
-        <div class="stats-grid">
-          <div class="stat-box"><div class="num">${readiness.score}</div><div class="lbl">${esc(readiness.label)} / 100</div></div>
-          <div class="stat-box"><div class="num">${readiness.parts.km}</div><div class="lbl">km-osa</div></div>
-          <div class="stat-box"><div class="num">${readiness.parts.strength}</div><div class="lbl">voima-osa</div></div>
-          <div class="stat-box"><div class="num">${readiness.parts.sleepEnergy}</div><div class="lbl">uni/energia</div></div>
-        </div>
-        <div class="progress-bar"><span style="width:${readiness.score}%"></span></div>
-        <div class="hint">${esc(readiness.tip)} · kk-km ${readiness.monthKm}/${readiness.targetMonthKm}</div>
-      </div>
-      <div class="card">
-        <h2>HRV / leposyke -trendi</h2>
-        <p class="hint" style="margin:0 0 6px">Manuaalinen merkintä kuukausiseurannassa. Noussut RHR pehmentää päivän ehdotusta.</p>
-        ${trendHtml}
-      </div>`;
-  }
-
   function renderProgress() {
     updateHeader();
     const now = new Date();
     const weekStart = P.startOfWeek(now);
-    const weekEnd = P.addDays(weekStart, 6);
-    const ws = P.toISO(weekStart);
-    const we = P.toISO(weekEnd);
 
     let weekKm = 0;
     let strengthDone = 0;
-    let strengthPlanned = 0;
     let completedCount = 0;
-    let lightOtherCount = 0;
-    let hardOtherCount = 0;
 
     for (let i = 0; i < 7; i++) {
       const iso = P.toISO(P.addDays(weekStart, i));
       const day = getEffectiveDay(iso);
-      if (!day) continue;
-      const planned = day.planned;
-      if (planned && planned.type === 'strength') strengthPlanned++;
-      if (day.completed) {
-        completedCount++;
-        const s = day.session || planned;
-        if (s && s.type === 'other') {
-          if (s.lightLoad) lightOtherCount++;
-          else hardOtherCount++;
-          // Kevyt muu liikunta: ei lisätä juoksu-km:ään (kävely ≠ kova juoksu)
-        } else if (s && s.distanceKm) {
-          weekKm += s.distanceKm;
-        }
-        if (s && s.type === 'strength') strengthDone++;
-      }
+      if (!day || !day.completed) continue;
+      completedCount++;
+      const s = day.session || day.planned;
+      // Kevyt muu liikunta (kävely ym.) ei lisää juoksukilometreihin
+      if (s && s.type !== 'other' && s.distanceKm) weekKm += s.distanceKm;
+      if (s && s.type === 'strength') strengthDone++;
     }
     weekKm = Math.round(weekKm * 10) / 10;
 
-    // Last 4 weeks km from log
     const cutoff = P.toISO(P.addDays(now, -28));
-    const recentLog = state.log.filter(l => l.date >= cutoff);
-    const logKm = Math.round(recentLog.reduce((s, l) => s + (l.distanceKm || 0), 0) * 10) / 10;
+    const logKm = Math.round(state.log.filter(l => l.date >= cutoff)
+      .reduce((s, l) => s + (l.distanceKm || 0), 0) * 10) / 10;
 
-    const plan = ensurePlan();
-    const target = (plan.weeks[0] && plan.weeks[0].volumeTargetKm) || 30;
-
-    // Latest monthly weight blurb
-    let weightBlurb = '';
+    let weightBox = '';
     if (TP) {
       const groups = TP.groupByMonth(getMonthlyCheckins());
-      if (groups.length) {
-        const latest = groups[0];
-        const prev = groups[1];
+      const latest = groups.find(g => g.weightKg != null);
+      if (latest) {
+        const prev = groups.slice(groups.indexOf(latest) + 1).find(g => g.weightKg != null);
         const d = prev ? TP.weightDelta(latest.weightKg, prev.weightKg) : null;
-        weightBlurb = latest.weightKg != null
-          ? `<div class="stat-box"><div class="num">${latest.weightKg}</div><div class="lbl">kg · ${esc(TP.formatWeightDelta(d))}</div></div>`
-          : '';
+        weightBox = `<div class="stat-box"><div class="num">${latest.weightKg}</div><div class="lbl">kg${d != null ? ' · ' + esc(TP.formatWeightDelta(d)) : ''}</div></div>`;
       }
     }
 
-    const readinessHtml = renderReadinessAndTrend();
-
     document.getElementById('progress-content').innerHTML = `
       <div class="stats-grid">
-        <div class="stat-box"><div class="num">${weekKm}</div><div class="lbl">km tällä vk</div></div>
-        <div class="stat-box"><div class="num">${completedCount}</div><div class="lbl">treeniä tehty</div></div>
-        <div class="stat-box"><div class="num">${strengthDone}/${strengthPlanned || 2}</div><div class="lbl">voima / vk</div></div>
-        <div class="stat-box"><div class="num">${lightOtherCount}${hardOtherCount ? '+' + hardOtherCount : ''}</div><div class="lbl">muu liikunta</div></div>
+        <div class="stat-box"><div class="num">${weekKm}</div><div class="lbl">km tällä viikolla</div></div>
+        <div class="stat-box"><div class="num">${completedCount}</div><div class="lbl">treeniä tehty / vk</div></div>
+        <div class="stat-box"><div class="num">${strengthDone}</div><div class="lbl">voimaa / vk</div></div>
         <div class="stat-box"><div class="num">${logKm}</div><div class="lbl">km / 4 vk</div></div>
-        ${weightBlurb}
+        ${weightBox}
       </div>
-      <div class="hint" style="margin:-4px 0 10px">Muu liikunta (kävely/pyörä/uinti) lasketaan kevyesti – ei juoksuvolyymiin.</div>
-      ${readinessHtml}
       ${renderMonthlySection()}
       <div class="card">
-        <h2>Viikon juoksuvolyymi</h2>
-        <div class="progress-bar"><span style="width:${Math.min(100, (weekKm / target) * 100)}%"></span></div>
-        <div class="hint">${weekKm} / ~${target} km (suunnitelman tavoite)</div>
-      </div>
-      <div class="card">
-        <h2>Terveys</h2>
-        ${renderHealthSummary()}
-      </div>
-      <div class="card">
-        <h2>Garmin-yhteenveto</h2>
-        ${renderGarminSummaryCard()}
-      </div>
-      <div class="card">
-        <h2>Lähtötaso</h2>
-        ${renderBaselineSummary()}
-      </div>
-      <div class="card">
-        <h2>Viimeisimmät merkinnät</h2>
+        <h2>Viimeisimmät treenit</h2>
         ${state.log.length === 0
-          ? '<div class="empty">Ei vielä merkittyjä treenejä.</div>'
-          : state.log.slice(0, 15).map(l =>
+          ? '<div class="empty">Ei vielä merkittyjä treenejä. Paina Tänään-näkymässä ✓ Valmis.</div>'
+          : state.log.slice(0, 10).map(l =>
               `<div class="log-item"><div class="when">${formatFiDate(l.date)}</div>
                <strong>${esc(l.name)}</strong>${l.distanceKm ? ' · ' + l.distanceKm + ' km' : ''}</div>`
             ).join('')}
@@ -2969,317 +2444,138 @@
     bindMonthlySection();
   }
 
-  function renderHealthSummary() {
-    const h = state.health || {};
-    const parts = [];
-    parts.push('<ul class="garmin-stats">');
-    parts.push(`<li>Pituus: <strong>${h.heightCm != null ? esc(h.heightCm) + ' cm' : '—'}</strong></li>`);
-    parts.push(`<li>Paino: <strong>${h.weightKg != null ? esc(h.weightKg) + ' kg' : '—'}</strong></li>`);
-    const bp = (h.bpSys != null || h.bpDia != null)
-      ? `${h.bpSys ?? '—'} / ${h.bpDia ?? '—'}`
-      : '—';
-    parts.push(`<li>Verenpaine: <strong>${esc(bp)}</strong></li>`);
-    parts.push(`<li>Uni: <strong>${h.sleepHours != null ? esc(h.sleepHours) + ' h' : '—'}</strong></li>`);
-    const ap = (h.pains || []).filter(p => p.status === 'active');
-    const hp = (h.pains || []).filter(p => p.status === 'history');
-    parts.push(`<li>Aktiiviset kivut: <strong>${ap.length ? ap.map(p => p.area + (p.side ? ' ('+p.side+')' : '')).join(', ') : 'ei'}</strong></li>`);
-    if (hp.length) parts.push(`<li>Historia: ${esc(hp.map(p => p.area).join(', '))}</li>`);
-    parts.push('</ul>');
-    parts.push('<div class="hint">Muokkaa asetuksista. Garmin CSV täyttää mitat vain jos sarakkeet löytyvät (ei fake-autosynciä).</div>');
-    return parts.join('');
-  }
-
-  function renderGarminSummaryCard() {
-    const g = state.garmin && state.garmin.summary;
-    if (!g) {
-      return '<div class="hint">Ei Garmin-yhteenvetoa. Tuo aktiviteetti-CSV tai varmuuskopio Asetuksista.</div>';
-    }
-    const li = [];
-    const period = g.periodLabel || (g.dateFrom && g.dateTo ? `${formatFiDate(g.dateFrom)} – ${formatFiDate(g.dateTo)}` : '');
-    if (period) li.push(`<li><strong>${esc(period)}</strong></li>`);
-    const counts = [];
-    if (g.runCount != null) counts.push(`${g.runCount} juoksua`);
-    if (g.floorballCount) counts.push(`${g.floorballCount} salibandy`);
-    if (g.strengthCount) counts.push(`${g.strengthCount} voima`);
-    if (counts.length) li.push(`<li>${g.activityCount ? esc(g.activityCount) + ' aktiviteettia: ' : ''}${esc(counts.join(', '))}</li>`);
-    if (g.avgWeeklyKm || g.longestRunKm) {
-      li.push(`<li>${g.totalKm ? 'Juoksu ~' + esc(g.totalKm) + ' km ≈ ' : ''}<strong>${esc(g.avgWeeklyKm || 0)} km/vk</strong>, pisin <strong>${esc(g.longestRunKm || 0)} km</strong></li>`);
-    }
-    const h = g.highlights || {};
-    if (h.easyPace) li.push(`<li>${esc(h.easyPace)}</li>`);
-    if (h.longRunsSummary) li.push(`<li>${esc(h.longRunsSummary)}</li>`);
-    if (h.qualitySummary) li.push(`<li>${esc(h.qualitySummary)}</li>`);
-    if (h.floorballNote) li.push(`<li>${esc(h.floorballNote)}</li>`);
-    if (g.pullUpsStrict != null || g.pushUpsApprox != null) {
-      li.push(`<li>Voima-baseline: <strong>${esc(g.pullUpsStrict != null ? g.pullUpsStrict : '—')} tiukkaa leuanvetoa</strong>, ~${esc(g.pushUpsApprox != null ? g.pushUpsApprox : '—')} punnerrusta · ei 1RM-dataa → RPE 6–7</li>`);
-    }
-    if (g.notes) li.push(`<li>${esc(g.notes)}</li>`);
-    return `
-      <ul class="garmin-stats">${li.join('')}</ul>
-      <div class="hint">${g.hardcoded ? 'Tallennettu yhteenveto Garmin-jaksosta (ei raaka-CSV:ää).' : 'Yhteenveto tuodusta CSV:stä.'} Voit tuoda uuden CSV:n asetuksista.</div>`;
-  }
-
-  function bOr(g, bl, key, fallback) {
-    if (g && g[key] != null) return g[key];
-    if (bl && bl[key] != null) return bl[key];
-    return fallback;
-  }
-
-  function renderBaselineSummary() {
-    const b = state.baseline;
-    const g = state.garmin && state.garmin.summary;
-    let parts = [];
-    if (g) parts.push(`<div class="alert ok">${esc(g.message)}</div>`);
-    parts.push('<ul style="padding-left:18px;font-size:0.88rem;color:var(--text-muted)">');
-    if (b.manualWeeklyKm) parts.push(`<li>Manuaalinen vk-km: ${b.manualWeeklyKm}</li>`);
-    if (b.manualLongestKm) parts.push(`<li>Pisin lenkki: ${b.manualLongestKm} km</li>`);
-    if (b.pullUpsStrict) parts.push(`<li>Leuanvedot (tiukat): ${b.pullUpsStrict}</li>`);
-    if (b.pushUpsApprox) parts.push(`<li>Punnerrukset: ~${b.pushUpsApprox}</li>`);
-    if (b.vo2max) parts.push(`<li>VO2max: ${b.vo2max}</li>`);
-    else parts.push('<li>VO2max: tuntematon</li>');
-    if (b.restingHr) parts.push(`<li>Leposyke: ${b.restingHr}</li>`);
-    if (b.time5k) parts.push(`<li>5 km: ${esc(b.time5k)}</li>`);
-    else parts.push('<li>Kisatajat: tuntemattomia</li>');
-    if (b.time10k) parts.push(`<li>10 km: ${esc(b.time10k)}</li>`);
-    if (b.timeHalf) parts.push(`<li>Puolimaraton: ${esc(b.timeHalf)}</li>`);
-    if (b.yearsRunning) parts.push(`<li>Juoksuvuosia: ${b.yearsRunning}</li>`);
-    if (b.injuryNotes) parts.push(`<li>Huomiot: ${esc(b.injuryNotes)}</li>`);
-    parts.push(`<li>Kuntotaso (asetus): ${esc(state.settings.fitnessLevel)}</li>`);
-    const sd = state.settings.salibandyDow;
-    if (sd !== null && sd !== undefined && sd !== '' && sd !== 'none') {
-      parts.push(`<li>Salibandy-ilta: ${esc(P.DOW_FULL[+sd] || sd)}</li>`);
-    }
-    parts.push('</ul>');
-    if (!g && !b.manualWeeklyKm) {
-      parts.unshift('<div class="alert warn">Lisää lähtötaso asetuksista (manuaalinen tai Garmin CSV), jotta suunnitelma skaalautuu paremmin.</div>');
-    }
-    return parts.join('');
-  }
-
   // ---------- Settings ----------
   function renderSettings() {
     updateHeader();
     const s = state.settings;
     const b = state.baseline;
+    const dowOpt = (v, label) => {
+      const sel = v === 'none'
+        ? (s.salibandyDow === 'none' || s.salibandyDow == null || s.salibandyDow === '')
+        : (s.salibandyDow !== 'none' && s.salibandyDow !== '' && s.salibandyDow != null && +s.salibandyDow === +v);
+      return `<option value="${v}"${sel ? ' selected' : ''}>${label}</option>`;
+    };
     document.getElementById('settings-content').innerHTML = `
       <div class="card">
-        <h2>Profiili</h2>
+        <h2>Profiili &amp; kisa</h2>
         <div class="form-group">
           <label>Nimi (valinnainen)</label>
           <input type="text" id="set-user-name" value="${esc(s.userName || '')}" placeholder="Etunimi tai lempinimi" autocomplete="given-name" />
-          <div class="hint">Näkyy vain tällä laitteella (tsemppikortissa). Ei lähetetä minnekään.</div>
+          <div class="hint">Vain tällä laitteella.</div>
         </div>
-      </div>
-
-      <div class="card">
-        <h2>Kilpailu</h2>
         <div class="form-group">
-          <label>Nimi</label>
+          <label>Kilpailu</label>
           <input type="text" id="set-race-name" value="${esc(s.raceName)}" />
         </div>
-        <div class="form-group">
-          <label>Päivämäärä</label>
-          <input type="date" id="set-race-date" value="${esc(s.raceDate)}" />
-          <div class="hint">Oletus: Paavo Nurmi Marathon, Turku – la 21.8.2027 klo 11.00 (tapahtuma pe–la 20.–21.8.2027; päivämäärä muokattavissa).</div>
-        </div>
-        <div class="form-group">
-          <label>Lähtöaika (valinnainen)</label>
-          <input type="time" id="set-race-time" value="${esc(s.raceTime || '')}" />
-        </div>
-        <div class="form-group">
-          <label>Aikatavoite</label>
-          <input type="text" id="set-marathon-goal" value="${esc(s.marathonGoal || '')}" placeholder="esim. alle 4 h" />
-          <div class="hint">Esim. alle 4 h ≈ 5:41 /km, alle 4:30 ≈ 6:24 /km. Vertaa puolimaratonaikaan: HM-vauhti + ~20–30 s/km on realistinen maratonvauhti.</div>
+        <div class="form-row">
+          <div class="form-group"><label>Päivämäärä</label>
+            <input type="date" id="set-race-date" value="${esc(s.raceDate)}" /></div>
+          <div class="form-group"><label>Aikatavoite</label>
+            <input type="text" id="set-marathon-goal" value="${esc(s.marathonGoal || '')}" placeholder="esim. alle 4 h" /></div>
         </div>
       </div>
 
       <div class="card">
         <h2>Harjoittelu</h2>
         <div class="form-group">
-          <label>Kuntotaso</label>
-          <select id="set-fitness">
-            <option value="aloittelija"${s.fitnessLevel==='aloittelija'?' selected':''}>Aloittelija (~18 km/vk)</option>
-            <option value="aloittelija-keskitaso"${s.fitnessLevel==='aloittelija-keskitaso'?' selected':''}>Aloittelija–keskitaso (~19–22 km/vk)</option>
-            <option value="keskitaso"${s.fitnessLevel==='keskitaso'?' selected':''}>Keskitaso (~28 km/vk)</option>
-            <option value="kokenut"${s.fitnessLevel==='kokenut'?' selected':''}>Kokenut (~45 km/vk)</option>
-          </select>
-          <div class="hint">Garmin-/manuaalidata ohittaa oletusvolyymin. Lähtö ~20–25 km/vk, ei hyppyä 35:een.</div>
-        </div>
-        <div class="form-group">
-          <label>Voiman oletussijainti</label>
-          <select id="set-strength">
-            <option value="sali"${s.strengthLocation==='sali'?' selected':''}>Sali</option>
-            <option value="koti"${s.strengthLocation==='koti'?' selected':''}>Koti</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Salibandy / kova laji -ilta (kova päivä)</label>
+          <label>Salibandy-ilta (kova päivä)</label>
           <select id="set-salibandy">
-            <option value="none"${s.salibandyDow==='none'||s.salibandyDow===null||s.salibandyDow===''?' selected':''}>Ei asetettu</option>
-            <option value="1"${+s.salibandyDow===1?' selected':''}>Maanantai</option>
-            <option value="2"${+s.salibandyDow===2?' selected':''}>Tiistai</option>
-            <option value="3"${+s.salibandyDow===3?' selected':''}>Keskiviikko</option>
-            <option value="4"${+s.salibandyDow===4?' selected':''}>Torstai</option>
-            <option value="5"${+s.salibandyDow===5?' selected':''}>Perjantai</option>
-            <option value="6"${+s.salibandyDow===6?' selected':''}>Lauantai</option>
-            <option value="0"${s.salibandyDow===0||s.salibandyDow==='0'?' selected':''}>Sunnuntai</option>
+            ${dowOpt('none', 'Ei asetettu')}${dowOpt(1, 'Maanantai')}${dowOpt(2, 'Tiistai')}${dowOpt(3, 'Keskiviikko')}
+            ${dowOpt(4, 'Torstai')}${dowOpt(5, 'Perjantai')}${dowOpt(6, 'Lauantai')}${dowOpt(0, 'Sunnuntai')}
           </select>
-          <div class="hint">Laatutreeniä ei pidetä salibandy-iltana eikä seuraavana aamuna. Voit myös merkitä päivän 🏒-napilla.</div>
-        </div>
-        <div class="form-group">
-          <label>Univelka (0–5, subjektiivinen)</label>
-          <select id="set-sleep-debt">
-            <option value="">—</option>
-            ${[0,1,2,3,4,5].map(n =>
-              `<option value="${n}"${s.sleepDebt!=null && +s.sleepDebt===n?' selected':''}>${n}${
-                n===0?' (ei)':n===2?' (jonkin verran)':n===5?' (kova)':''}</option>`
-            ).join('')}
-          </select>
-          <div class="hint">≥2 ehdottaa minimi yövuoro -pakettia Tänään-näkymässä.</div>
-        </div>
-        <div class="form-group">
-          <label>Vuoron jälkeinen muistutus (sovelluksessa)</label>
-          <select id="set-post-shift">
-            <option value="1"${s.postShiftBanner!==false?' selected':''}>Käytössä (banneri)</option>
-            <option value="0"${s.postShiftBanner===false?' selected':''}>Pois</option>
-          </select>
-          <div class="hint">Ilta-/yövuoron jälkeen: proteiini + kevyt liikkuvuus. Ei WhatsAppia.</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Lähtötaso (manuaalinen)</h2>
-        <div class="form-row">
-          <div class="form-group"><label>Viikkokm (viime aikoina)</label>
-            <input type="number" id="bl-weekly" step="0.1" min="0" value="${b.manualWeeklyKm ?? ''}" placeholder="esim. 20" /></div>
-          <div class="form-group"><label>Pisin lenkki (km)</label>
-            <input type="number" id="bl-longest" step="0.1" min="0" value="${b.manualLongestKm ?? ''}" placeholder="esim. 16" /></div>
+          <div class="hint">Ei laatutreeniä salibandy-iltana eikä seuraavana päivänä.</div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label>Tiukat leuanvedot (max)</label>
-            <input type="number" id="bl-pullups" min="0" max="50" value="${b.pullUpsStrict ?? ''}" placeholder="esim. 5" /></div>
-          <div class="form-group"><label>Punnerrukset (max)</label>
-            <input type="number" id="bl-pushups" min="0" max="200" value="${b.pushUpsApprox ?? ''}" placeholder="esim. 30" /></div>
+          <div class="form-group">
+            <label>Voima oletuksena</label>
+            <select id="set-strength">
+              <option value="sali"${s.strengthLocation==='sali'?' selected':''}>Sali</option>
+              <option value="koti"${s.strengthLocation==='koti'?' selected':''}>Koti</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Kuntotaso</label>
+            <select id="set-fitness">
+              <option value="aloittelija"${s.fitnessLevel==='aloittelija'?' selected':''}>Aloittelija</option>
+              <option value="aloittelija-keskitaso"${s.fitnessLevel==='aloittelija-keskitaso'?' selected':''}>Aloitt.–keskitaso</option>
+              <option value="keskitaso"${s.fitnessLevel==='keskitaso'?' selected':''}>Keskitaso</option>
+              <option value="kokenut"${s.fitnessLevel==='kokenut'?' selected':''}>Kokenut</option>
+            </select>
+          </div>
         </div>
-        <div class="form-row">
-          <div class="form-group"><label>Leposyke</label>
-            <input type="number" id="bl-rhr" min="30" max="120" value="${b.restingHr ?? ''}" /></div>
-          <div class="form-group"><label>Garmin VO2max</label>
-            <input type="number" id="bl-vo2" step="0.1" min="20" max="90" value="${b.vo2max ?? ''}" /></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>5 km aika</label>
-            <input type="text" id="bl-5k" value="${esc(b.time5k)}" placeholder="25:00" /></div>
-          <div class="form-group"><label>10 km aika</label>
-            <input type="text" id="bl-10k" value="${esc(b.time10k)}" placeholder="52:00" /></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Puolimaraton</label>
-            <input type="text" id="bl-half" value="${esc(b.timeHalf)}" placeholder="1:55:00" /></div>
-          <div class="form-group"><label>Juoksuvuosia</label>
-            <input type="number" id="bl-years" min="0" max="60" value="${b.yearsRunning ?? ''}" /></div>
-        </div>
-        <div class="form-group">
-          <label>Vammat / huomiot</label>
-          <textarea id="bl-injury">${esc(b.injuryNotes)}</textarea>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Terveys &amp; mittarit</h2>
-        <div class="form-row">
-          <div class="form-group"><label>Pituus (cm)</label>
-            <input type="number" id="h-height" min="100" max="250" step="0.1" value="${state.health.heightCm ?? ''}" placeholder="178" /></div>
-          <div class="form-group"><label>Paino (kg)</label>
-            <input type="number" id="h-weight" min="30" max="250" step="0.1" value="${state.health.weightKg ?? ''}" placeholder="75" /></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Verenpaine sys</label>
-            <input type="number" id="h-bpsys" min="70" max="220" value="${state.health.bpSys ?? ''}" placeholder="120" /></div>
-          <div class="form-group"><label>Verenpaine dia</label>
-            <input type="number" id="h-bpdia" min="40" max="140" value="${state.health.bpDia ?? ''}" placeholder="80" /></div>
-        </div>
-        <div class="form-group">
-          <label>Uni (tuntia, viime yö / keskiarvo)</label>
-          <input type="number" id="h-sleep" min="0" max="16" step="0.1" value="${state.health.sleepHours ?? ''}" placeholder="7.5" />
-        </div>
-        <div class="hint">Garmin Connect -livesyncia ei ole ilman API:a. CSV-tuonti täyttää nämä vain jos sarakkeet löytyvät; muuten täytä käsin.</div>
-      </div>
-
-      <div class="card">
-        <h2>Kivut &amp; vammat</h2>
-        <div class="hint" style="margin-bottom:8px">Merkitse aktiiviset kivut (vaikuttaa tämän päivän treeniin) ja historia.</div>
-        <div id="pain-list">${renderPainList()}</div>
-        <div class="section-title">Lisää kipu / vamma</div>
-        <div class="form-row">
-          <div class="form-group"><label>Alue</label>
-            <select id="pain-area">${BODY_AREAS.map(a => `<option value="${a}">${a}</option>`).join('')}</select></div>
-          <div class="form-group"><label>Puoli</label>
-            <select id="pain-side">${PAIN_SIDES.map(a => `<option value="${a}">${a}</option>`).join('')}</select></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Vakavuus</label>
-            <select id="pain-sev">${PAIN_SEVERITIES.map(s => `<option value="${s.id}">${s.label}</option>`).join('')}</select></div>
-          <div class="form-group"><label>Tila</label>
-            <select id="pain-status">
-              <option value="active">Aktiivinen</option>
-              <option value="history">Historia</option>
-            </select></div>
-        </div>
-        <div class="form-group">
-          <label>Huomiot (esim. juoksijan polvi, akilles, IT-jänne)</label>
-          <input type="text" id="pain-notes" placeholder="juoksijan polvi, akilles, plantaari, kiertäjäkalvo…" />
-        </div>
-        <button class="btn block" id="pain-add" type="button">Lisää</button>
-      </div>
-
-      <div class="card">
-        <h2>Garmin-yhteenveto</h2>
-        ${renderGarminSummaryCard()}
-      </div>
-
-      <div class="card">
-        <h2>Garmin CSV -tuonti</h2>
-        <div class="alert info">
-          Live-synkronointi Garmin Connectiin ei ole käytössä ilman API-avaimia.
-          Voit tuoda aktiviteetit CSV-tiedostona (Garmin Connect → vientitoiminto) tai täyttää lähtötason ja terveysmitat käsin.
-          Terveysmitat (pituus/paino/BP/uni) päivittyvät CSV:stä vain jos sarakkeet löytyvät – emme teeskentele autosynciä.
-          Kaikki data säilyy laitteellasi (localStorage), offline-käyttö ok.
-        </div>
-        <label class="file-drop" id="csv-drop">
-          <input type="file" id="csv-file" accept=".csv,text/csv" />
-          Napauta ja valitse Garmin-aktiviteetti-CSV
-        </label>
-        <div id="csv-result" style="margin-top:10px"></div>
-        ${state.garmin && state.garmin.summary
-          ? `<div class="alert ok" style="margin-top:10px">Tuotu: ${esc(state.garmin.summary.message)}<br>
-             <button class="btn sm" id="clear-garmin" style="margin-top:8px">Poista tuonti</button></div>`
-          : ''}
+        <details class="settings-fold">
+          <summary>Lähtötaso (varasuunnitelmalle)</summary>
+          <div class="hint" style="margin:6px 0 8px">Valmentajan päivät ohittavat automaattisen suunnitelman. Nämä vaikuttavat vain päiviin, joille valmentaja ei ole vielä antanut treeniä.</div>
+          <div class="form-row">
+            <div class="form-group"><label>Viikkokm</label>
+              <input type="number" id="bl-weekly" step="0.1" min="0" value="${b.manualWeeklyKm ?? ''}" placeholder="esim. 20" /></div>
+            <div class="form-group"><label>Pisin lenkki (km)</label>
+              <input type="number" id="bl-longest" step="0.1" min="0" value="${b.manualLongestKm ?? ''}" placeholder="esim. 16" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Leuanvedot (max)</label>
+              <input type="number" id="bl-pullups" min="0" max="50" value="${b.pullUpsStrict ?? ''}" /></div>
+            <div class="form-group"><label>Punnerrukset (max)</label>
+              <input type="number" id="bl-pushups" min="0" max="200" value="${b.pushUpsApprox ?? ''}" /></div>
+          </div>
+        </details>
+        <details class="settings-fold">
+          <summary>Kivut &amp; vammat${activePains().length ? ` <span class="badge warn-pain">${activePains().length} aktiivinen</span>` : ''}</summary>
+          <div class="hint" style="margin:6px 0 8px">Aktiivinen kipu pehmentää treeniä automaattisesti ja näyttää päivittäisen kysymyksen.</div>
+          <div id="pain-list">${renderPainList()}</div>
+          <div class="form-row">
+            <div class="form-group"><label>Alue</label>
+              <select id="pain-area">${BODY_AREAS.map(a => `<option value="${a}">${a}</option>`).join('')}</select></div>
+            <div class="form-group"><label>Puoli</label>
+              <select id="pain-side">${PAIN_SIDES.map(a => `<option value="${a}">${a}</option>`).join('')}</select></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Vakavuus</label>
+              <select id="pain-sev">${PAIN_SEVERITIES.map(x => `<option value="${x.id}">${x.label}</option>`).join('')}</select></div>
+            <div class="form-group"><label>Tila</label>
+              <select id="pain-status">
+                <option value="active">Aktiivinen</option>
+                <option value="history">Historia</option>
+              </select></div>
+          </div>
+          <div class="form-group">
+            <label>Huomiot</label>
+            <input type="text" id="pain-notes" placeholder="esim. juoksijan polvi, akilles…" />
+          </div>
+          <button class="btn block" id="pain-add" type="button">Lisää kipu</button>
+        </details>
+        <button class="btn primary block" id="save-settings" style="margin-top:14px">Tallenna</button>
       </div>
 
       <div class="card backup-card">
         <h2>Varmuuskopio</h2>
-        <p class="hint" style="margin:0 0 8px">Kaikki tiedot ovat vain tällä laitteella. Vie ne JSON-tiedostoksi ja tuo takaisin esim. uudella puhelimella tai osoitteella. Tuonti korvaa tiedostossa olevat osiot (asetukset, lähtötaso, loki…); muut säilyvät.</p>
-        <div class="action-row" style="flex-direction:column">
-          <button class="btn primary block" id="backup-export" type="button">⬇ Vie JSON (lataa tiedosto)</button>
-          <button class="btn block" id="backup-copy" type="button">📋 Kopioi JSON leikepöydälle</button>
-        </div>
+        <p class="hint" style="margin:0 0 8px">Tiedot ovat vain tällä laitteella. Vie JSON-tiedostoksi ja tuo takaisin esim. uudella puhelimella.</p>
+        <button class="btn primary block" id="backup-export" type="button">⬇ Vie JSON</button>
         <label class="file-drop" style="margin-top:10px">
           <input type="file" id="backup-file" accept=".json,application/json" />
-          Tuo JSON-tiedosto
+          ⬆ Tuo JSON-tiedosto
         </label>
-        <div class="form-group" style="margin-top:10px">
-          <label>…tai liitä JSON tähän</label>
-          <textarea id="backup-paste" rows="4" placeholder='{"app":"treeni-app", ...}'></textarea>
-        </div>
-        <button class="btn block" id="backup-import-paste" type="button">Tuo liitetty JSON</button>
+        <details class="settings-fold">
+          <summary>Kopioi / liitä tekstinä</summary>
+          <button class="btn block" id="backup-copy" type="button" style="margin-top:8px">📋 Kopioi JSON leikepöydälle</button>
+          <div class="form-group" style="margin-top:10px">
+            <textarea id="backup-paste" rows="4" placeholder='{"app":"treeni-app", ...}'></textarea>
+          </div>
+          <button class="btn block" id="backup-import-paste" type="button">Tuo liitetty JSON</button>
+        </details>
         <div id="backup-result" style="margin-top:10px"></div>
       </div>
 
       <div class="card">
-        <button class="btn primary block" id="save-settings">Tallenna asetukset &amp; päivitä suunnitelma</button>
-        <button class="btn ghost block" id="reset-plan" style="margin-top:8px">Luo suunnitelma uudelleen</button>
-        <button class="btn ghost block" id="reset-all" style="margin-top:8px;color:var(--danger)">Nollaa kaikki tiedot</button>
+        <details class="settings-fold" style="border-top:0;margin-top:0;padding-top:0">
+          <summary>Näin käytät sovellusta</summary>
+          ${renderAppTipsHtml()}
+        </details>
+        <details class="settings-fold">
+          <summary>Nollaus</summary>
+          <button class="btn ghost block" id="reset-plan" style="margin-top:8px">Luo varasuunnitelma uudelleen</button>
+          <button class="btn ghost block" id="reset-all" style="margin-top:8px;color:var(--danger)">Nollaa kaikki tiedot</button>
+        </details>
       </div>
     `;
 
@@ -3324,7 +2620,7 @@
       showView('today');
     };
     document.getElementById('reset-all').onclick = () => {
-      if (confirm('Nollataanko kaikki paikalliset tiedot?')) {
+      if (confirm('Nollataanko kaikki paikalliset tiedot? Vie ensin varmuuskopio!')) {
         localStorage.removeItem(STORAGE_KEY);
         state = loadState();
         ensurePlan(true);
@@ -3332,121 +2628,35 @@
         renderSettings();
       }
     };
-    const clearG = document.getElementById('clear-garmin');
-    if (clearG) clearG.onclick = () => {
-      state.garmin = null;
-      saveState();
-      toast('Garmin-tuonti poistettu');
-      renderSettings();
-    };
-    document.getElementById('csv-file').onchange = (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const result = GarminImport.importGarminCSV(String(reader.result), 6);
-          state.garmin = {
-            summary: result.summary,
-            activities: result.activities.slice(0, 500),
-            importedAt: result.importedAt,
-            fileName: file.name
-          };
-          // Also nudge baseline if empty
-          if (!state.baseline.manualWeeklyKm && result.summary.avgWeeklyKm) {
-            state.baseline.manualWeeklyKm = result.summary.avgWeeklyKm;
-          }
-          if (!state.baseline.manualLongestKm && result.summary.longestRunKm) {
-            state.baseline.manualLongestKm = result.summary.longestRunKm;
-          }
-          let healthNote = '';
-          if (GarminImport.extractHealthMetrics) {
-            const hm = GarminImport.extractHealthMetrics(String(reader.result));
-            if (hm.found && hm.found.length) {
-              if (hm.heightCm != null) state.health.heightCm = hm.heightCm;
-              if (hm.weightKg != null) state.health.weightKg = hm.weightKg;
-              if (hm.bpSys != null) state.health.bpSys = hm.bpSys;
-              if (hm.bpDia != null) state.health.bpDia = hm.bpDia;
-              if (hm.sleepHours != null) state.health.sleepHours = hm.sleepHours;
-              healthNote = '<br>Terveysmitat CSV:stä: ' + hm.found.join(', ');
-            } else {
-              healthNote = '<br><em>CSV:ssä ei terveysmitta-sarakkeita – täytä käsin. Connect-livesynciä ei ole ilman API:a.</em>';
-            }
-          }
-          saveState();
-          document.getElementById('csv-result').innerHTML =
-            `<div class="alert ok">${esc(result.summary.message)}<br>Aktiviteetteja: ${result.activities.length} (juoksuja: ${result.runs.length})${healthNote}</div>`;
-          toast('Garmin CSV tuotu');
-        } catch (err) {
-          document.getElementById('csv-result').innerHTML =
-            `<div class="alert warn">Tuonti epäonnistui: ${esc(err.message || err)}</div>`;
-        }
-      };
-      reader.readAsText(file);
-    };
   }
 
+  /** Lukee lomakkeen. Kentät, joita lomakkeella ei ole, jätetään ennalleen (vanhat tiedot säilyvät). */
   function saveSettingsFromForm(showToast) {
     const s = state.settings;
-    s.raceName = document.getElementById('set-race-name').value.trim() || DEFAULTS.settings.raceName;
-    s.raceDate = document.getElementById('set-race-date').value || DEFAULTS.settings.raceDate;
-    const mg = document.getElementById('set-marathon-goal');
-    if (mg) s.marathonGoal = mg.value.trim();
-    const un = document.getElementById('set-user-name');
-    if (un) s.userName = un.value.trim().slice(0, 40);
-    const rt = document.getElementById('set-race-time');
-    if (rt) s.raceTime = rt.value || '';
-    s.fitnessLevel = document.getElementById('set-fitness').value;
-    s.strengthLocation = document.getElementById('set-strength').value;
-    const saliVal = document.getElementById('set-salibandy').value;
-    s.salibandyDow = saliVal === 'none' ? 'none' : +saliVal;
-    const debtEl = document.getElementById('set-sleep-debt');
-    if (debtEl) {
-      s.sleepDebt = debtEl.value === '' ? null : +debtEl.value;
-    }
-    const psEl = document.getElementById('set-post-shift');
-    if (psEl) {
-      s.postShiftBanner = psEl.value !== '0';
-    }
+    const val = (id) => { const el = document.getElementById(id); return el ? el.value : undefined; };
+    const rn = val('set-race-name'); if (rn !== undefined) s.raceName = rn.trim() || DEFAULTS.settings.raceName;
+    const rd = val('set-race-date'); if (rd !== undefined) s.raceDate = rd || DEFAULTS.settings.raceDate;
+    const mg = val('set-marathon-goal'); if (mg !== undefined) s.marathonGoal = mg.trim();
+    const un = val('set-user-name'); if (un !== undefined) s.userName = un.trim().slice(0, 40);
+    const fl = val('set-fitness'); if (fl !== undefined) s.fitnessLevel = fl;
+    const sl = val('set-strength'); if (sl !== undefined) s.strengthLocation = sl;
+    const sb = val('set-salibandy'); if (sb !== undefined) s.salibandyDow = sb === 'none' ? 'none' : +sb;
 
     const b = state.baseline;
-    const num = (id) => {
-      const el = document.getElementById(id);
-      if (!el) return null;
-      const v = el.value;
-      return v === '' ? null : +v;
+    const num = (id, key) => {
+      const v = val(id);
+      if (v === undefined) return;
+      b[key] = v === '' ? null : +v;
     };
-    b.manualWeeklyKm = num('bl-weekly');
-    b.manualLongestKm = num('bl-longest');
-    b.pullUpsStrict = num('bl-pullups');
-    b.pushUpsApprox = num('bl-pushups');
-    b.restingHr = num('bl-rhr');
-    b.vo2max = num('bl-vo2');
-    b.time5k = document.getElementById('bl-5k').value.trim();
-    b.time10k = document.getElementById('bl-10k').value.trim();
-    b.timeHalf = document.getElementById('bl-half').value.trim();
-    b.yearsRunning = num('bl-years');
-    b.injuryNotes = document.getElementById('bl-injury').value.trim();
-
-    const h = state.health;
-    const numH = (id) => {
-      const el = document.getElementById(id);
-      if (!el) return null;
-      const v = el.value;
-      return v === '' ? null : +v;
-    };
-    if (document.getElementById('h-height')) {
-      h.heightCm = numH('h-height');
-      h.weightKg = numH('h-weight');
-      h.bpSys = numH('h-bpsys');
-      h.bpDia = numH('h-bpdia');
-      h.sleepHours = numH('h-sleep');
-    }
+    num('bl-weekly', 'manualWeeklyKm');
+    num('bl-longest', 'manualLongestKm');
+    num('bl-pullups', 'pullUpsStrict');
+    num('bl-pushups', 'pushUpsApprox');
 
     state.planCache = null;
     ensurePlan(true);
     saveState();
-    if (showToast !== false) toast('Asetukset tallennettu');
+    if (showToast !== false) toast('Tallennettu');
     updateHeader();
   }
 
@@ -3546,7 +2756,7 @@
     ensurePlan();
     updateHeader();
 
-    document.querySelectorAll('.nav button').forEach(btn => {
+    document.querySelectorAll('[data-view]').forEach(btn => {
       btn.addEventListener('click', () => showView(btn.getAttribute('data-view')));
     });
 

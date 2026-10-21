@@ -191,61 +191,6 @@
     return e;
   }
 
-  /**
-   * RHR/HRV-trendi kuukausimerkinnöistä (uusimmat ensin suositeltu).
-   * elevated RHR = viimeisimmät > aiempi keskiarvo + kynnys.
-   */
-  function rhrHrvTrend(entries, opts) {
-    opts = opts || {};
-    const threshold = opts.rhrRiseThreshold != null ? opts.rhrRiseThreshold : 4;
-    const sorted = sortEntriesDesc(entries).filter(Boolean);
-    const withHr = sorted.filter((e) => e.restingHr != null && !isNaN(+e.restingHr));
-    const withHrv = sorted.filter((e) => e.hrv != null && !isNaN(+e.hrv));
-
-    const result = {
-      latestRhr: withHr.length ? +withHr[0].restingHr : null,
-      latestHrv: withHrv.length ? +withHrv[0].hrv : null,
-      prevAvgRhr: null,
-      rhrDelta: null,
-      elevatedRhr: false,
-      hrvDelta: null,
-      softSuggestion: null,
-      sampleRhr: withHr.length,
-      sampleHrv: withHrv.length
-    };
-
-    if (withHr.length >= 2) {
-      // Uusin 1–2 vs aiempi keskiarvo (ei päällekkäin)
-      const recentN = withHr.length >= 4 ? 2 : 1;
-      const recent = withHr.slice(0, recentN);
-      const older = withHr.slice(recentN);
-      const recentAvg = recent.reduce((s, e) => s + +e.restingHr, 0) / recent.length;
-      const baseAvg = older.length
-        ? older.reduce((s, e) => s + +e.restingHr, 0) / older.length
-        : +withHr[withHr.length - 1].restingHr;
-      result.prevAvgRhr = Math.round(baseAvg * 10) / 10;
-      result.rhrDelta = Math.round((recentAvg - baseAvg) * 10) / 10;
-      result.elevatedRhr = result.rhrDelta >= threshold;
-    } else if (withHr.length === 1) {
-      result.prevAvgRhr = +withHr[0].restingHr;
-      result.rhrDelta = 0;
-    }
-
-    if (withHrv.length >= 2) {
-      result.hrvDelta = Math.round((+withHrv[0].hrv - +withHrv[1].hrv) * 10) / 10;
-    }
-
-    if (result.elevatedRhr) {
-      result.softSuggestion =
-        'Leposyke nousussa (+' + result.rhrDelta + ' vs aiempi). ' +
-        'Kevennä laatua tänään – helppo / liikkuvuus / minimi-paketti.';
-    } else if (result.hrvDelta != null && result.hrvDelta <= -10 && result.latestHrv != null) {
-      result.softSuggestion =
-        'HRV laskenut (' + result.hrvDelta + '). Suosi kevyttä treeniä ja unta.';
-    }
-    return result;
-  }
-
   function averageMetric(entries, key) {
     const vals = (entries || [])
       .map((e) => e[key])
@@ -273,7 +218,6 @@
     primaryPhoto,
     compressImageFile,
     normalizeEntry,
-    rhrHrvTrend,
     averageMetric
   };
 })(typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : this);

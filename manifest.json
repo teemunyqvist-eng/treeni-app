@@ -1,7 +1,7 @@
 {
   "name": "Treeni – Maraton & Voima",
   "short_name": "Treeni",
-  "description": "Joustava maraton- ja voimaharjoittelu 3-vuorotyöhön",
+  "description": "Maraton- ja voimaharjoittelu valmentajan suunnitelmalla",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f1419",

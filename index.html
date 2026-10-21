@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1a7f5a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="description" content="Joustava maraton- ja voimaharjoittelu – Paavo Nurmi Marathon 2027" />
+  <meta name="description" content="Maraton- ja voimaharjoittelu – Paavo Nurmi Marathon 2027" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <title>Treeni – Paavo Nurmi Marathon 2027</title>
@@ -14,8 +14,13 @@
 </head>
 <body>
   <header class="app-header">
-    <h1>Treeni</h1>
-    <div class="sub" id="header-sub">Paavo Nurmi Marathon 2027 · 21.08.2027</div>
+    <div class="header-row">
+      <div>
+        <h1>Treeni</h1>
+        <div class="sub" id="header-sub">Paavo Nurmi Marathon 2027 · 21.08.2027</div>
+      </div>
+      <button class="header-btn" data-view="settings" aria-label="Asetukset">⚙️</button>
+    </div>
     <div class="phase-pill" id="phase-pill">Peruskunto</div>
   </header>
 
@@ -59,7 +64,6 @@
     <button data-view="week"><span class="ico">📅</span>Viikko</button>
     <button data-view="exercises"><span class="ico">💪</span>Liikkeet</button>
     <button data-view="progress"><span class="ico">📈</span>Edistyminen</button>
-    <button data-view="settings"><span class="ico">⚙️</span>Asetukset</button>
   </nav>
 
   <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">

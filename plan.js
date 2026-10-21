@@ -586,6 +586,17 @@
                 (session.details || '') +
                 '\n\n🏒 Salibandy-ilta: merkitse tehdyksi jos pelasit. Lasketaan kovaksi treeniksi (TE jopa 5.0).'
             });
+          } else if (session.type === 'strength') {
+            // Salibandy on päivän kova ärsyke – ei raskasta voimaa samaan päivään
+            session = {
+              type: 'rest',
+              subtype: 'salibandy',
+              name: 'Salibandy',
+              details:
+                '🏒 Salibandy-ilta = päivän treeni (kova kuormitus).\n' +
+                'Ei voimaa samana päivänä. Lämmittele kunnolla ennen peliä ja venyttele sen jälkeen.',
+              mobility: mobilityFor('gentle')
+            };
           } else if (session.type === 'run' && session.subtype === 'easy') {
             session = Object.assign({}, session, {
               name: session.name + ' (salibandy-ilta)',
@@ -828,7 +839,7 @@
       s.details = 'Lyhyt lihashuolto ~15 min – dynaaminen + muutama venytys.';
       if (s.warmup) s.warmup = warmupFor('strength', true);
     } else if (s.type === 'rest') {
-      s.details = 'Lepo säilyy – hyvä valinta vuorossa.';
+      s.details = 'Lepo säilyy – palautuminen on osa suunnitelmaa.';
     }
     return s;
   }
@@ -1690,108 +1701,6 @@
   }
 
 
-  // --- Vuorotyö, minimi-paketti, muu liikunta, valmius ---
-
-  const SHIFT_LABELS = {
-    aamu: 'Aamuvuoro',
-    ilta: 'Iltavuoro',
-    yo: 'Yövuoro'
-  };
-
-  /** Ehdotus treeniajalle vuoron mukaan */
-  function suggestTrainingTiming(shift) {
-    if (!shift) {
-      return {
-        shift: null,
-        label: 'Ei vuoroa merkitty',
-        when: 'Normaali aikataulu',
-        tip: 'Merkitse vuoro vuorokalenteriin, niin saat ajoitusvinkin.',
-        avoidQuality: false
-      };
-    }
-    if (shift === 'aamu') {
-      return {
-        shift: 'aamu',
-        label: SHIFT_LABELS.aamu,
-        when: 'Iltapäivä / alkuilta (vuoron jälkeen)',
-        tip: 'Aamuvuoron jälkeen kevyt/helppo ok. Laatu vasta kun olo on palautunut.',
-        avoidQuality: false
-      };
-    }
-    if (shift === 'ilta') {
-      return {
-        shift: 'ilta',
-        label: SHIFT_LABELS.ilta,
-        when: 'Aamu / aamupäivä (ennen vuoroa)',
-        tip: 'Treenaa ennen iltavuoroa. Vuoron jälkeen proteiini + kevyt liikkuvuus, ei kovaa treeniä.',
-        avoidQuality: false,
-        postShiftReminder: true
-      };
-    }
-    // yo
-    return {
-      shift: 'yo',
-      label: SHIFT_LABELS.yo,
-      when: 'Seuraava päivä iltapäivällä (palautumisen jälkeen)',
-      tip: 'Yövuoron jälkeen älä tee laatua/intervalleja. Suosi kävelyä, liikkuvuutta tai minimi-pakettia.',
-      avoidQuality: true,
-      postShiftReminder: true
-    };
-  }
-
-  /** Varoitus: kova laatu yövuoron jälkeen */
-  function shouldWarnQualityAfterNight(shiftToday, shiftYesterday, session) {
-    const night = shiftToday === 'yo' || shiftYesterday === 'yo';
-    if (!night || !session) return false;
-    if (session.type === 'run' &&
-        (session.subtype === 'tempo' || session.subtype === 'intervals' ||
-         session.subtype === 'strides' || session.subtype === 'long')) {
-      return true;
-    }
-    if (session.type === 'strength' && (session.durationMin || 60) >= 45 &&
-        !session.modified) {
-      return true;
-    }
-    return false;
-  }
-
-  /** 20 min kävely + liikkuvuus – yövuoro / univelka */
-  function buildMinimiYovuoroPackage() {
-    const session = {
-      type: 'mobility',
-      subtype: 'minimi-yovuoro',
-      name: 'Minimi yövuoro -paketti (20 min)',
-      durationMin: 20,
-      modified: 'minimi-yovuoro',
-      details:
-        'Yövuoro / univelka – pidä kuorma minimissä.\n' +
-        '1) Kävely 10–12 min rauhallisesti (ulko tai paikka).\n' +
-        '2) Liikkuvuus ~8 min alla.\n' +
-        'Ei juoksua, ei voimaa. Proteiini + nesteytys vuoron jälkeen.',
-      exercises: [
-        { id: 'cat_cow', label: 'Kissa–lehmä', sets: '8–10' },
-        { id: 'hip_opener', label: 'Lonkan avaukset', sets: '6/puoli' },
-        { id: 'thoracic_opener', label: 'Rintarangan avaukset', sets: '6/puoli' },
-        { id: 'childs_pose', label: 'Lapsen asento', sets: '45–60 s' },
-        { id: 'calf_stretch', label: 'Pohjevenytys (kevyt)', sets: '20 s/puoli' }
-      ],
-      mobility: mobilityFor('gentle'),
-      notes: 'Yksi napautus riittää – merkitse Valmis kun tehty.'
-    };
-    return session;
-  }
-
-  function shouldOfferMinimiPackage(opts) {
-    opts = opts || {};
-    const shift = opts.shiftToday || opts.shiftYesterday;
-    const debt = opts.sleepDebt;
-    const energy = opts.energy;
-    if (shift === 'yo') return true;
-    if (debt != null && +debt >= 2) return true; // 0–5 skaala, ≥2 = merkittävä
-    if (energy != null && +energy <= 2) return true;
-    return false;
-  }
-
   /** Salibandyn jälkeinen palautuspäivä – vahvistettu */
   function applySalibandyRecovery(session) {
     if (!session) return session;
@@ -1809,7 +1718,7 @@
         '🏒 Eilinen salibandy oli kova kuormitus (TE jopa 5.0).\n' +
         'Tänään vain helppo palautus ~' + s.distanceKm + ' km tai kävely.\n' +
         'Ei tempoa, intervalleja eikä pitkää. Laatu aikaisintaan ylihuomenna.\n' +
-        'Jos jalat raskaat: vaihda lihashuoltoon / minimi-pakettiin.';
+        'Jos jalat raskaat: vaihda lihashuoltoon tai kävelyyn.';
       s.cueIds = ['easy_run_form'];
       s.warmup = warmupFor('run', true);
       s.mobility = mobilityFor('run');
@@ -1835,79 +1744,6 @@
     return s;
   }
 
-  /** In-app muistutusteksti vuoron jälkeen (ei WhatsApp) */
-  function postShiftReminderText(shift) {
-    if (shift !== 'ilta' && shift !== 'yo') return null;
-    const title = shift === 'yo'
-      ? 'Yövuoron jälkeen'
-      : 'Iltavuoron jälkeen';
-    return {
-      title: title,
-      body:
-        'Proteiini + nesteytys. Tee 5–10 min kevyt liikkuvuus (lonkat, rintaranka, pohkeet). ' +
-        'Älä lisää kovaa treeniä – uni ensin.',
-      actions: ['minimi', 'dismiss']
-    };
-  }
-
-  /** Kuukausittainen valmiusindeksi 0–100 (ennen PNM) */
-  function computeReadinessIndex(input) {
-    input = input || {};
-    const targetKm = Math.max(1, +(input.targetMonthKm) || 80);
-    const km = Math.max(0, +(input.monthKm) || 0);
-    const kmScore = clamp((km / targetKm) * 100, 0, 100);
-
-    const strPlanned = Math.max(1, +(input.strengthPlanned) || 8);
-    const strDone = Math.max(0, +(input.strengthDone) || 0);
-    const strengthScore = clamp((strDone / strPlanned) * 100, 0, 100);
-
-    let sleepScore = 55; // neutraali jos ei dataa
-    if (input.sleepAvg != null && !isNaN(+input.sleepAvg)) {
-      const h = +input.sleepAvg;
-      // 7–8.5 h ideaali
-      if (h >= 7 && h <= 8.5) sleepScore = 95;
-      else if (h >= 6.5 && h < 7) sleepScore = 75;
-      else if (h > 8.5 && h <= 9.5) sleepScore = 80;
-      else if (h >= 6 && h < 6.5) sleepScore = 55;
-      else sleepScore = 35;
-    }
-    if (input.energyAvg != null && !isNaN(+input.energyAvg)) {
-      const e = +input.energyAvg; // 1–5
-      const eScore = clamp(((e - 1) / 4) * 100, 0, 100);
-      sleepScore = sleepScore * 0.55 + eScore * 0.45;
-    }
-
-    // Painot: km 35 %, voima 35 %, uni/energia 30 %
-    let score = Math.round(kmScore * 0.35 + strengthScore * 0.35 + sleepScore * 0.30);
-    score = clamp(score, 0, 100);
-
-    let label = 'Kohtalainen';
-    if (score >= 80) label = 'Hyvä';
-    else if (score >= 65) label = 'Ok';
-    else if (score >= 45) label = 'Kohtalainen';
-    else label = 'Heikko';
-
-    const weeksToRace = input.weeksToRace != null ? +input.weeksToRace : null;
-    let tip = 'Pidä juoksu + voima tasaisena; uni ja energia tukevat valmiutta kohti PNM:ää.';
-    if (score < 50) tip = 'Nosta kevyttä volyymia ja voiman säännöllisyyttä; priorisoi uni.';
-    else if (score >= 80) tip = 'Hyvä pohja – jatka polarisoitua mallia kohti Paavo Nurmea.';
-    if (weeksToRace != null && weeksToRace <= 6 && score < 60) {
-      tip = 'Kisaan ≤6 vk: älä kiristä kovaa – lisää palautumista ja unen laatua.';
-    }
-
-    return {
-      score: score,
-      label: label,
-      tip: tip,
-      parts: {
-        km: Math.round(kmScore),
-        strength: Math.round(strengthScore),
-        sleepEnergy: Math.round(sleepScore)
-      },
-      monthKm: round1(km),
-      targetMonthKm: round1(targetKm)
-    };
-  }
 
   // ---------- Valmentajan suunnitelma (coach-plan.json) ----------
   const COACH_TYPES = ['juoksu', 'koti', 'sali', 'lihashuolto', 'kavely', 'lepo'];
@@ -2079,15 +1915,8 @@
     matchedConditions,
     normalizeAnswers,
     TIP_DISCLAIMER,
-    suggestTrainingTiming,
-    shouldWarnQualityAfterNight,
-    buildMinimiYovuoroPackage,
-    shouldOfferMinimiPackage,
     buildOtherActivitySession,
     OTHER_ACTIVITY_KINDS,
-    applySalibandyRecovery,
-    postShiftReminderText,
-    computeReadinessIndex,
-    SHIFT_LABELS
+    applySalibandyRecovery
   };
 })(typeof window !== 'undefined' ? window : global);
