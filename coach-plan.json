@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "updatedAt": "2026-10-21T19:00:00+03:00",
+  "version": 2,
+  "updatedAt": "2026-10-21T19:00:14+03:00",
   "days": [
     {
       "date": "2026-10-22",
@@ -8,7 +8,10 @@
       "title": "Lepo / kävely",
       "details": "Nuku yövuoron jälkeen. Kävely 20–40 min tai 15 min liikkuvuus.",
       "options": [
-        { "label": "Pelkkä lepo", "details": "Jos uni jäi alle 6 h: täysi lepo. Uni on tänään se treeni." }
+        {
+          "label": "Pelkkä lepo",
+          "details": "Jos uni jäi alle 6 h: täysi lepo. Uni on tänään se treeni."
+        }
       ],
       "note": "Uni ensin. Lepo ei ole tekosyy, se on osa suunnitelmaa – huomenna juostaan."
     },
@@ -22,8 +25,16 @@
       "details": "Pitkä lenkki 10–12 km kevyesti ~6:45/km, syke ~140 (pystyt puhumaan).\nTasainen vauhti alusta loppuun. Juo ennen lähtöä, ota vettä mukaan jos yli 75 min.",
       "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
       "options": [
-        { "label": "Kevennetty", "distanceKm": 8, "details": "8 km kevyesti ~6:45/km, syke ~140. Sama lämmittely ja venyttely." },
-        { "label": "Kovennettu", "distanceKm": 12, "details": "12 km kevyesti ~6:45/km, syke ~140; viimeinen km hieman rauhallista vauhtia nopeammin – ei kuitenkaan kova (pystyt yhä puhumaan lyhyin lausein)." }
+        {
+          "label": "Kevennetty",
+          "distanceKm": 8,
+          "details": "8 km kevyesti ~6:45/km, syke ~140. Sama lämmittely ja venyttely."
+        },
+        {
+          "label": "Kovennettu",
+          "distanceKm": 12,
+          "details": "12 km kevyesti ~6:45/km, syke ~140; viimeinen km hieman rauhallista vauhtia nopeammin – ei kuitenkaan kova (pystyt yhä puhumaan lyhyin lausein)."
+        }
       ],
       "note": "Kevyt tarkoittaa kevyttä. Ego kotiin – 32 km seinä Turussa kaadetaan näillä hitailla kilometreillä, ei sankaroinnilla."
     },
@@ -36,7 +47,10 @@
       "details": "Kotikuntopiiri ~30 min ennen saunaa – 3 kierrosta:\n• Leuanveto 3–5\n• Punnerrus 12–15\n• Käsipainosoutu 10 / puoli\n• Askelkyykky tai step-up 10 / jalka\n• Kuminauha face pull 15\n• Ab wheel 8–10\n• Lankku 40 s\nLepo kierrosten välissä 1–2 min.",
       "cooldown": "Venyttely ~5–10 min: rinta, selkä, lonkankoukistajat, takareidet.",
       "options": [
-        { "label": "Kevennetty", "details": "2 kierrosta samaa piiriä. Lämmittely ja venyttely kuten normaalisti." }
+        {
+          "label": "Kevennetty",
+          "details": "2 kierrosta samaa piiriä. Lämmittely ja venyttely kuten normaalisti."
+        }
       ],
       "note": "Piiri ensin, sitten sauna ja kaljat."
     },
@@ -49,7 +63,10 @@
       "details": "Kevyt 4–5 km tai kävely, miten olo antaa. Vauhti täysin rento.",
       "cooldown": "Liikkuvuus ~10 min: lonkat, nilkat, rintaranka, pohkeet.",
       "options": [
-        { "label": "Kävely", "details": "30–45 min kävely + sama liikkuvuus." }
+        {
+          "label": "Kävely",
+          "details": "30–45 min kävely + sama liikkuvuus."
+        }
       ],
       "note": "Kuuntele kehoa – mutta erota väsymys tekosyystä."
     },
@@ -59,6 +76,19 @@
       "title": "Kävely / lepo",
       "details": "Aamuvuoro. Kevyt kävely tai vapaa.",
       "note": "Vuoropäivä. Palaudu, syö kunnolla, nuku – viikko jatkuu."
+    },
+    {
+      "date": "2026-10-27",
+      "type": "lihashuolto",
+      "title": "Salibandy illalla – viikon kova päivä",
+      "details": "Säbä on tämän päivän treeni. Ennen peliä 10 min lämmittely: kevyt hölkkä, lonkka- ja nilkkaliikkuvuus, muutama vauhdinlisäys. Pelin jälkeen 10 min venyttely: pohkeet, takareidet, lonkankoukistajat.",
+      "note": "Täysillä mutta fiksusti. Huomenna kevyttä.",
+      "options": [
+        {
+          "label": "Ei pääse säbään",
+          "details": "Kevyt 6 km ~6:45/km tai 30 min kotipiiri."
+        }
+      ]
     }
   ]
 }
