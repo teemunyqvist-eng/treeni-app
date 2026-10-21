@@ -1909,7 +1909,128 @@
     };
   }
 
+  // ---------- Valmentajan suunnitelma (coach-plan.json) ----------
+  const COACH_TYPES = ['juoksu', 'koti', 'sali', 'lihashuolto', 'kavely', 'lepo'];
+  const COACH_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+  function coachStr(v, max) {
+    return typeof v === 'string' ? v.slice(0, max || 4000) : '';
+  }
+
+  /** Validoi ja siistii coach-plan-objektin. Palauttaa null jos ei kelpaa. */
+  function parseCoachPlan(obj) {
+    if (typeof obj === 'string') {
+      try { obj = JSON.parse(obj); } catch (e) { return null; }
+    }
+    if (!obj || typeof obj !== 'object' || !Array.isArray(obj.days)) return null;
+    const days = [];
+    const seen = {};
+    obj.days.forEach(function (d) {
+      if (!d || typeof d !== 'object' || !COACH_DATE_RE.test(String(d.date || ''))) return;
+      const type = COACH_TYPES.indexOf(d.type) >= 0 ? d.type : 'juoksu';
+      const day = {
+        date: d.date,
+        type: type,
+        title: coachStr(d.title, 120) || 'Valmentajan treeni',
+        details: coachStr(d.details),
+        note: coachStr(d.note, 600),
+        warmup: coachStr(d.warmup, 600),
+        cooldown: coachStr(d.cooldown, 600),
+        distanceKm: typeof d.distanceKm === 'number' && d.distanceKm > 0 && d.distanceKm < 60 ? d.distanceKm : null,
+        durationMin: typeof d.durationMin === 'number' && d.durationMin > 0 && d.durationMin < 400 ? d.durationMin : null,
+        subtype: coachStr(d.subtype, 30),
+        options: (Array.isArray(d.options) ? d.options : []).slice(0, 6).map(function (o) {
+          return {
+            label: coachStr(o && o.label, 60) || 'Vaihtoehto',
+            details: coachStr(o && o.details),
+            distanceKm: o && typeof o.distanceKm === 'number' && o.distanceKm > 0 && o.distanceKm < 60 ? o.distanceKm : null
+          };
+        })
+      };
+      seen[day.date] = day; // viimeinen voittaa
+    });
+    Object.keys(seen).sort().forEach(function (k) { days.push(seen[k]); });
+    return {
+      version: typeof obj.version === 'number' ? obj.version : 0,
+      updatedAt: coachStr(obj.updatedAt, 40),
+      days: days
+    };
+  }
+
+  /** Lyhyt sisältöavain: muuttuu kun valmentaja muuttaa päivän sisältöä. */
+  function coachKey(day) {
+    const str = JSON.stringify(day || {});
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+    return (day && day.date || '') + ':' + h.toString(36);
+  }
+
+  function findCoachDay(plan, iso) {
+    if (!plan || !Array.isArray(plan.days)) return null;
+    for (let i = 0; i < plan.days.length; i++) if (plan.days[i].date === iso) return plan.days[i];
+    return null;
+  }
+
+  /** Muuntaa valmentajan päivän sovelluksen sessio-objektiksi. */
+  function coachDayToSession(day, meta) {
+    if (!day) return null;
+    let base;
+    switch (day.type) {
+      case 'koti': base = { type: 'strength', location: 'koti', subtype: day.subtype || 'coach', exercises: [] }; break;
+      case 'sali': base = { type: 'strength', location: 'sali', subtype: day.subtype || 'coach', exercises: [] }; break;
+      case 'lihashuolto': base = { type: 'mobility', subtype: 'lihashuolto', exercises: [] }; break;
+      case 'kavely': base = { type: 'other', subtype: 'kavely', lightLoad: true }; break;
+      case 'lepo': base = { type: 'rest', subtype: 'rest' }; break;
+      default: base = { type: 'run', subtype: day.subtype || 'easy' };
+    }
+    const s = Object.assign(base, {
+      name: day.title,
+      details: day.details || '',
+      coach: {
+        key: coachKey(day),
+        date: day.date,
+        note: day.note || '',
+        warmup: day.warmup || '',
+        cooldown: day.cooldown || '',
+        options: (day.options || []).map(function (o) { return Object.assign({}, o); }),
+        updatedAt: (meta && meta.updatedAt) || '',
+        version: (meta && meta.version) || 0
+      }
+    });
+    if (day.distanceKm) s.distanceKm = day.distanceKm;
+    if (day.durationMin) s.durationMin = day.durationMin;
+    return s;
+  }
+
+  /** Valitsee valmentajan vaihtoehdon (esim. Kevennetty) sessioksi. */
+  function applyCoachOption(session, idx) {
+    if (!session || !session.coach) return null;
+    const opt = (session.coach.options || [])[idx];
+    if (!opt) return null;
+    const s = JSON.parse(JSON.stringify(session));
+    s.name = (s.name || '').replace(/ – .*$/, '') + ' – ' + opt.label;
+    s.details = opt.details || s.details;
+    if (opt.distanceKm) s.distanceKm = opt.distanceKm;
+    s.modified = /kevenn/i.test(opt.label) ? 'keventa' : /kovenn/i.test(opt.label) ? 'koventa' : 'coach-option';
+    s.coach.selected = opt.label;
+    return s;
+  }
+
+  function coachOptionIndex(session, re) {
+    if (!session || !session.coach) return -1;
+    const opts = session.coach.options || [];
+    for (let i = 0; i < opts.length; i++) if (re.test(opts[i].label)) return i;
+    return -1;
+  }
+
   global.TreeniPlan = {
+    parseCoachPlan,
+    coachKey,
+    findCoachDay,
+    coachDayToSession,
+    applyCoachOption,
+    coachOptionIndex,
+    COACH_TYPES,
     PHASES,
     DOW_FI,
     DOW_FULL,

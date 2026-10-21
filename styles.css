@@ -1140,3 +1140,13 @@ details.shift-card[open] > .today-fold-sum::before { content: '▾ '; }
   outline: 2px solid var(--accent-light);
   outline-offset: -2px;
 }
+
+/* Valmentajan suunnitelma */
+.badge.coach { background: rgba(26, 127, 90, 0.22); color: #6fe0b0; }
+.coach-block { border-left: 3px solid #1a7f5a; }
+.coach-sub { font-size: 0.85rem; margin: 6px 0; color: var(--text-muted); }
+.coach-options { padding-left: 18px; margin: 6px 0 8px; font-size: 0.88rem; }
+.coach-options li { margin-bottom: 6px; }
+.coach-options .btn.sm { margin-left: 6px; }
+.coach-note { margin-top: 8px; }
+.coach-updated { margin-top: 6px; font-size: 0.75rem; }

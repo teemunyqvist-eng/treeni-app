@@ -75,6 +75,91 @@
   let state = loadState();
   let weekOffset = 0; // 0 = current week
 
+  // ---------- Valmentajan suunnitelma (coach-plan.json, haetaan automaattisesti) ----------
+  const COACH_STORAGE_KEY = 'treeni-coach-plan';
+  const COACH_URL = './coach-plan.json';
+  const COACH_MIN_INTERVAL_MS = 30 * 1000;
+  let coachFetchedAt = null;
+  let coachLastAttempt = 0;
+  let coachInflight = null;
+  let coachPlan = loadCoachPlan();
+
+  function loadCoachPlan() {
+    try {
+      const raw = localStorage.getItem(COACH_STORAGE_KEY);
+      if (!raw) return null;
+      const obj = JSON.parse(raw);
+      coachFetchedAt = obj && obj.fetchedAt || null;
+      return P.parseCoachPlan(obj && obj.plan);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function storeCoachPlan(plan) {
+    coachFetchedAt = new Date().toISOString();
+    try {
+      localStorage.setItem(COACH_STORAGE_KEY, JSON.stringify({ plan, fetchedAt: coachFetchedAt }));
+    } catch (e) { /* täynnä – käytetään muistissa olevaa */ }
+  }
+
+  /** Hakee coach-plan.json verkosta (ohittaa välimuistin). Virheessä käytetään hiljaa tallennettua. */
+  function refreshCoachPlan(force) {
+    if (typeof fetch !== 'function') return Promise.resolve(false);
+    const now = Date.now();
+    if (coachInflight) return coachInflight;
+    if (!force && now - coachLastAttempt < COACH_MIN_INTERVAL_MS) return Promise.resolve(false);
+    coachLastAttempt = now;
+    coachInflight = fetch(COACH_URL + '?t=' + now, { cache: 'no-store' })
+      .then((res) => {
+        if (!res || !res.ok) throw new Error('HTTP ' + (res && res.status));
+        return res.json();
+      })
+      .then((json) => {
+        const plan = P.parseCoachPlan(json);
+        if (!plan) throw new Error('coach-plan: virheellinen muoto');
+        const changed = JSON.stringify(plan) !== JSON.stringify(coachPlan);
+        coachPlan = plan;
+        storeCoachPlan(plan);
+        if (changed) rerenderCoachViews();
+        return changed;
+      })
+      .catch(() => false) // hiljaa: välimuistissa oleva suunnitelma jää käyttöön
+      .then((r) => { coachInflight = null; return r; });
+    return coachInflight;
+  }
+
+  function rerenderCoachViews() {
+    if (typeof document === 'undefined' || !document.getElementById) return;
+    const active = document.querySelector && document.querySelector('.view.active');
+    if (!active) return;
+    try {
+      if (active.id === 'view-today') renderToday();
+      else if (active.id === 'view-week') renderWeek();
+    } catch (e) { /* ei kaadeta sovellusta */ }
+  }
+
+  function coachDayFor(iso) {
+    return coachPlan ? P.findCoachDay(coachPlan, iso) : null;
+  }
+
+  function formatFiDateTime(isoStr) {
+    if (!isoStr) return '';
+    const d = new Date(isoStr);
+    if (isNaN(d.getTime())) return '';
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${d.getDate()}.${d.getMonth() + 1}. klo ${pad(d.getHours())}.${pad(d.getMinutes())}`;
+  }
+
+  if (typeof window !== 'undefined') {
+    window.TreeniCoach = {
+      refresh: (force) => refreshCoachPlan(force !== false),
+      getPlan: () => coachPlan,
+      getEffectiveDay: (iso) => getEffectiveDay(iso),
+      handleAction: (iso, act) => handleAction(iso, act)
+    };
+  }
+
 
   function loadState() {
     try {
@@ -267,8 +352,22 @@
     const plan = ensurePlan();
     const found = P.getDayFromPlan(plan, iso);
     if (!found) return null;
-    const override = state.dayOverrides[iso] || {};
-    let session = override.session || found.day.planned;
+    let override = state.dayOverrides[iso] || {};
+    let planned = found.day.planned;
+    const coachDay = coachDayFor(iso);
+    let coachSession = null;
+    if (coachDay) {
+      coachSession = P.coachDayToSession(coachDay, coachPlan);
+      planned = coachSession;
+      // Vanha muokkaus (ennen valmentajan päivitystä) ei peitä uutta valmentajan treeniä.
+      const fresh = override.completed || override.coachKey === coachSession.coach.key;
+      if (!fresh && (override.session || override.status)) {
+        override = override.status === 'sairas'
+          ? { status: 'sairas', session: P.applySick(coachSession), note: override.note }
+          : {};
+      }
+    }
+    let session = override.session || planned;
     // Auto-soften if active pain and session not already pain-modified by user override
     if (session && !override.session && P.applyPainSoftening) {
       const ansMap = answersForDay(iso);
@@ -279,7 +378,9 @@
     }
     return {
       ...found.day,
-      planned: found.day.planned,
+      planned,
+      autoPlanned: found.day.planned,
+      coach: !!coachSession,
       session,
       status: override.status || null,
       completed: !!override.completed,
@@ -315,6 +416,10 @@
   }
 
   function setOverride(iso, patch) {
+    const cd = coachDayFor(iso);
+    if (cd) {
+      patch = Object.assign({}, patch, { coachKey: P.coachKey(cd) });
+    }
     state.dayOverrides[iso] = Object.assign({}, state.dayOverrides[iso] || {}, patch);
     saveState();
   }
@@ -377,6 +482,7 @@
       if (s.lightLoad) html += '<span class="badge mod">Kevyt</span>';
     }
     if (s.type === 'race') html += '<span class="badge run">Kisa</span>';
+    if (s.coach) html += '<span class="badge coach">Valmentajalta</span>';
     if (day.completed) html += '<span class="badge done">Tehty</span>';
     if (day.status === 'sairas') html += '<span class="badge skip">Sairas</span>';
     if (day.status === 'toissa') html += '<span class="badge mod">Vuoro</span>';
@@ -477,8 +583,10 @@
     // Warm-up first (run + strength)
     if (s.warmup) html += renderPrepBlock(s.warmup, 'warmup');
 
-    const canEdit = !!opts.editable && (s.type === 'strength' || s.type === 'mobility');
-    if ((s.type === 'strength' || s.type === 'mobility') && ((s.exercises && s.exercises.length) || canEdit)) {
+    const canEdit = !!opts.editable && !s.coach && (s.type === 'strength' || s.type === 'mobility');
+    if (s.coach && !(s.exercises && s.exercises.length)) {
+      html += renderCoachBlock(s, opts);
+    } else if ((s.type === 'strength' || s.type === 'mobility') && ((s.exercises && s.exercises.length) || canEdit)) {
       html += '<div class="session-block is-main">';
       html += '<div class="block-head"><div class="block-title">' + (s.type === 'mobility' ? 'Liikkuvuus &amp; venyttely' : 'Päätreeni') + '</div></div>';
       if (s.equipmentNote) {
@@ -525,6 +633,33 @@
 
     // Optional mobility / cooldown / gentle
     if (s.mobility) html += renderPrepBlock(s.mobility, 'mobility');
+    return html;
+  }
+
+  function renderCoachBlock(s, opts) {
+    const c = s.coach || {};
+    let html = '<div class="session-block is-main coach-block">';
+    html += '<div class="block-head"><div class="block-title">🧭 Valmentajalta</div>' +
+      (c.selected ? `<div class="block-badges"><span class="badge mod">${esc(c.selected)}</span></div>` : '') + '</div>';
+    if (c.warmup) html += `<div class="coach-sub"><strong>Lämmittely:</strong> ${esc(c.warmup)}</div>`;
+    html += `<div class="session-details">${esc(s.details || '')}</div>`;
+    if (c.cooldown) html += `<div class="coach-sub"><strong>Lopuksi:</strong> ${esc(c.cooldown)}</div>`;
+    if (c.options && c.options.length) {
+      html += '<div class="section-title">Vaihtoehdot</div><ul class="coach-options">';
+      c.options.forEach((o, i) => {
+        const btn = opts && opts.coachActions
+          ? ` <button type="button" class="btn sm" data-act="coach-opt-${i}">Valitse</button>` : '';
+        html += `<li><strong>${esc(o.label)}:</strong> ${esc(o.details || '')}${btn}</li>`;
+      });
+      html += '</ul>';
+      if (opts && opts.coachActions && (c.selected || s.modified)) {
+        html += '<button type="button" class="btn sm ghost" data-act="coach-reset">↺ Valmentajan alkuperäinen</button>';
+      }
+    }
+    if (c.note) html += `<div class="session-notes coach-note">💬 ${esc(c.note)}</div>`;
+    const upd = formatFiDateTime(c.updatedAt);
+    if (upd) html += `<div class="hint coach-updated">Päivitetty ${esc(upd)}</div>`;
+    html += '</div>';
     return html;
   }
 
@@ -656,6 +791,10 @@
     {
       title: 'Edistyminen & kuvat',
       body: 'Edistyminen-välilehti: paino, energia, progress-kuvat (1–2 / kk). Vertaa kuukausia rinnakkain.'
+    },
+    {
+      title: 'Valmentajan suunnitelma',
+      body: 'Valmentajan sopimat päivät haetaan automaattisesti (avatessa ja kun yhteys palaa). Ne näkyvät merkinnällä 🧭 Valmentajalta ja korvaavat automaattisen treenin. Kevennä/Kovenna käyttää valmentajan vaihtoehtoja, Valmis kirjaa treenin. Muut päivät tulevat automaattisesta suunnitelmasta.'
     },
     {
       title: 'Varmuuskopio',
@@ -955,7 +1094,7 @@
         <div class="session-meta">${sessionBadges(day)}</div>
         ${guidance}
         ${painBanner}
-        ${renderSessionBody(s, { editable: !day.completed && (s.type === 'strength' || s.type === 'mobility') })}
+        ${renderSessionBody(s, { editable: !day.completed && !s.coach && (s.type === 'strength' || s.type === 'mobility'), coachActions: !day.completed })}
 
         <div class="today-primary-actions status-grid">
           <button class="status-btn primary" data-act="done"${day.completed ? ' disabled' : ''}>✓ Valmis</button>
@@ -1124,6 +1263,7 @@
         name: session.name,
         type: session.type,
         distanceKm: session.distanceKm || null,
+        coach: session.coach ? (session.coach.selected || 'perus') : undefined,
         at: new Date().toISOString()
       });
       if (state.log.length > 200) state.log.length = 200;
@@ -1160,6 +1300,37 @@
     if (act === 'ei-fiilista') {
       openMoodModal(iso);
       return;
+    }
+
+    if (act.indexOf('coach-opt-') === 0) {
+      const base = day.planned && day.planned.coach ? day.planned : session;
+      const chosen = P.applyCoachOption(base, +act.slice('coach-opt-'.length));
+      if (chosen) {
+        setOverride(iso, { status: chosen.modified === 'keventa' ? 'keventa' : chosen.modified === 'koventa' ? 'koventa' : 'coach-option', session: chosen, completed: false });
+        toast('Valittu: ' + chosen.coach.selected);
+        renderToday();
+      }
+      return;
+    }
+
+    if (act === 'coach-reset') {
+      if (day.planned && day.planned.coach) {
+        setOverride(iso, { status: null, session: day.planned, completed: false });
+        toast('Valmentajan alkuperäinen treeni');
+        renderToday();
+      }
+      return;
+    }
+
+    if ((act === 'keventa' || act === 'koventa') && day.planned && day.planned.coach && session && session.coach && !session.coach.selected) {
+      const idx = P.coachOptionIndex(day.planned, act === 'keventa' ? /kevenn/i : /kovenn/i);
+      if (idx >= 0) {
+        const chosen = P.applyCoachOption(day.planned, idx);
+        setOverride(iso, { status: act, session: chosen });
+        toast(act === 'keventa' ? 'Valmentajan kevennetty versio – taktiikka, ei luovutus' : 'Valmentajan kovennettu versio');
+        renderToday();
+        return;
+      }
     }
 
     if (act === 'keventa') {
@@ -2017,7 +2188,7 @@
 
       return `<div class="week-day${d.date === todayI ? ' today' : ''}${eff.completed ? ' done' : ''}${sh === 'yo' ? ' shift-yo' : ''}" data-date="${d.date}">
         <div><div class="dow">${P.DOW_FI[d.dow]}</div><div class="date">${formatFiDate(d.date).replace(/\.\d{4}$/, '')}</div></div>
-        <div><div class="name">${shiftBadge}${esc(s.name)}</div><div class="detail">${esc(detail)}</div></div>
+        <div><div class="name">${shiftBadge}${s.coach ? '<span class="badge coach">Valmentaja</span> ' : ''}${esc(s.name)}</div><div class="detail">${esc(detail)}</div></div>
         <div class="status-ico">${ico}</div>
       </div>`;
     }).join('');
@@ -3384,6 +3555,13 @@
     document.getElementById('week-today').onclick = () => { weekOffset = 0; renderWeek(); };
 
     showView('today');
+
+    // Valmentajan suunnitelma: hae heti, kun yhteys palaa ja kun sovellus tulee näkyviin
+    refreshCoachPlan(true);
+    window.addEventListener('online', () => refreshCoachPlan(true));
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') refreshCoachPlan(false);
+    });
 
     // PWA
     if ('serviceWorker' in navigator) {
