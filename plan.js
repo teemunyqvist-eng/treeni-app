@@ -2003,8 +2003,34 @@
       version: typeof obj.version === 'number' ? obj.version : 0,
       updatedAt: coachStr(obj.updatedAt, 40),
       flags: parseCoachFlags(obj.flags),
+      feedback: parseCoachFeedback(obj.feedback),
       days: days
     };
+  }
+
+  /** PT:n palaute: { 'YYYY-MM-DD': { title, text } } → sama muoto, siivottuna (max 60). */
+  function parseCoachFeedback(raw) {
+    const out = {};
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+    Object.keys(raw).filter(function (k) { return COACH_DATE_RE.test(k); }).sort().slice(-60).forEach(function (k) {
+      const v = raw[k];
+      const fb = typeof v === 'string' ? { title: '', text: v } : (v && typeof v === 'object' ? v : null);
+      if (!fb) return;
+      const text = coachStr(fb.text, 1500);
+      if (!text) return;
+      out[k] = { title: coachStr(fb.title, 80), text: text };
+    });
+    return out;
+  }
+
+  /** Uusin palaute päiville [fromIso..toIso]; null jos ei. */
+  function latestCoachFeedback(plan, fromIso, toIso) {
+    const fb = plan && plan.feedback;
+    if (!fb) return null;
+    const keys = Object.keys(fb).filter(function (k) { return k >= fromIso && k <= toIso; }).sort();
+    if (!keys.length) return null;
+    const k = keys[keys.length - 1];
+    return Object.assign({ date: k }, fb[k]);
   }
 
   /** Lyhyt sisältöavain: muuttuu kun valmentaja muuttaa päivän sisältöä. */
@@ -2075,6 +2101,8 @@
 
   global.TreeniPlan = {
     parseCoachPlan,
+    parseCoachFeedback,
+    latestCoachFeedback,
     coachKey,
     findCoachDay,
     coachDayToSession,

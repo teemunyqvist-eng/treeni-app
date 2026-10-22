@@ -1192,3 +1192,19 @@ details.today-fold-card[open] > .today-fold-sum::before { content: '▾ '; }
 .pt-list { list-style: none; margin: 0 0 8px; padding: 0; }
 .pt-list li { padding: 4px 0; font-size: 0.9rem; }
 .link-btn { background: none; border: none; color: var(--accent-light); font: inherit; font-weight: 600; padding: 0; cursor: pointer; text-decoration: underline; }
+
+/* PT:n palaute */
+.pt-fb { border-left: 4px solid var(--warn); }
+.pt-fb.inline { margin: 12px 0 4px; padding: 10px 12px; background: var(--bg-elevated); border-radius: var(--radius-sm); }
+.pt-fb-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 6px; }
+.pt-fb-head .hint { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.pt-fb-title { font-weight: 700; margin-bottom: 4px; }
+.pt-fb-text { white-space: pre-line; line-height: 1.45; }
+.pt-fb-text.clamp { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.pt-fb-more { margin-top: 6px; font-size: 0.85rem; }
+.pt-fb-mini { color: var(--warn); }
+.pt-fb-item { border-top: 1px solid var(--border); padding: 8px 0; }
+.pt-fb-item:first-of-type { border-top: none; }
+.pt-fb-item summary { cursor: pointer; font-weight: 600; }
+.pt-fb-item .when { color: var(--text-muted); font-weight: 400; font-size: 0.85rem; margin-right: 4px; }
+.pt-fb-item .pt-fb-text { margin-top: 6px; }

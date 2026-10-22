@@ -135,7 +135,47 @@
     try {
       if (active.id === 'view-today') renderToday();
       else if (active.id === 'view-week') renderWeek();
+      else if (active.id === 'view-progress') renderProgress();
     } catch (e) { if (typeof console !== 'undefined') console.error(e); }
+  }
+
+  // ---------- PT:n palaute (coach-plan.json "feedback") ----------
+  function feedbackFor(iso) {
+    const fb = coachPlan && coachPlan.feedback;
+    return fb && fb[iso] ? Object.assign({ date: iso }, fb[iso]) : null;
+  }
+
+  function feedbackDateLabel(iso) {
+    const t = todayISO();
+    const y = P.toISO(P.addDays(P.parseISO(t), -1));
+    const d = P.parseISO(iso);
+    const base = P.DOW_FI[d.getDay()] + ' ' + d.getDate() + '.' + (d.getMonth() + 1) + '.';
+    return iso === t ? 'Tänään · ' + base : iso === y ? 'Eilen · ' + base : base;
+  }
+
+  const FB_CLAMP = 220;
+  function renderFeedbackCard(fb, opts) {
+    if (!fb || !fb.text) return '';
+    opts = opts || {};
+    const long = fb.text.length > FB_CLAMP;
+    return `<div class="${opts.inline ? 'pt-fb inline' : 'card pt-fb'}" data-fb-date="${esc(fb.date)}">
+      <div class="pt-fb-head"><span>💬 PT:n palaute</span><span class="hint">${esc(feedbackDateLabel(fb.date))}</span></div>
+      ${fb.title ? `<div class="pt-fb-title">${esc(fb.title)}</div>` : ''}
+      <div class="pt-fb-text${long ? ' clamp' : ''}">${esc(fb.text)}</div>
+      ${long ? '<button type="button" class="link-btn pt-fb-more">Näytä kaikki</button>' : ''}
+    </div>`;
+  }
+
+  function bindFeedbackToggles(root) {
+    if (!root || !root.querySelectorAll) return;
+    root.querySelectorAll('.pt-fb-more').forEach((b) => {
+      b.onclick = (e) => {
+        e.stopPropagation();
+        const txt = b.parentNode.querySelector('.pt-fb-text');
+        const open = txt.classList.toggle('clamp') === false;
+        b.textContent = open ? 'Näytä vähemmän' : 'Näytä kaikki';
+      };
+    });
   }
 
   function coachDayFor(iso) {
@@ -1211,9 +1251,11 @@
           </div>
         </details>
       </div>
+      ${renderFeedbackCard(feedbackFor(iso) || feedbackFor(yIso))}
       ${condPromptsHtml}
       ${tipCardsHtml}
     `;
+    bindFeedbackToggles(el);
 
     el.querySelectorAll('[data-act]').forEach(btn => {
       btn.addEventListener('click', () => handleAction(iso, btn.getAttribute('data-act')));
@@ -2117,7 +2159,7 @@
         : (s.durationMin ? '~' + s.durationMin + ' min' : '');
       return `<div class="week-day${d.date === todayI ? ' today' : ''}${eff.completed ? ' done' : ''}${s.coach ? ' coach' : ''}" data-date="${d.date}">
         <div><div class="dow">${P.DOW_FI[d.dow]}</div><div class="date">${formatFiDate(d.date).replace(/\d{4}$/, '')}</div></div>
-        <div><div class="name">${s.coach ? '🧭 ' : ''}${esc(s.name)}</div>${detail ? `<div class="detail">${esc(detail)}</div>` : ''}</div>
+        <div><div class="name">${s.coach ? '🧭 ' : ''}${esc(s.name)}</div>${detail ? `<div class="detail">${esc(detail)}</div>` : ''}${(() => { const fb = feedbackFor(d.date); return fb ? `<div class="detail pt-fb-mini">💬 PT: ${esc(fb.title || 'palaute')}</div>` : ''; })()}</div>
         <div class="status-ico">${weekDayIcon(eff, s)}</div>
       </div>`;
     }).join('');
@@ -2143,6 +2185,7 @@
       `<div class="session-title">${esc(s.name)}</div>
        <div class="session-meta" style="margin:8px 0">${sessionBadges(day)}</div>
        ${renderSessionBody(s)}
+       ${renderFeedbackCard(feedbackFor(iso), { inline: true })}
        <button class="btn primary block" id="d-done" style="margin-top:14px"${day.completed ? ' disabled' : ''}>✓ Merkitse tehdyksi</button>
        <div class="status-grid two" style="margin-top:8px">
          <button class="status-btn" id="d-keventa">↓ Kevennä</button>
@@ -2158,6 +2201,7 @@
         root.querySelector('#d-siirra').onclick = () => { closeModal(); openRescheduleModal(iso); };
         root.querySelector('#d-sairas').onclick = () => go('sairas');
         bindExerciseTaps(root);
+        bindFeedbackToggles(root);
       }
     );
   }
@@ -2654,6 +2698,17 @@
 
   let coachMsgOffset = 0;
 
+  function renderFeedbackHistory() {
+    const fb = (coachPlan && coachPlan.feedback) || {};
+    const keys = Object.keys(fb).filter(k => k <= todayISO()).sort().reverse().slice(0, 10);
+    if (!keys.length) return '';
+    return `<div class="card pt-fb-hist">
+      <h2>💬 PT:n palautteet</h2>
+      ${keys.map(k => `<details class="pt-fb-item"><summary><span class="when">${esc(feedbackDateLabel(k))}</span> ${esc(fb[k].title || 'Palaute')}</summary>
+        <div class="pt-fb-text">${esc(fb[k].text)}</div></details>`).join('')}
+    </div>`;
+  }
+
   /** Valmentajan palaute: yksi viesti kerrallaan, lasketaan paikallisesta datasta. */
   function renderProgressCoach() {
     if (!TP || !TP.coachMessage) return '';
@@ -2721,6 +2776,7 @@
         <div class="stat-box"><div class="num">${logKm}</div><div class="lbl">km / 4 vk</div></div>
         ${weightBox}
       </div>
+      ${renderFeedbackHistory()}
       ${renderMonthlySection()}
       <div class="card">
         <h2>Viimeisimmät treenit</h2>
