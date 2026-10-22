@@ -2004,6 +2004,7 @@
       updatedAt: coachStr(obj.updatedAt, 40),
       flags: parseCoachFlags(obj.flags),
       feedback: parseCoachFeedback(obj.feedback),
+      done: parseCoachDone(obj.done),
       days: days
     };
   }
@@ -2021,6 +2022,63 @@
       out[k] = { title: coachStr(fb.title, 80), text: text };
     });
     return out;
+  }
+
+  const DONE_TYPES = ['run', 'walk', 'strength', 'floorball', 'cycle', 'swim', 'mobility', 'other'];
+  const DONE_LABELS = { run: 'Juoksu', walk: 'Kävely', strength: 'Voimatreeni', floorball: 'Salibandy',
+    cycle: 'Pyöräily', swim: 'Uinti', mobility: 'Liikkuvuus', other: 'Liikunta' };
+
+  /** Tehdyt treenit (Garmin/käsin): { 'YYYY-MM-DD': [{type, km, min, pace, source, id}] } – vain treenidata. */
+  function parseCoachDone(raw) {
+    const out = {};
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+    Object.keys(raw).filter(function (k) { return COACH_DATE_RE.test(k); }).sort().slice(-90).forEach(function (k) {
+      const list = Array.isArray(raw[k]) ? raw[k] : [];
+      const items = [];
+      list.slice(0, 10).forEach(function (e) {
+        if (!e || typeof e !== 'object') return;
+        const type = DONE_TYPES.indexOf(e.type) >= 0 ? e.type : 'other';
+        const id = typeof e.id === 'string' && /^[A-Za-z0-9_-]{1,24}$/.test(e.id) ? e.id : null;
+        if (!id) return;
+        const km = typeof e.km === 'number' && e.km > 0 && e.km < 200 ? Math.round(e.km * 100) / 100 : null;
+        const min = typeof e.min === 'number' && e.min > 0 && e.min < 1000 ? Math.round(e.min) : null;
+        const pace = typeof e.pace === 'string' && /^\d{1,2}:\d{2}$/.test(e.pace) ? e.pace : null;
+        items.push({ type: type, km: km, min: min, pace: pace, source: e.source === 'garmin' ? 'garmin' : 'manual', id: id });
+      });
+      if (items.length) out[k] = items;
+    });
+    return out;
+  }
+
+  function doneLabel(type) { return DONE_LABELS[type] || DONE_LABELS.other; }
+
+  /** Session → tehdyn treenin tyyppi (run|walk|strength|floorball|mobility|…) tai null (lepo). */
+  function sessionKind(session, status) {
+    const s = session;
+    if (status === 'salibandy' || (s && (s.salibandyDay || s.subtype === 'salibandy' || s.modified === 'salibandy'))) return 'floorball';
+    if (!s) return null;
+    if (s.type === 'run' || s.type === 'race') return 'run';
+    if (s.type === 'strength') return 'strength';
+    if (s.type === 'mobility') return 'mobility';
+    if (s.type === 'other') {
+      if (s.subtype === 'kavely' || /kävely/i.test(s.name || '')) return 'walk';
+      if (s.subtype === 'pyoraily') return 'cycle';
+      if (s.subtype === 'uinti') return 'swim';
+      return 'other';
+    }
+    return null;
+  }
+
+  /** Lokimerkintä → tyyppi (vanhoissa merkinnöissä ei ole kind-kenttää). */
+  function logKind(l) {
+    if (!l) return null;
+    if (l.kind) return l.kind;
+    if (/salibandy|säbä/i.test(l.name || '')) return 'floorball';
+    if (l.type === 'run' || l.type === 'race') return 'run';
+    if (l.type === 'strength') return 'strength';
+    if (l.type === 'mobility') return 'mobility';
+    if (/kävely/i.test(l.name || '')) return 'walk';
+    return l.type === 'rest' ? null : 'other';
   }
 
   /** Uusin palaute päiville [fromIso..toIso]; null jos ei. */
@@ -2103,6 +2161,10 @@
     parseCoachPlan,
     parseCoachFeedback,
     latestCoachFeedback,
+    parseCoachDone,
+    sessionKind,
+    logKind,
+    doneLabel,
     coachKey,
     findCoachDay,
     coachDayToSession,

@@ -1208,3 +1208,9 @@ details.today-fold-card[open] > .today-fold-sum::before { content: '▾ '; }
 .pt-fb-item summary { cursor: pointer; font-weight: 600; }
 .pt-fb-item .when { color: var(--text-muted); font-weight: 400; font-size: 0.85rem; margin-right: 4px; }
 .pt-fb-item .pt-fb-text { margin-top: 6px; }
+
+/* Garmin ✓ – automaattisesti merkitty tehdyksi */
+.badge.garmin { background: rgba(0, 124, 195, 0.22); color: #7cc8f5; }
+.garmin-mini { color: #7cc8f5; font-size: 12px; }
+.done-extra { padding: 10px 14px; }
+.done-extra-row { margin-top: 6px; }

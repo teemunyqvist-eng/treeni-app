@@ -41,6 +41,7 @@
     garmin: null, // täyttyy varmuuskopion tuonnista (vanha Garmin-yhteenveto)
     dayOverrides: {}, // iso -> { status, completed, session, note, completedAt }
     log: [],
+    garminApplied: {}, // done-merkinnän id -> { date, kind } (idempotentti Garmin ✓ Valmis)
     planCache: null,
     health: {
       heightCm: null,
@@ -120,12 +121,107 @@
         const changed = JSON.stringify(plan) !== JSON.stringify(coachPlan);
         coachPlan = plan;
         storeCoachPlan(plan);
-        if (changed) rerenderActive();
+        const applied = applyCoachDone();
+        if (changed || applied) rerenderActive();
         return changed;
       })
       .catch(() => false) // hiljaa: välimuistissa oleva suunnitelma jää käyttöön
       .then((r) => { coachInflight = null; return r; });
     return coachInflight;
+  }
+
+  // ---------- Tehdyt treenit (Garmin) → ✓ Valmis automaattisesti ----------
+  /**
+   * coach-plan.json "done": { pvm: [{type, km, min, pace, source, id}] }.
+   * Jokainen id käsitellään kerran (state.garminApplied) → idempotentti latauksesta toiseen.
+   * Jos päivän suunniteltu treeni on samaa tyyppiä → merkitään tehdyksi (kuten ✓ Valmis).
+   * Jos käyttäjä merkitsi sen jo itse → ei uutta lokimerkintää, vaan Garminin todelliset km/min päivitetään.
+   * Muut (esim. kävely lepopäivänä, ylimääräinen lenkki) → lokiin lisäaktiviteettina.
+   */
+  function applyCoachDone() {
+    const done = coachPlan && coachPlan.done;
+    if (!done || !P.sessionKind) return 0;
+    state.garminApplied = state.garminApplied || {};
+    const applied = state.garminApplied;
+    const today = todayISO();
+    let n = 0;
+    Object.keys(done).sort().forEach((iso) => {
+      if (iso > today) return;
+      (done[iso] || []).forEach((e) => {
+        if (!e || !e.id || applied[e.id]) return;
+        let kind = 'extra';
+        try { kind = applyDoneEntry(iso, e, applied); } catch (err) { if (typeof console !== 'undefined') console.error(err); }
+        applied[e.id] = { date: iso, kind };
+        n++;
+      });
+    });
+    if (n) {
+      const cut = P.toISO(P.addDays(new Date(), -150));
+      Object.keys(applied).forEach((k) => { if (applied[k].date < cut) delete applied[k]; });
+      saveState();
+    }
+    return n;
+  }
+
+  function insertLogSorted(entry) {
+    let i = state.log.findIndex(l => (l.date || '') < entry.date);
+    if (i < 0) i = state.log.length;
+    state.log.splice(i, 0, entry);
+    if (state.log.length > 200) state.log.length = 200;
+  }
+
+  function applyDoneEntry(iso, e, applied) {
+    const day = getEffectiveDay(iso);
+    const s = day && (day.session || day.planned);
+    const kind = day ? P.sessionKind(s, day.status) : null;
+    const garmin = e.source === 'garmin';
+    const actual = { distanceKm: e.km || null, minutes: e.min || null, pace: e.pace || null, garminId: e.id, source: e.source };
+    const planTaken = Object.keys(applied).some(k => applied[k].date === iso && applied[k].kind === 'plan');
+    // Käsin merkitty sama treeni (✓ Valmis) → päivitetään paikallaan, ei tuplana
+    const manual = state.log.find(l => l.date === iso && !l.garminId && P.logKind(l) === e.type);
+    const merge = (l) => Object.assign(l, {
+      distanceKm: e.km != null ? e.km : l.distanceKm, minutes: actual.minutes, pace: actual.pace,
+      garminId: e.id, source: e.source, kind: e.type
+    });
+    if (day && s && kind === e.type && !planTaken && day.status !== 'sairas') {
+      const ov = state.dayOverrides[iso] || {};
+      const sess = Object.assign({}, s, e.km ? { distanceKm: e.km } : {});
+      setOverride(iso, {
+        completed: true,
+        status: 'done',
+        session: sess,
+        completedAt: ov.completedAt || new Date().toISOString(),
+        garmin: { id: e.id, km: actual.distanceKm, min: actual.minutes, pace: actual.pace, source: e.source }
+      });
+      if (manual) merge(manual);
+      else insertLogSorted(Object.assign({
+        date: iso, name: s.name, type: s.type, kind: e.type,
+        coach: s.coach ? (s.coach.selected || 'perus') : undefined,
+        at: new Date().toISOString()
+      }, actual));
+      return 'plan';
+    }
+    if (manual && (!day || !day.completed || kind !== e.type)) { merge(manual); return 'log'; }
+    const T = { run: 'run', strength: 'strength', mobility: 'mobility' };
+    insertLogSorted(Object.assign({
+      date: iso,
+      name: P.doneLabel(e.type) + (garmin ? '' : ' (käsin)'),
+      type: T[e.type] || 'other', kind: e.type, extra: true,
+      at: new Date().toISOString()
+    }, actual));
+    return 'extra';
+  }
+
+  function doneExtrasFor(iso) {
+    return (state.log || []).filter(l => l.date === iso && l.extra && l.garminId);
+  }
+
+  function doneSummary(l) {
+    const parts = [];
+    if (l.distanceKm) parts.push(String(l.distanceKm).replace('.', ',') + ' km');
+    if (l.minutes) parts.push(Math.round(l.minutes) + ' min');
+    if (l.pace && (l.kind === 'run')) parts.push(l.pace + '/km');
+    return parts.join(' · ');
   }
 
   function rerenderActive() {
@@ -518,6 +614,7 @@
       completed: !!override.completed,
       note: override.note || '',
       completedAt: override.completedAt || null,
+      garmin: override.garmin || null,
       shoulderRehab: shoulder,
       week: found.week
     };
@@ -656,6 +753,13 @@
     return `${d}.${m}.${y}`;
   }
 
+  function renderDoneExtras(iso) {
+    const ex = doneExtrasFor(iso);
+    if (!ex.length) return '';
+    return `<div class="card done-extra"><div class="hint">Myös tehty tänään</div>${ex.map(l =>
+      `<div class="done-extra-row"><span class="badge done garmin">Garmin ✓</span> <strong>${esc(l.name)}</strong> <span class="hint">${esc(doneSummary(l))}</span></div>`).join('')}</div>`;
+  }
+
   function sessionBadges(day) {
     const s = day.session || day.planned;
     if (!s) return '';
@@ -672,7 +776,8 @@
     }
     if (s.type === 'race') html += '<span class="badge run">Kisa</span>';
     if (s.coach) html += '<span class="badge coach">Valmentajalta</span>';
-    if (day.completed) html += '<span class="badge done">Tehty</span>';
+    if (day.completed) html += day.garmin && day.garmin.source === 'garmin'
+      ? '<span class="badge done garmin">Garmin ✓</span>' : '<span class="badge done">Tehty</span>';
     if (day.status === 'sairas') html += '<span class="badge skip">Sairas</span>';
     if (day.status === 'salibandy' || s.salibandyDay || s.modified === 'salibandy')
       html += '<span class="badge salibandy">Salibandy</span>';
@@ -1251,6 +1356,7 @@
           </div>
         </details>
       </div>
+      ${renderDoneExtras(iso)}
       ${renderFeedbackCard(feedbackFor(iso) || feedbackFor(yIso))}
       ${condPromptsHtml}
       ${tipCardsHtml}
@@ -1349,6 +1455,7 @@
         name: session.name,
         type: session.type,
         distanceKm: session.distanceKm || null,
+        kind: P.sessionKind ? (P.sessionKind(session, day.status) || undefined) : undefined,
         coach: session.coach ? (session.coach.selected || 'perus') : undefined,
         at: new Date().toISOString()
       });
@@ -2154,12 +2261,18 @@
       if (s && s.distanceKm && s.type !== 'other') km += s.distanceKm;
       if (eff.completed) done++;
       if (s && s.coach) coachDays++;
+      doneExtrasFor(d.date).forEach(l => { if (l.type === 'run' && l.distanceKm) km += l.distanceKm; });
       const detail = s.distanceKm
         ? s.distanceKm + ' km'
         : (s.durationMin ? '~' + s.durationMin + ' min' : '');
       return `<div class="week-day${d.date === todayI ? ' today' : ''}${eff.completed ? ' done' : ''}${s.coach ? ' coach' : ''}" data-date="${d.date}">
         <div><div class="dow">${P.DOW_FI[d.dow]}</div><div class="date">${formatFiDate(d.date).replace(/\d{4}$/, '')}</div></div>
-        <div><div class="name">${s.coach ? '🧭 ' : ''}${esc(s.name)}</div>${detail ? `<div class="detail">${esc(detail)}</div>` : ''}${(() => { const fb = feedbackFor(d.date); return fb ? `<div class="detail pt-fb-mini">💬 PT: ${esc(fb.title || 'palaute')}</div>` : ''; })()}</div>
+        <div><div class="name">${s.coach ? '🧭 ' : ''}${esc(s.name)}</div>${detail ? `<div class="detail">${esc(detail)}</div>` : ''}${(() => { const fb = feedbackFor(d.date); return fb ? `<div class="detail pt-fb-mini">💬 PT: ${esc(fb.title || 'palaute')}</div>` : ''; })()}${(() => {
+          const g = [];
+          if (eff.garmin && eff.garmin.source === 'garmin') g.push(doneSummary({ distanceKm: eff.garmin.km, minutes: eff.garmin.min }));
+          doneExtrasFor(d.date).forEach(l => g.push('+ ' + l.name + (doneSummary(l) ? ' ' + doneSummary(l) : '')));
+          return g.length ? `<div class="detail garmin-mini">Garmin ✓ ${esc(g.filter(Boolean).join(' · '))}</div>` : '';
+        })()}</div>
         <div class="status-ico">${weekDayIcon(eff, s)}</div>
       </div>`;
     }).join('');
@@ -2750,10 +2863,18 @@
       if (s && s.type !== 'other' && s.distanceKm) weekKm += s.distanceKm;
       if (s && s.type === 'strength') strengthDone++;
     }
+    // Garminin lisäaktiviteetit (ei suunnitelmassa): lasketaan mukaan
+    const weekStartIso = P.toISO(weekStart), weekEndIso = P.toISO(P.addDays(weekStart, 6));
+    (state.log || []).filter(l => l.extra && l.date >= weekStartIso && l.date <= weekEndIso).forEach(l => {
+      completedCount++;
+      if (l.type === 'run' && l.distanceKm) weekKm += l.distanceKm;
+      if (l.type === 'strength') strengthDone++;
+    });
     weekKm = Math.round(weekKm * 10) / 10;
 
     const cutoff = P.toISO(P.addDays(now, -28));
-    const logKm = Math.round(state.log.filter(l => l.date >= cutoff)
+    // Juoksukilometrit: kävely/salibandy (type other) ei lisää
+    const logKm = Math.round(state.log.filter(l => l.date >= cutoff && l.type !== 'other')
       .reduce((s, l) => s + (l.distanceKm || 0), 0) * 10) / 10;
 
     let weightBox = '';
@@ -2784,7 +2905,7 @@
           ? '<div class="empty">Ei vielä merkittyjä treenejä. Paina Tänään-näkymässä ✓ Valmis.</div>'
           : state.log.slice(0, 10).map(l =>
               `<div class="log-item"><div class="when">${formatFiDate(l.date)}</div>
-               <strong>${esc(l.name)}</strong>${l.distanceKm ? ' · ' + l.distanceKm + ' km' : ''}</div>`
+               <strong>${esc(l.name)}</strong>${l.distanceKm ? ' · ' + l.distanceKm + ' km' : ''}${l.minutes ? ' · ' + Math.round(l.minutes) + ' min' : ''}${l.garminId && l.source === 'garmin' ? ' <span class="badge done garmin">Garmin ✓</span>' : ''}</div>`
             ).join('')}
       </div>
     `;
@@ -3161,6 +3282,7 @@
     }
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalLevels > 0) closeModalTop(); });
     ensurePlan();
+    applyCoachDone(); // välimuistissa oleva coach-plan → Garmin ✓ heti, verkkohaku päivittää
     updateHeader();
 
     document.querySelectorAll('[data-view]').forEach(btn => {
