@@ -20,7 +20,8 @@
       units: 'km',
       userName: '', // käyttäjä asettaa Asetuksista (tai varmuuskopion tuonnilla)
       reminders: false,
-      salibandyDow: 'none', // kova joukkuelaji-ilta, asetetaan Asetuksista
+      salibandyDow: 2, // kova joukkuelaji-ilta (ti), muutettavissa Asetuksista
+      noGymCard: true, // ei salikorttia → salitreenit kotipiireinä
       marathonGoal: '',
       raceTime: ''
     },
@@ -203,6 +204,7 @@
       if (!raw) return structuredClone(DEFAULTS);
       const parsed = JSON.parse(raw);
       const merged = deepMerge(structuredClone(DEFAULTS), parsed);
+      migrateSettings(merged);
       // Migrate legacy free-text injury notes into pains if empty
       if ((!merged.health.pains || !merged.health.pains.length) &&
           merged.baseline && /polvi|nilkka|lonkka|selkä/i.test(merged.baseline.injuryNotes || '')) {
@@ -212,6 +214,25 @@
     } catch (e) {
       return structuredClone(DEFAULTS);
     }
+  }
+
+  /**
+   * Kertamigraatio: vanha versio tallensi oletukseksi salibandy = perjantai (5),
+   * joka jäi puhelimen tallennukseen. Salibandy on tiistaisin → korjaa kerran.
+   * Käyttäjän myöhempi oma valinta Asetuksista säilyy (salibandyFix = 1).
+   */
+  function migrateSettings(st) {
+    if (!st || !st.settings) return;
+    const s = st.settings;
+    if (!s.salibandyFix) {
+      const d = s.salibandyDow;
+      if (d === 5 || d === '5' || d === 'none' || d === null || d === undefined || d === '') {
+        s.salibandyDow = 2;
+        st.planCache = null;
+      }
+      s.salibandyFix = 1;
+    }
+    if (s.noGymCard === undefined) s.noGymCard = true;
   }
 
   function deepMerge(base, over) {
@@ -287,6 +308,19 @@
     Object.keys(data).forEach(k => {
       const v = data[k];
       const def = DEFAULTS[k];
+      if (k === 'health' && v && typeof v === 'object' && !Array.isArray(v)) {
+        // Terveystiedot yhdistetään: tiedostossa olevat kentät päivittyvät, muut (kivut ym.) säilyvät
+        next.health = deepMerge(deepMerge(structuredClone(DEFAULTS.health), state.health || {}), structuredClone(v));
+        return;
+      }
+      if (k === 'monthlyCheckins' && Array.isArray(v)) {
+        // Kuukausimerkinnät yhdistetään (sama id tai päivä → tiedoston versio)
+        const incoming = v.filter(e => e && e.date).map(e => (TP ? TP.normalizeEntry(e) : e));
+        const keep = (Array.isArray(state.monthlyCheckins) ? state.monthlyCheckins : [])
+          .filter(e => !incoming.some(n => n.id === e.id || n.date === e.date));
+        next.monthlyCheckins = keep.concat(incoming);
+        return;
+      }
       if (def && typeof def === 'object' && !Array.isArray(def) && v && typeof v === 'object' && !Array.isArray(v)) {
         next[k] = deepMerge(structuredClone(def), v);
       } else {
@@ -294,8 +328,13 @@
       }
     });
     next.planCache = null;
+    migrateSettings(next);
     state = next;
-    state.planCache = P.generatePlan(state.settings, garminForPlan());
+    if (TP && state.monthlyCheckins && state.monthlyCheckins.length) {
+      const w = TP.sortEntriesDesc(state.monthlyCheckins).find(e => e.weightKg != null);
+      if (w) state.health.weightKg = w.weightKg;
+    }
+    state.planCache = buildPlan();
     saveState();
     return Object.keys(data);
   }
@@ -321,16 +360,32 @@
     return g;
   }
 
+  function noGym() { return state.settings.noGymCard !== false; }
+
+  /** Suunnitelman asetukset: ilman salikorttia voima oletuksena kotona. */
+  function planSettings() {
+    return noGym() ? Object.assign({}, state.settings, { strengthLocation: 'koti' }) : state.settings;
+  }
+
+  function buildPlan() {
+    const plan = P.generatePlan(planSettings(), garminForPlan());
+    plan.salibandyDow = state.settings.salibandyDow;
+    plan.noGym = noGym();
+    return plan;
+  }
+
   function ensurePlan(force) {
     const need =
       force ||
       !state.planCache ||
+      state.planCache.salibandyDow !== state.settings.salibandyDow ||
+      state.planCache.noGym !== noGym() ||
       state.planCache.raceDate !== state.settings.raceDate ||
       !planCoversToday(state.planCache) ||
       !planHasWarmup(state.planCache) ||
       !planHasGym60(state.planCache);
     if (need) {
-      state.planCache = P.generatePlan(state.settings, garminForPlan());
+      state.planCache = buildPlan();
       saveState();
     }
     return state.planCache;
@@ -403,6 +458,10 @@
       const ansMap = answersForDay(iso);
       const softened = P.applyPainSoftening(session, state.health.pains, ansMap);
       if (softened && softened.painSoftened) session = softened;
+    }
+    // Ei salikorttia: salitreenit (automaattinen, valmentajan, vaihdettu) → vastaava kotipiiri
+    if (session && noGym() && P.noGymSession) {
+      session = P.noGymSession(session, found.day.weekIndex);
     }
     // Olkapäätila: suodata kaikki sessiot (automaattinen, valmentajan, vaihdettu, kevennetty/kovennettu)
     const shoulder = shoulderRehabActive();
@@ -1131,10 +1190,10 @@
         </div>
 
         <details class="today-fold">
-          <summary class="today-fold-sum"><span>Vaihda treeni</span><span class="hint">sali · koti · juoksu · muu</span></summary>
+          <summary class="today-fold-sum"><span>Vaihda treeni</span><span class="hint">${noGym() ? 'koti' : 'sali · koti'} · juoksu · muu</span></summary>
           <div class="swap-grid" role="group" aria-label="Vaihda treenityyppi">
             ${swapBtn('swap-juoksu', '🏃', 'Juoksu', s.type === 'run' || s.type === 'race')}
-            ${swapBtn('swap-sali', '🏋️', 'Sali', s.type === 'strength' && s.location === 'sali')}
+            ${noGym() ? '' : swapBtn('swap-sali', '🏋️', 'Sali', s.type === 'strength' && s.location === 'sali')}
             ${swapBtn('swap-koti', '🏠', 'Koti', s.type === 'strength' && s.location === 'koti')}
             ${swapBtn('swap-lihashuolto', '🧘', 'Lihashuolto', s.type === 'mobility' || s.subtype === 'lihashuolto')}
             ${swapBtn('swap-kavely', '🚶', 'Kävely', s.type === 'other' && s.subtype === 'kavely')}
@@ -2036,7 +2095,7 @@
     const wsISO = P.toISO(ws);
     let week = plan.weeks.find(w => w.weekStart === wsISO);
     if (!week) {
-      week = P.generatePlan(state.settings, garminForPlan()).weeks.find(w => w.weekStart === wsISO) || null;
+      week = buildPlan().weeks.find(w => w.weekStart === wsISO) || null;
     }
     const list = document.getElementById('week-list');
     const range = `${formatFiDate(wsISO).replace(/\d{4}$/, '')}–${formatFiDate(P.toISO(P.addDays(ws, 6))).replace(/\d{4}$/, '')}`;
@@ -2593,6 +2652,30 @@
     });
   }
 
+  let coachMsgOffset = 0;
+
+  /** Valmentajan palaute: yksi viesti kerrallaan, lasketaan paikallisesta datasta. */
+  function renderProgressCoach() {
+    if (!TP || !TP.coachMessage) return '';
+    let msg;
+    try {
+      msg = TP.coachMessage({
+        today: todayISO(),
+        log: state.log || [],
+        weights: getMonthlyCheckins().filter(e => e.weightKg != null).map(e => ({ date: e.date, kg: e.weightKg }))
+      }, coachMsgOffset);
+    } catch (e) {
+      return '';
+    }
+    const ico = msg.tone === 'praise' ? '🔥' : msg.tone === 'kick' ? '👊' : '🧭';
+    const title = msg.tone === 'praise' ? 'Ansaittu' : msg.tone === 'kick' ? 'Rehellisesti' : 'Valmentaja';
+    return `<div class="card coach-msg tone-${msg.tone}" id="coach-msg">
+      <div class="coach-msg-head"><span>${ico} ${title}</span>${msg.count > 1
+        ? `<button type="button" class="coach-msg-next" id="coach-msg-next" aria-label="Seuraava viesti">↻ ${msg.index + 1}/${msg.count}</button>` : ''}</div>
+      <div class="coach-msg-text">${esc(msg.text)}</div>
+    </div>`;
+  }
+
   function renderProgress() {
     updateHeader();
     const now = new Date();
@@ -2630,6 +2713,7 @@
     }
 
     document.getElementById('progress-content').innerHTML = `
+      ${renderProgressCoach()}
       <div class="stats-grid">
         <div class="stat-box"><div class="num">${weekKm}</div><div class="lbl">km tällä viikolla</div></div>
         <div class="stat-box"><div class="num">${completedCount}</div><div class="lbl">treeniä tehty / vk</div></div>
@@ -2649,6 +2733,8 @@
       </div>
     `;
     bindMonthlySection();
+    const nx = document.getElementById('coach-msg-next');
+    if (nx) nx.onclick = () => { coachMsgOffset++; renderProgress(); };
   }
 
   // ---------- Settings ----------
@@ -2693,10 +2779,30 @@
           </select>
           <div class="hint">Ei laatutreeniä salibandy-iltana eikä seuraavana päivänä.</div>
         </div>
+        <label class="toggle-row"><input type="checkbox" id="set-no-gym"${noGym() ? ' checked' : ''} />
+          <span><strong>Ei salikorttia</strong><br/>
+          <span class="hint">Salitreenit vaihtuvat automaattisesti vastaaviksi kotipiireiksi. Ota pois, kun salikortti on.</span></span></label>
+        <details class="settings-fold" id="pt-fold">
+          <summary>🏋️ Ennen salia: pyydä PT:tä näyttämään</summary>
+          <div class="hint" style="margin:6px 0 8px">Aloittelijana 2–3 PT-kertaa ennen omia salitreenejä. Pyydä näyttämään ja korjaamaan nämä – kevyillä painoilla:</div>
+          <ul class="pt-list">
+            ${[
+              ['back_squat', 'Kyykky (tanko + goblet)', 'syvyys, polvet varpaiden suuntaan, keskivartalon tuki'],
+              ['deadlift', 'Maastaveto', 'selkä neutraali, tanko lähellä, lonkasta liike'],
+              ['rdl', 'Romanian maastaveto', 'lonkkasarana, takareisien venytys, ei pyöreää selkää'],
+              ['bench_press', 'Penkkipunnerrus', 'lapojen asento, tangon rata, olkapäät turvassa'],
+              ['overhead_press', 'Pystypunnerrus', 'kylkiluut alas, ei notkoselkää'],
+              ['bent_over_row', 'Kulmasoutu / alatalja', 'lavat taakse, ei nykimistä'],
+              ['lat_pulldown', 'Ylätalja', 'vetosuunta rintaan, olkapäät alhaalla'],
+              ['leg_press', 'Jalkaprässi', 'alaselkä kiinni penkissä, polvet eivät lukitu']
+            ].map(([id, name, why]) => `<li><button type="button" class="link-btn" data-ex="${id}">${esc(name)}</button> <span class="hint">– ${esc(why)}</span></li>`).join('')}
+          </ul>
+          <div class="hint">Kysy myös: lämmittelysarjat, sopiva aloituspaino (RPE 6–7) ja laitteiden säädöt.</div>
+        </details>
         <div class="form-row">
           <div class="form-group">
             <label>Voima oletuksena</label>
-            <select id="set-strength">
+            <select id="set-strength"${noGym() ? ' disabled title="Ei salikorttia: aina koti"' : ''}>
               <option value="sali"${s.strengthLocation==='sali'?' selected':''}>Sali</option>
               <option value="koti"${s.strengthLocation==='koti'?' selected':''}>Koti</option>
             </select>
@@ -2796,6 +2902,18 @@
     `;
 
     document.getElementById('save-settings').onclick = saveSettingsFromForm;
+    const ngT = document.getElementById('set-no-gym');
+    if (ngT) ngT.onchange = () => {
+      state.settings.noGymCard = !!ngT.checked;
+      state.planCache = null;
+      ensurePlan(true);
+      saveState();
+      toast(ngT.checked ? 'Ei salikorttia: salitreenit kotona' : 'Salikortti käytössä: salitreenit salilla');
+      renderSettings();
+    };
+    document.querySelectorAll('#pt-fold [data-ex]').forEach(b => {
+      b.onclick = () => openExerciseDetail(b.getAttribute('data-ex'));
+    });
     const shT = document.getElementById('set-shoulder-rehab');
     if (shT) shT.onchange = () => {
       setShoulderRehabLocal(shT.checked);

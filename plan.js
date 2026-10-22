@@ -520,7 +520,7 @@
           durationMin: 60
         };
       }
-      // pe (5): lepo (usein hyvä salibandy-ilta)
+      // pe (5): lepo
       else if (dow === 5) {
         session = {
           type: 'rest',
@@ -528,8 +528,7 @@
           name: 'Lepo / palautus',
           details:
             'Täysi lepo tai kevyt kävely 20–30 min.\n' +
-            'Hyvä uni ja ravinto – vuorotyössä tämä on tärkeää.\n' +
-            'Jos salibandy-ilta: tämä riittää kovaksi päiväksi – älä lisää laatu-/intervallitreeniä.'
+            'Hyvä uni ja ravinto – vuorotyössä tämä on tärkeää.'
         };
       }
       // la (6): pitkä
@@ -872,6 +871,36 @@
     swapped.warmup = warmupFor('strength', !!shortened);
     swapped.mobility = mobilityFor('strength');
     return swapped;
+  }
+
+  /**
+   * Ei salikorttia: salitreeni → vastaava kotipiiri (A↔A, B↔B). Valmentajan salipäivä
+   * korvataan kotipiirillä, valmentajan muistiinpano säilyy. Muut sessiot ennallaan.
+   */
+  function noGymSession(session, weekIndex) {
+    if (!session || session.type !== 'strength' || session.location !== 'sali') return session;
+    const known = session.subtype === 'gymA' || session.subtype === 'gymB' ||
+      session.altId === 'homeA' || session.altId === 'homeB';
+    let home;
+    if (known && !session.coach) {
+      home = swapLocation(session);
+      if (session.modified === 'keventa' || session.modified === 'lyhyt' || /lyhyt/i.test(session.name || '')) {
+        home = Object.assign(shortStrength(home), { warmup: home.warmup, mobility: home.mobility, location: 'koti' });
+      }
+      home.modified = session.modified || 'ei-salia';
+    } else {
+      const tmpl = strengthFor(typeof weekIndex === 'number' ? weekIndex : 0, 'koti');
+      home = buildStrengthSession(tmpl, session.durationMin || 45);
+      home.modified = 'ei-salia';
+      if (session.coach) {
+        home.coach = Object.assign({}, session.coach, { options: [] });
+        home.name = 'Kotipiiri (salitreenin tilalla)';
+      }
+    }
+    home.noGym = true;
+    home.details = '🏠 Ei salikorttia → kotiversio' +
+      (session.coach ? ' (valmentajan salitreeni: ' + (session.name || '') + ')' : '') + '.\n' + (home.details || '');
+    return home;
   }
 
   /**
@@ -2071,6 +2100,7 @@
     applyKoventa,
     applyShortSwap,
     swapLocation,
+    noGymSession,
     swapSessionType,
     buildLihashuoltoSession,
     buildEasyRunSession,

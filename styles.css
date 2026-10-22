@@ -1181,3 +1181,14 @@ details.today-fold-card[open] > .today-fold-sum::before { content: '▾ '; }
 .toggle-row input { width: 22px; height: 22px; flex: none; margin-top: 2px; accent-color: #e8a040; }
 .ex-lib-card .rehab-meta { color: #f0b866; }
 .ex-lib-card .warn-meta { color: #e88a8a; }
+
+/* Valmentajan palaute (Edistyminen) */
+.coach-msg { border-left: 4px solid var(--info); }
+.coach-msg.tone-praise { border-left-color: var(--accent-light); }
+.coach-msg.tone-kick { border-left-color: var(--danger); }
+.coach-msg-head { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 6px; }
+.coach-msg-text { font-size: 1rem; line-height: 1.45; font-weight: 600; }
+.coach-msg-next { background: none; border: 1px solid var(--border); color: var(--text-muted); border-radius: 999px; padding: 2px 10px; font-size: 0.75rem; cursor: pointer; }
+.pt-list { list-style: none; margin: 0 0 8px; padding: 0; }
+.pt-list li { padding: 4px 0; font-size: 0.9rem; }
+.link-btn { background: none; border: none; color: var(--accent-light); font: inherit; font-weight: 600; padding: 0; cursor: pointer; text-decoration: underline; }
