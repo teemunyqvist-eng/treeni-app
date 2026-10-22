@@ -466,8 +466,65 @@
     toast._t = setTimeout(() => el.classList.remove('show'), 2600);
   }
 
+  // ---------- Takaisin-nappi (History API) ----------
+  // Jokainen avoin ikkuna = yksi historiamerkintä {treeni:1, view, modal:taso}. Välilehti (≠ Tänään)
+  // = yksi merkintä Tänään-merkinnän päällä. Takaisin sulkee ylimmän ikkunan / palaa Tänään-näkymään;
+  // Tänään-näkymässä ilman ikkunoita takaisin poistuu normaalisti. Omat history.go()-kutsut jonotetaan,
+  // jotta pushState ei osu kesken siirtymän eikä popstate sulje mitään toiseen kertaan.
+  const H = (typeof history !== 'undefined' && history && typeof history.pushState === 'function') ? history : null;
+  const nav = { pending: 0, queue: [], timer: null };
+  let currentView = 'today';
+  let modalLevels = 0;
+  const modalStack = [];
+
+  function navFlush() {
+    while (nav.pending === 0 && nav.queue.length) {
+      const fn = nav.queue.shift();
+      try { fn(); } catch (e) { console.error(e); }
+    }
+  }
+  function navMutate(fn) {
+    if (!H) return;
+    if (nav.pending > 0) nav.queue.push(fn); else fn();
+  }
+  function navBackRaw(n) {
+    if (!H || !n) return;
+    nav.pending++;
+    clearTimeout(nav.timer);
+    nav.timer = setTimeout(() => { if (nav.pending) { nav.pending = 0; navFlush(); } }, 1000);
+    H.go(-n);
+  }
+  function navBack(n) { navMutate(() => navBackRaw(n)); }
+  function navState() {
+    const s = H && H.state;
+    return s && s.treeni ? s : { treeni: 1, view: 'today', modal: 0 };
+  }
+  function navPopstate(e) {
+    if (nav.pending > 0) {
+      nav.pending--;
+      if (!nav.pending) { clearTimeout(nav.timer); navFlush(); }
+      return;
+    }
+    const s = (e && e.state && e.state.treeni) ? e.state : { view: 'today', modal: 0 };
+    while (modalLevels > (s.modal || 0)) closeModalTopUI();
+    const v = s.view || 'today';
+    if (v !== currentView) renderView(v);
+  }
+
   // ---------- Views ----------
   function showView(name) {
+    renderView(name);
+    navMutate(() => {
+      const s = navState();
+      if ((s.modal || 0) > 0) { H.replaceState(Object.assign({}, s, { view: name }), ''); return; }
+      if (name === 'today') { if (s.view && s.view !== 'today') navBackRaw(1); }
+      else if (!s.view || s.view === 'today') H.pushState({ treeni: 1, view: name, modal: 0 }, '');
+      else H.replaceState({ treeni: 1, view: name, modal: 0 }, '');
+    });
+  }
+
+  function renderView(name) {
+    currentView = name;
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('active', b.getAttribute('data-view') === name));
     const view = document.getElementById('view-' + name);
@@ -1894,22 +1951,66 @@
   function openModal(title, bodyHtml, bind) {
     const overlay = document.getElementById('modal-overlay');
     const modal = document.getElementById('modal');
+    if (modalLevels > 0 && overlay.classList.contains('open')) {
+      // sisäkkäinen ikkuna: säilytä alempi ikkuna DOM-solmuina (tapahtumankäsittelijät ja tila säilyvät)
+      const frag = document.createDocumentFragment();
+      while (modal.firstChild) frag.appendChild(modal.firstChild);
+      modalStack.push({ frag, cls: modal.className, scroll: modal.scrollTop });
+      modal.className = 'modal';
+    } else {
+      modalLevels = 0;
+      modalStack.length = 0;
+    }
     modal.innerHTML = `
       <button class="modal-close" id="modal-x" aria-label="Sulje">×</button>
       <h2>${esc(title)}</h2>
       ${bodyHtml}
     `;
     overlay.classList.add('open');
-    document.getElementById('modal-x').onclick = closeModal;
-    overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
+    modalLevels++;
+    const lvl = modalLevels;
+    navMutate(() => H.pushState({ treeni: 1, view: currentView, modal: lvl }, ''));
+    modal.querySelector('#modal-x').onclick = closeModalTop;
+    overlay.onclick = (e) => { if (e.target === overlay) closeModalTop(); };
     if (bind) bind(modal);
   }
 
-  function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('open');
+  // Sulkee vain ylimmän ikkunan käyttöliittymästä (ei koske historiaan).
+  function closeModalTopUI() {
+    if (modalLevels <= 0) return;
+    const overlay = document.getElementById('modal-overlay');
     const modal = document.getElementById('modal');
-    if (modal) modal.classList.remove('coach-modal');
+    if (coachState && modal.classList.contains('coach-modal')) coachCleanup();
+    modalLevels--;
+    const prev = modalStack.pop();
+    if (prev && modalLevels > 0) {
+      modal.innerHTML = '';
+      modal.appendChild(prev.frag);
+      modal.className = prev.cls;
+      modal.scrollTop = prev.scroll || 0;
+    } else {
+      modalStack.length = 0;
+      modalLevels = 0;
+      overlay.classList.remove('open');
+      modal.className = 'modal';
+    }
+  }
+
+  // ✕ / tausta / Esc: sulje ylin ikkuna ja poista sen historiamerkintä.
+  function closeModalTop() {
+    if (modalLevels <= 0) return;
+    closeModalTopUI();
+    navBack(1);
+  }
+
+  // Ohjelmallinen sulku (esim. toiminnon jälkeen): sulje kaikki ikkunat.
+  function closeModal() {
+    const n = modalLevels;
+    while (modalLevels > 0) closeModalTopUI();
+    const overlay = document.getElementById('modal-overlay');
+    if (overlay) overlay.classList.remove('open');
     if (coachState) coachCleanup();
+    navBack(n);
   }
 
   // ---------- Week ----------
@@ -2879,6 +2980,12 @@
 
   // ---------- Init ----------
   function init() {
+    if (H) {
+      try { H.scrollRestoration = 'manual'; } catch (e) {}
+      H.replaceState({ treeni: 1, view: 'today', modal: 0 }, '');
+      window.addEventListener('popstate', navPopstate);
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalLevels > 0) closeModalTop(); });
     ensurePlan();
     updateHeader();
 
