@@ -1,11 +1,49 @@
 {
-  "version": 7,
-  "updatedAt": "2026-10-22T19:04:54+03:00",
+  "version": 8,
+  "updatedAt": "2026-10-22T19:40:43+03:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
       "text": "Juuri tätä yövuoron jälkeen tarvittiin: reipas 9:16/km mutta kevyt kuorma, jalat liikkui ilman rasitusta. Ei korjattavaa. Huomenna päivän tärkein juttu: 11 km pitkä kevyt, pysy kevyellä alueella koko matka. Mäessä kävele mieluummin kuin esitä sankaria. Nuku kunnolla."
     }
+  },
+  "done": {
+    "2026-10-20": [
+      {
+        "type": "run",
+        "km": 7.89,
+        "min": 53.4,
+        "pace": "6:46",
+        "source": "garmin",
+        "id": "g2cb4283d89"
+      },
+      {
+        "type": "floorball",
+        "min": 59.3,
+        "source": "garmin",
+        "id": "ga320edbd19"
+      }
+    ],
+    "2026-10-21": [
+      {
+        "type": "walk",
+        "km": 4.77,
+        "min": 56.2,
+        "pace": "11:48",
+        "source": "garmin",
+        "id": "g878f3ca616"
+      }
+    ],
+    "2026-10-22": [
+      {
+        "type": "walk",
+        "km": 4.31,
+        "min": 40.0,
+        "pace": "9:16",
+        "source": "garmin",
+        "id": "gb05336ab81"
+      }
+    ]
   },
   "days": [
     {
