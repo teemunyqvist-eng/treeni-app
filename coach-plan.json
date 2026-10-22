@@ -1,6 +1,12 @@
 {
-  "version": 6,
-  "updatedAt": "2026-10-22T02:56:27+03:00",
+  "version": 7,
+  "updatedAt": "2026-10-22T19:04:54+03:00",
+  "feedback": {
+    "2026-10-22": {
+      "title": "Kävely 4,3 km",
+      "text": "Juuri tätä yövuoron jälkeen tarvittiin: reipas 9:16/km mutta kevyt kuorma, jalat liikkui ilman rasitusta. Ei korjattavaa. Huomenna päivän tärkein juttu: 11 km pitkä kevyt, pysy kevyellä alueella koko matka. Mäessä kävele mieluummin kuin esitä sankaria. Nuku kunnolla."
+    }
+  },
   "days": [
     {
       "date": "2026-10-22",
