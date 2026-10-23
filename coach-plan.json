@@ -1,10 +1,14 @@
 {
-  "version": 9,
-  "updatedAt": "2026-10-23T10:05:33+03:00",
+  "version": 10,
+  "updatedAt": "2026-10-23T10:20:40+03:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
       "text": "Juuri tätä yövuoron jälkeen tarvittiin: reipas 9:16/km mutta kevyt kuorma, jalat liikkui ilman rasitusta. Ei korjattavaa. Huomenna päivän tärkein juttu: 11 km pitkä kevyt, pysy kevyellä alueella koko matka. Mäessä kävele mieluummin kuin esitä sankaria. Nuku kunnolla."
+    },
+    "2026-10-23": {
+      "title": "Pitkä kevyt 11 km – juuri oikein",
+      "text": "11,0 km / 1:15:14 / 6:50 per km. Tätä haettiin, saatana! Pysyit kevyellä alueella koko lenkin, vauhti tasainen 6:40–6:55 ja mäet otettiin rauhassa. Viimeisellä kilsalla vähän kiristit – ei tarvetta, pitkä kevyt on kevyt loppuun asti. Huomenna kotipiiri ennen saunaa, sunnuntaina vain rento 4–5 km tai kävely. Ei bonuskilsoja."
     }
   },
   "done": {
