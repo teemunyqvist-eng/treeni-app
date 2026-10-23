@@ -3055,16 +3055,17 @@
         <p class="hint" style="margin:0 0 8px">Tiedot ovat vain tällä laitteella. Vie JSON-tiedostoksi ja tuo takaisin esim. uudella puhelimella.</p>
         <button class="btn primary block" id="backup-export" type="button">⬇ Vie JSON</button>
         <label class="file-drop" style="margin-top:10px">
-          <input type="file" id="backup-file" accept=".json,application/json" />
+          <input type="file" id="backup-file" accept="*/*" />
           ⬆ Tuo JSON-tiedosto
         </label>
-        <details class="settings-fold">
-          <summary>Kopioi / liitä tekstinä</summary>
+        <details class="settings-fold" open>
+          <summary>Kopioi / liitä tekstinä (helpoin puhelimella)</summary>
+          <p class="hint" style="margin:8px 0 0">Liitä koko JSON alle ja paina Tuo. Jos tiedosto on iso, käytä mieluummin &quot;Tuo JSON-tiedosto&quot;.</p>
           <button class="btn block" id="backup-copy" type="button" style="margin-top:8px">📋 Kopioi JSON leikepöydälle</button>
           <div class="form-group" style="margin-top:10px">
-            <textarea id="backup-paste" rows="4" placeholder='{"app":"treeni-app", ...}'></textarea>
+            <textarea id="backup-paste" rows="6" placeholder='{"app":"treeni-app", ...}'></textarea>
           </div>
-          <button class="btn block" id="backup-import-paste" type="button">Tuo liitetty JSON</button>
+          <button class="btn primary block" id="backup-import-paste" type="button">Tuo liitetty JSON</button>
         </details>
         <div id="backup-result" style="margin-top:10px"></div>
       </div>
@@ -3205,7 +3206,11 @@
         const o2 = document.getElementById('backup-result');
         if (o2) o2.innerHTML = `<div class="alert ok">Tuotu: ${esc(keys.join(', '))}</div>`;
       } catch (err) {
-        show('warn', 'Tuonti epäonnistui: ' + (err.message || err));
+        const msg = String(err && err.message || err || '');
+        const quota = /quota|exceeded|tallennus|localStorage/i.test(msg);
+        show('warn', quota
+          ? 'Tuonti epäonnistui: tallennustila täynnä. Poista vanhoja kuukausikuvia Edistymisestä ja kokeile uudelleen.'
+          : ('Tuonti epäonnistui: ' + msg));
       }
     };
     const exp = document.getElementById('backup-export');
