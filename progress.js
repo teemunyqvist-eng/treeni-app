@@ -171,10 +171,10 @@
       weightKg: raw.weightKg === '' || raw.weightKg == null ? null : +raw.weightKg,
       notesFront: (raw.notesFront || '').trim().slice(0, 500),
       notesSide: (raw.notesSide || '').trim().slice(0, 500),
-      photos: Array.isArray(raw.photos) ? raw.photos.slice(0, 2).map((p) => ({
+      photos: Array.isArray(raw.photos) ? raw.photos.slice(0, 3).map((p) => ({
         id: p.id || ('ph' + Math.random().toString(36).slice(2, 8)),
         dataUrl: p.dataUrl,
-        kind: p.kind === 'side' ? 'side' : (p.kind === 'front' ? 'front' : 'front')
+        kind: p.kind === 'side' ? 'side' : (p.kind === 'back' ? 'back' : 'front')
       })).filter((p) => !!p.dataUrl) : [],
       waistCm: raw.waistCm === '' || raw.waistCm == null ? null : +raw.waistCm,
       restingHr: raw.restingHr === '' || raw.restingHr == null ? null : +raw.restingHr,

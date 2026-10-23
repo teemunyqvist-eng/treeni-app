@@ -56,7 +56,7 @@
       shoulderRehab: null, // olkapään kuntoutustila (paikallinen valinta); valmentajan lippu voittaa
       shoulderLog: {} // iso -> { cold1, cold2, routine }
     },
-    // Kuukausiseuranta: paino + vyötärö + 1–2 progress-kuvaa / merkintä
+    // Kuukausiseuranta: paino + vyötärö + 1–3 progress-kuvaa / merkintä
     monthlyCheckins: []
     // Vanhat avaimet (vuorokalenteri, bannerit, univelka-asetukset)
     // säilyvät tallennetussa tilassa, mutta sovellus ei enää käytä niitä.
@@ -2393,7 +2393,7 @@
     return `
       <div class="card" id="mp-card">
         <h2>Kuukausiseuranta</h2>
-        <p class="hint" style="margin-bottom:10px">Paino + 1–2 progress-kuvaa kerran kuussa. Kuvat pysyvät vain tällä laitteella.</p>
+        <p class="hint" style="margin-bottom:10px">Paino + 1–3 progress-kuvaa kerran kuussa. Kuvat pysyvät vain tällä laitteella.</p>
         ${warn}
         <button type="button" class="btn primary block" id="mp-add-btn">+ Lisää merkintä</button>
         <div class="section-title">Galleria kuukausittain</div>
@@ -2432,15 +2432,15 @@
           energy: ''
         };
     // Keep photos in closure for edit
-    let photos = (draft.photos || []).slice(0, 2);
+    let photos = (draft.photos || []).slice(0, 3);
 
     function photosHtml() {
-      if (!photos.length) return '<div class="hint">Ei vielä kuvia (max 2).</div>';
+      if (!photos.length) return '<div class="hint">Ei vielä kuvia (max 3).</div>';
       return `<div class="mp-photo-previews">${photos.map((p, i) => `
         <div class="mp-photo-prev">
-          <img src="${p.dataUrl}" alt="${esc(p.kind === 'side' ? 'Sivu' : 'Etu')}" />
+          <img src="${p.dataUrl}" alt="${esc(p.kind === 'side' ? 'Sivu' : (p.kind === 'back' ? 'Taka' : 'Etu'))}" />
           <div class="mp-photo-prev-actions">
-            <span class="badge">${p.kind === 'side' ? 'Sivu' : 'Etu'}</span>
+            <span class="badge">${p.kind === 'side' ? 'Sivu' : (p.kind === 'back' ? 'Taka' : 'Etu')}</span>
             <button type="button" class="btn sm ghost" data-mp-rm-photo="${i}">Poista</button>
           </div>
         </div>`).join('')}</div>`;
@@ -2468,9 +2468,9 @@
           value="${esc(draft.notesFront || '')}" placeholder="Valinnainen" />
       </div>
       <div class="form-group">
-        <label>Progress-kuvat (1–2)</label>
+        <label>Progress-kuvat (1–3)</label>
         <div id="mp-photos-wrap">${photosHtml()}</div>
-        <div class="mp-photo-add" id="mp-photo-add-row" ${photos.length >= 2 ? 'style="display:none"' : ''}>
+        <div class="mp-photo-add" id="mp-photo-add-row" ${photos.length >= 3 ? 'style="display:none"' : ''}>
           <label class="file-drop mp-file-drop">
             📷 Kamera / tiedosto
             <input type="file" id="mp-photo-input" accept="image/*" capture="environment" />
@@ -2478,6 +2478,7 @@
           <select id="mp-photo-kind" aria-label="Kuvan tyyppi">
             <option value="front">Etu</option>
             <option value="side">Sivu</option>
+            <option value="back">Taka</option>
           </select>
         </div>
         <div class="hint">Pakataan JPEG max ~900 px, laatu ~0.7. Tallennus localStorageen.</div>
@@ -2491,7 +2492,7 @@
       function refreshPhotos() {
         root.querySelector('#mp-photos-wrap').innerHTML = photosHtml();
         const addRow = root.querySelector('#mp-photo-add-row');
-        if (addRow) addRow.style.display = photos.length >= 2 ? 'none' : '';
+        if (addRow) addRow.style.display = photos.length >= 3 ? 'none' : '';
         root.querySelectorAll('[data-mp-rm-photo]').forEach(btn => {
           btn.onclick = () => {
             photos.splice(+btn.getAttribute('data-mp-rm-photo'), 1);
@@ -2507,8 +2508,8 @@
           const file = input.files && input.files[0];
           input.value = '';
           if (!file) return;
-          if (photos.length >= 2) {
-            toast('Max 2 kuvaa / merkintä');
+          if (photos.length >= 3) {
+            toast('Max 3 kuvaa / merkintä');
             return;
           }
           try {
@@ -2516,9 +2517,12 @@
             const kind = root.querySelector('#mp-photo-kind').value || 'front';
             const res = await TP.compressImageFile(file, { maxEdge: 900, quality: 0.7 });
             photos.push({ id: uid(), dataUrl: res.dataUrl, kind });
-            // Prefer distinct kinds
-            if (photos.length === 1) {
-              root.querySelector('#mp-photo-kind').value = kind === 'front' ? 'side' : 'front';
+            // Prefer distinct kinds (front / side / back)
+            {
+              const order = ['front', 'side', 'back'];
+              const used = new Set(photos.map((p) => p.kind));
+              const next = order.find((k) => !used.has(k)) || 'front';
+              root.querySelector('#mp-photo-kind').value = next;
             }
             refreshPhotos();
             toast('Kuva lisätty (~' + Math.round(res.bytes / 1024) + ' kt)');
