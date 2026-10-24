@@ -1,6 +1,6 @@
 {
-  "version": 11,
-  "updatedAt": "2026-10-24T13:04:19+03:00",
+  "version": 12,
+  "updatedAt": "2026-10-24T13:04:57+03:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -9,6 +9,10 @@
     "2026-10-23": {
       "title": "Pitkä kevyt 11 km – juuri oikein",
       "text": "11,0 km / 1:15:14 / 6:50 per km. Tätä haettiin, saatana! Pysyit kevyellä alueella koko lenkin, vauhti tasainen 6:40–6:55 ja mäet otettiin rauhassa. Viimeisellä kilsalla vähän kiristit – ei tarvetta, pitkä kevyt on kevyt loppuun asti. Huomenna kotipiiri ennen saunaa, sunnuntaina vain rento 4–5 km tai kävely. Ei bonuskilsoja."
+    },
+    "2026-10-24": {
+      "title": "Kotikuntopiiri 3 kierrosta",
+      "text": "Piiri tehty täytenä: 3 kierrosta, 35 min lämmöt ja venyttelyt mukana. Leuat 7/6/7 eli yli tavoitteen, punnerrukset 15–16 joka kierros ja askelkyykyt pysyivät vahvoina loppuun asti. Tällaista duunia, ei mitään säätöä. Korjattavaa: face pullit ja ab wheel hiipuivat kierroksilla 2–3, joten ensi kerralla toistot täyteen ja hidas, kontrolloitu liike, mieluummin vähemmän ja puhtaasti kuin hätäinen räpellys. Pitkän lenkin jälkeisenä päivänä hyvä suoritus. Huomenna kevyt 4–5 km täysin rennosti tai kävely, jos olo on illan jäljiltä tukkoinen."
     }
   },
   "done": {
