@@ -1,6 +1,6 @@
 {
-  "version": 10,
-  "updatedAt": "2026-10-23T10:20:40+03:00",
+  "version": 11,
+  "updatedAt": "2026-10-24T13:04:19+03:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -56,6 +56,14 @@
         "pace": "6:50",
         "source": "garmin",
         "id": "g4d77e57f6a"
+      }
+    ],
+    "2026-10-24": [
+      {
+        "type": "strength",
+        "min": 35.7,
+        "source": "garmin",
+        "id": "g7b21d5e5be"
       }
     ]
   },
