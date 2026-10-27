@@ -2882,7 +2882,7 @@
       const hit = tt.month && r.past ? (r.km >= tt.month[0] ? ' ok' : ' low') : '';
       return `<tr class="${r.current ? 'cur' : ''}${hit}">
         <td>${esc(mName(r.m).replace(/ \d{2}(\d{2})$/, ' $1'))}</td>
-        <td>${esc(wk)}</td><td>${esc(tgt)}</td><td>${esc(tt.long || (tt.note || '–'))}</td>
+        <td>${esc(wk)}</td><td>${esc(tgt)}</td><td>${esc(tt.long ? tt.long + (tt.note ? ' · ' + tt.note : '') : (tt.note || '–'))}</td>
         <td class="num">${r.km || r.past || r.current ? f1(r.km) : ''}</td>
         ${anySki ? `<td class="num">${r.skiKm ? f1(r.skiKm) : ''}</td>` : ''}
       </tr>`;
