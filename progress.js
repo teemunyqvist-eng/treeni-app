@@ -389,6 +389,118 @@
   }
 
 
+  /* ---------- Juoksukilometrit: kuukausitavoitteet ja laskuri ---------- */
+  const KM_SINCE = '2026-10-23';
+  const KM_RACE_DATE = '2027-08-21';
+  const KM_RACE_GOAL = 1500;
+  const KM_SERIES_END = '2027-10-23';
+  /** Kuukausitavoitteet (km/vk, km/kk, pisin lenkki). Lokakuu 2026 = aloitus, vain toteuma. */
+  const KM_TARGETS = [
+    { m: '2026-10', week: null, month: null, long: null, note: 'Aloitus 23.10. – vain toteuma' },
+    { m: '2026-11', week: [22, 28], month: [100, 110], long: '11–13 km' },
+    { m: '2026-12', week: [25, 30], month: [110, 120], long: '13–15 km' },
+    { m: '2027-01', week: [28, 32], month: [125, 135], long: '14–16 km' },
+    { m: '2027-02', week: [30, 35], month: [130, 145], long: '16–18 km' },
+    { m: '2027-03', week: [33, 38], month: [145, 160], long: '18–20 km' },
+    { m: '2027-04', week: [35, 40], month: [155, 170], long: '20–22 km' },
+    { m: '2027-05', week: [38, 45], month: [165, 185], long: '22–25 km' },
+    { m: '2027-06', week: [42, 50], month: [180, 200], long: '24–28 km', note: 'puolimaraton testinä' },
+    { m: '2027-07', week: [45, 52], month: [190, 210], long: '28–32 km', note: 'huippu' },
+    { m: '2027-08', week: null, weekText: 'taper + kisa 21.8.', month: [110, 120], long: '42,2 km', note: 'sis. maraton' },
+    { m: '2027-09', week: [20, 30], month: [90, 120], long: null, note: 'palautus kohti 40-vuotispäivää' },
+    { m: '2027-10', week: [20, 30], month: [90, 120], long: null, note: 'palautus kohti 40-vuotispäivää' }
+  ];
+  const KM_NOTE = 'Joka 4. viikko ~30 % kevyempi. Salibandy ja kävelyt tulevat näiden päälle.';
+
+  function kmTargetFor(monthKeyStr) {
+    return KM_TARGETS.find(function (t) { return t.m === monthKeyStr; }) || null;
+  }
+  function rangeText(r, prefix) {
+    return r ? (prefix || '') + r[0] + '–' + r[1] : '';
+  }
+  function km1(x) { return Math.round((x || 0) * 100) / 100; }
+
+  /**
+   * Yhdistää Garminin kmStatsin (coach-plan.json) ja käsin kirjatut juoksut/hiihdot.
+   * Käsin kirjattu (ei garminId) lasketaan vain, jos Garminilla ei ole saman lajin km:iä sille päivälle
+   * → ei tuplalaskentaa. Jos kmStats puuttuu, lasketaan kaikki lokin juoksut.
+   * opts: { kmStats, log, today: 'YYYY-MM-DD', logKind: fn(l) → 'run'|'ski'|… }
+   */
+  function kmSummary(opts) {
+    const o = opts || {};
+    const ks = o.kmStats || null;
+    const today = o.today || new Date().toISOString().slice(0, 10);
+    const kindOf = typeof o.logKind === 'function' ? o.logKind : function (l) { return l.kind || l.type; };
+    const since = KM_SINCE;
+    const months = {};
+    const mon = function (k) {
+      return months[k] || (months[k] = { km: 0, runs: 0, longest: 0, skiKm: 0, skiMin: 0, skis: 0, manualKm: 0, manualSkiKm: 0 });
+    };
+    if (ks && ks.months) {
+      Object.keys(ks.months).forEach(function (k) {
+        const g = ks.months[k] || {};
+        const m = mon(k);
+        m.km += g.km || 0; m.runs += g.runs || 0; m.longest = Math.max(m.longest, g.longest || 0);
+        m.skiKm += g.skiKm || 0; m.skiMin += g.skiMin || 0; m.skis += g.skis || 0;
+      });
+    }
+    const gDays = (ks && ks.days) || {};
+    const gSkiDays = (ks && ks.skiDays) || {};
+    let manualRuns = 0;
+    (o.log || []).forEach(function (l) {
+      if (!l || !l.date || l.date < since || l.date > today) return;
+      const kind = kindOf(l);
+      if (kind !== 'run' && kind !== 'ski') return;
+      const km = Number(l.distanceKm) || 0;
+      if (!(km > 0)) return;
+      if (ks && l.garminId) return;
+      if (ks && kind === 'run' && gDays[l.date]) return;
+      if (ks && kind === 'ski' && gSkiDays[l.date]) return;
+      const m = mon(l.date.slice(0, 7));
+      if (kind === 'run') { m.km += km; m.runs++; m.longest = Math.max(m.longest, km); m.manualKm += km; manualRuns++; }
+      else { m.skiKm += km; m.skiMin += Number(l.minutes) || 0; m.skis++; m.manualSkiKm += km; }
+    });
+    const keys = Object.keys(months).sort();
+    let totalKm = 0, raceKm = 0, skiKm = 0, skiMin = 0, runs = 0, skis = 0;
+    keys.forEach(function (k) {
+      const m = months[k];
+      ['km', 'longest', 'skiKm', 'manualKm', 'manualSkiKm'].forEach(function (f) { m[f] = km1(m[f]); });
+      m.skiMin = Math.round(m.skiMin);
+      totalKm += m.km; skiKm += m.skiKm; skiMin += m.skiMin; runs += m.runs; skis += m.skis;
+      if (k <= KM_RACE_DATE.slice(0, 7)) raceKm += m.km;
+    });
+    // Elokuu 2027: kisan jälkeiset juoksut (22.–31.8.) eivät kuulu 1500 km -tavoitteeseen
+    if (months['2027-08']) {
+      Object.keys(gDays).forEach(function (d) { if (d > KM_RACE_DATE && d.slice(0, 7) === '2027-08') raceKm -= gDays[d] || 0; });
+    }
+    const curKey = today.slice(0, 7);
+    const cur = months[curKey] || { km: 0, runs: 0, longest: 0, skiKm: 0, skiMin: 0, skis: 0 };
+    const target = kmTargetFor(curKey);
+    const rows = KM_TARGETS.map(function (t) {
+      const m = months[t.m] || null;
+      return { m: t.m, target: t, km: m ? m.km : 0, longest: m ? m.longest : 0, skiKm: m ? m.skiKm : 0,
+        skiMin: m ? m.skiMin : 0, past: t.m < curKey, current: t.m === curKey };
+    });
+    const raceGoalPct = Math.min(100, Math.round(raceKm / KM_RACE_GOAL * 1000) / 10);
+    const monthPct = target && target.month ? Math.min(100, Math.round(cur.km / target.month[1] * 100)) : null;
+    return {
+      since: since, today: today, garmin: !!ks, garminUpdatedAt: ks ? ks.updatedAt || '' : '',
+      totalKm: km1(totalKm), raceKm: km1(raceKm), raceGoal: KM_RACE_GOAL, raceDate: KM_RACE_DATE, raceGoalPct: raceGoalPct,
+      seriesEnd: KM_SERIES_END, runs: runs, manualRuns: manualRuns,
+      skiKm: km1(skiKm), skiMin: Math.round(skiMin), skis: skis, aerobicKm: km1(totalKm + skiKm),
+      current: { m: curKey, km: cur.km, longest: cur.longest, skiKm: cur.skiKm, skiMin: cur.skiMin, target: target, pct: monthPct },
+      months: months, rows: rows, note: KM_NOTE
+    };
+  }
+
+  function formatSkiTime(min) {
+    const m = Math.round(min || 0);
+    if (!m) return '';
+    const h = Math.floor(m / 60);
+    return h ? h + ' h ' + (m % 60) + ' min' : m + ' min';
+  }
+
+
   global.TreeniProgress = {
     MONTH_FI,
     PHOTO_SOFT_LIMIT,
@@ -409,6 +521,16 @@
     averageMetric,
     progressMetrics,
     coachCandidates,
-    coachMessage
+    coachMessage,
+    KM_SINCE,
+    KM_RACE_DATE,
+    KM_RACE_GOAL,
+    KM_SERIES_END,
+    KM_TARGETS,
+    KM_NOTE,
+    kmTargetFor,
+    rangeText,
+    kmSummary,
+    formatSkiTime
   };
 })(typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : this);

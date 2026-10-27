@@ -1104,12 +1104,13 @@
       ],
       cues: [
         'Hengitys rauhallinen – voit jutella',
+        'Syke 115–138: väsyneenä ja palauttavilla alapäässä, kello hälyttää vasta yli 138',
         'Lyhyt, kevyt askel; älä yliojenna',
         'Hartiat rentoina, kädet ~90°',
         'Katse eteen, ryhti kevyesti pystyssä'
       ],
       mistakes: [
-        'Liian kova vauhti “helppoon”',
+        'Liian kova vauhti “helppoon” (syke yli 138)',
         'Jäykät hartiat ja nyrkit',
         'Pitkä askel kantapääiskulla'
       ],
@@ -1127,6 +1128,7 @@
       ],
       cues: [
         'Aloita rauhallisesti, pidä vauhti helppona',
+        'Syke 115–138 – pitkällä yläpää ok, ei yli 138',
         'Kävelykatkot ok etenkin alussa',
         'Ota juotavaa jos yli ~90 min',
         'Kuuntele kehoa – älä “sankariudu”'

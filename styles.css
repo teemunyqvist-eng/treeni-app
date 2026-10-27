@@ -1214,3 +1214,23 @@ details.today-fold-card[open] > .today-fold-sum::before { content: '▾ '; }
 .garmin-mini { color: #7cc8f5; font-size: 12px; }
 .done-extra { padding: 10px 14px; }
 .done-extra-row { margin-top: 6px; }
+
+/* Juoksukilometrit */
+.km-total { text-align: center; margin: 4px 0 14px; }
+.km-total-num { font-size: 2.6rem; font-weight: 800; line-height: 1.1; color: var(--accent-light); }
+.km-total-num small { font-size: 1rem; font-weight: 600; color: var(--text-muted); }
+.km-total-lbl { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+.km-cur { background: var(--bg-elevated); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 10px; }
+.km-cur-head { display: flex; justify-content: space-between; gap: 8px; }
+.km-bar { position: relative; overflow: visible; }
+.km-bar > span { max-width: 100%; }
+.km-mark { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--text-muted); border-radius: 1px; }
+.km-ski { font-size: 0.9rem; margin: 6px 0 10px; line-height: 1.5; }
+.km-months summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
+.km-table-wrap { overflow-x: auto; }
+.km-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.km-table th, .km-table td { text-align: left; padding: 5px 4px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.km-table .num { text-align: right; }
+.km-table tr.cur td { background: var(--accent-soft); font-weight: 600; }
+.km-table tr.ok td.num { color: #6fdfa8; }
+.km-table tr.low td.num { color: #e6c35c; }

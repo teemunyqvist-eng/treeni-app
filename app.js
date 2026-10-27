@@ -769,7 +769,7 @@
     if (s.type === 'rest') html += '<span class="badge rest">Lepo</span>';
     if (s.type === 'mobility' || s.subtype === 'lihashuolto') html += '<span class="badge mobility">Lihashuolto</span>';
     if (s.type === 'other') {
-      const labels = { kavely: 'Kävely', pyoraily: 'Pyöräily', uinti: 'Uinti', salibandy: 'Salibandy', muu: 'Muu' };
+      const labels = { kavely: 'Kävely', hiihto: 'Hiihto', pyoraily: 'Pyöräily', uinti: 'Uinti', salibandy: 'Salibandy', muu: 'Muu' };
       const lab = labels[s.subtype] || (s.lightLoad ? 'Kevyt liikunta' : 'Liikunta');
       html += `<span class="badge other">${esc(lab)}</span>`;
       if (s.lightLoad) html += '<span class="badge mod">Kevyt</span>';
@@ -1335,14 +1335,15 @@
         </div>
 
         <details class="today-fold">
-          <summary class="today-fold-sum"><span>Vaihda treeni</span><span class="hint">${noGym() ? 'koti' : 'sali · koti'} · juoksu · muu</span></summary>
+          <summary class="today-fold-sum"><span>Vaihda treeni</span><span class="hint">${noGym() ? 'koti' : 'sali · koti'} · juoksu · hiihto · muu</span></summary>
           <div class="swap-grid" role="group" aria-label="Vaihda treenityyppi">
             ${swapBtn('swap-juoksu', '🏃', 'Juoksu', s.type === 'run' || s.type === 'race')}
             ${noGym() ? '' : swapBtn('swap-sali', '🏋️', 'Sali', s.type === 'strength' && s.location === 'sali')}
             ${swapBtn('swap-koti', '🏠', 'Koti', s.type === 'strength' && s.location === 'koti')}
             ${swapBtn('swap-lihashuolto', '🧘', 'Lihashuolto', s.type === 'mobility' || s.subtype === 'lihashuolto')}
             ${swapBtn('swap-kavely', '🚶', 'Kävely', s.type === 'other' && s.subtype === 'kavely')}
-            ${swapBtn('swap-muu', '✨', 'Muu laji', s.type === 'other' && s.subtype !== 'kavely' && s.subtype !== 'salibandy')}
+            ${swapBtn('swap-hiihto', '⛷️', 'Hiihto', s.type === 'other' && s.subtype === 'hiihto')}
+            ${swapBtn('swap-muu', '✨', 'Muu laji', s.type === 'other' && s.subtype !== 'kavely' && s.subtype !== 'salibandy' && s.subtype !== 'hiihto')}
           </div>
         </details>
 
@@ -1416,6 +1417,7 @@
       phaseId: day.phase || (day.week && day.week.phase) || 'base',
       fitness: fitness,
       currentSession: current,
+      plannedSession: day.planned,
       deload: !!day.deload,
       customName: extraOpts.customName
     });
@@ -1432,7 +1434,7 @@
     saveState();
     const labels = {
       koti: 'Kotivoima', sali: 'Salivoima', juoksu: 'Juoksu', lihashuolto: 'Lihashuolto',
-      kavely: 'Kävely', pyoraily: 'Pyöräily', uinti: 'Uinti', salibandy: 'Salibandy', muu: session.name || 'Muu'
+      kavely: 'Kävely', hiihto: 'Hiihto', pyoraily: 'Pyöräily', uinti: 'Uinti', salibandy: 'Salibandy', muu: session.name || 'Muu'
     };
     toast('Vaihdettu: ' + (labels[kind] || kind));
     rerenderActive();
@@ -1547,7 +1549,7 @@
     }
 
     if (act === 'swap-koti' || act === 'swap-sali' || act === 'swap-juoksu' || act === 'swap-lihashuolto' ||
-        act === 'swap-kavely' || act === 'swap-pyoraily' || act === 'swap-uinti') {
+        act === 'swap-kavely' || act === 'swap-hiihto' || act === 'swap-pyoraily' || act === 'swap-uinti') {
       applySessionTypeSwap(iso, day, act.replace('swap-', ''));
       return;
     }
@@ -2848,6 +2850,66 @@
     </div>`;
   }
 
+  /** Juoksukilometrit: kuukausitavoite vs. toteuma, kuukausitaulukko, kokonaislaskuri (Garmin kmStats + käsin) */
+  function renderKmSection() {
+    if (!TP || !TP.kmSummary) return '';
+    const k = TP.kmSummary({
+      kmStats: coachPlan && coachPlan.kmStats,
+      log: state.log || [],
+      today: todayISO(),
+      logKind: P.logKind
+    });
+    const f1 = (x) => String(Math.round((x || 0) * 10) / 10).replace('.', ',');
+    const mName = (mk) => TP.formatMonthFi ? TP.formatMonthFi(mk) : mk;
+    const cur = k.current, t = cur.target;
+    let curHtml;
+    if (t && t.month) {
+      const lowPct = Math.min(100, Math.round(t.month[0] / t.month[1] * 100));
+      curHtml = `<div class="km-cur">
+        <div class="km-cur-head"><strong>${esc(mName(cur.m))}</strong><span>${f1(cur.km)} / ~${t.month[0]}–${t.month[1]} km</span></div>
+        <div class="progress-bar km-bar"><span style="width:${cur.pct}%"></span><i class="km-mark" style="left:${lowPct}%"></i></div>
+        <div class="hint">${t.week ? t.week[0] + '–' + t.week[1] + ' km/vk' : esc(t.weekText || '')}${t.long ? ' · pisin ' + esc(t.long) : ''}${cur.longest ? ' · pisin nyt ' + f1(cur.longest) + ' km' : ''}${t.note ? ' · ' + esc(t.note) : ''}</div>
+      </div>`;
+    } else {
+      curHtml = `<div class="km-cur"><div class="km-cur-head"><strong>${esc(mName(cur.m))}</strong><span>${f1(cur.km)} km</span></div>
+        <div class="hint">${t && t.note ? esc(t.note) : 'Ei kuukausitavoitetta'}${cur.longest ? ' · pisin ' + f1(cur.longest) + ' km' : ''}</div></div>`;
+    }
+    const anySki = k.skiKm > 0 || k.rows.some(r => r.skiKm > 0);
+    const rows = k.rows.map(r => {
+      const tt = r.target;
+      const tgt = tt.month ? '~' + tt.month[0] + '–' + tt.month[1] : '–';
+      const wk = tt.week ? tt.week[0] + '–' + tt.week[1] : (tt.weekText || '–');
+      const hit = tt.month && r.past ? (r.km >= tt.month[0] ? ' ok' : ' low') : '';
+      return `<tr class="${r.current ? 'cur' : ''}${hit}">
+        <td>${esc(mName(r.m).replace(/ \d{2}(\d{2})$/, ' $1'))}</td>
+        <td>${esc(wk)}</td><td>${esc(tgt)}</td><td>${esc(tt.long || (tt.note || '–'))}</td>
+        <td class="num">${r.km || r.past || r.current ? f1(r.km) : ''}</td>
+        ${anySki ? `<td class="num">${r.skiKm ? f1(r.skiKm) : ''}</td>` : ''}
+      </tr>`;
+    }).join('');
+    const updated = k.garminUpdatedAt ? formatFiDate(k.garminUpdatedAt.slice(0, 10)) : '';
+    return `<div class="card km-card">
+      <h2>Juoksukilometrit</h2>
+      <div class="km-total">
+        <div class="km-total-num">${f1(k.raceKm)}<small> km</small></div>
+        <div class="km-total-lbl">juostu 23.10.2026 alkaen · tavoite ~${k.raceGoal} km Paavo Nurmi Maratoniin 21.8.2027 (Turku)</div>
+        <div class="progress-bar"><span style="width:${k.raceGoalPct}%"></span></div>
+        <div class="hint">${String(k.raceGoalPct).replace('.', ',')} % · ${k.runs} juoksua${k.totalKm > k.raceKm ? ' · sarja ’39 → 40’ yht. ' + f1(k.totalKm) + ' km (23.10.2027 asti)' : ' · sarja ’39 → 40’ jatkuu 23.10.2027 asti'}</div>
+      </div>
+      ${curHtml}
+      ${anySki ? `<div class="km-ski">⛷️ Hiihto km: <strong>${f1(k.skiKm)}</strong>${k.skiMin ? ' · ' + esc(TP.formatSkiTime(k.skiMin)) : ''} · ${k.skis} kertaa · tässä kuussa ${f1(cur.skiKm)} km
+        <br>Aerobinen yhteensä (juoksu + hiihto): <strong>${f1(k.aerobicKm)} km</strong></div>` : ''}
+      <details class="km-months"><summary>Kuukausitavoitteet</summary>
+        <div class="km-table-wrap"><table class="km-table">
+          <thead><tr><th>Kk</th><th>km/vk</th><th>km/kk</th><th>Pisin</th><th class="num">Toteuma</th>${anySki ? '<th class="num">Hiihto</th>' : ''}</tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>
+        <p class="hint">${esc(k.note)} Hiihto lasketaan erikseen – ei juoksukilometreihin eikä 1500 km tavoitteeseen.</p>
+      </details>
+      <p class="hint">${k.garmin ? 'Garmin-juoksut' + (updated ? ' (päivitetty ' + esc(updated) + ')' : '') : 'Garmin-tiedot puuttuvat – lasketaan lokin juoksut'}${k.manualRuns ? ' + ' + k.manualRuns + ' käsin kirjattua' : ''}.</p>
+    </div>`;
+  }
+
   function renderProgress() {
     updateHeader();
     const now = new Date();
@@ -2901,6 +2963,7 @@
         <div class="stat-box"><div class="num">${logKm}</div><div class="lbl">km / 4 vk</div></div>
         ${weightBox}
       </div>
+      ${renderKmSection()}
       ${renderFeedbackHistory()}
       ${renderMonthlySection()}
       <div class="card">

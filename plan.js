@@ -391,7 +391,7 @@
         distanceKm: round1(fitness.weekly * 0.2),
         cueIds: ['easy_run_form', 'strides_cues'],
         details:
-          'Helppo vauhti + 4–6 × 20 s kiihdytystä\n' +
+          'Helppo vauhti (syke 115–138) + 4–6 × 20 s kiihdytystä\n' +
           'Palautus kävellen/hölkäten 60–90 s kiihdytysten välillä.\n' +
           'Tuntuma kevyt, ei anaerobista.'
       };
@@ -430,10 +430,14 @@
       distanceKm: 6,
       cueIds: ['strides_cues', 'easy_run_form'],
       details:
-        'Helppo 5–6 km + 4 × 15–20 s kevyt kiihdytys.\n' +
+        'Helppo 5–6 km (syke 115–138) + 4 × 15–20 s kevyt kiihdytys.\n' +
         'Pidä kevyenä – kilpailuviikko / taper.'
     };
   }
+
+  /** Kevyiden, palauttavien ja pitkien lenkkien sykeikkuna (bpm). Kynnys/intervallit erikseen. */
+  const EASY_HR = [115, 138];
+  const EASY_HR_TEXT = 'Syke 115–138: väsyneenä ja palauttavilla pysy alapäässä, pitkällä yläpää ok – kello hälyttää vasta yli 138.';
 
   /**
    * Viikkorakenne (ma–su):
@@ -470,7 +474,8 @@
           name: 'Helppo lenkki',
           distanceKm: easyKm,
           cueIds: ['easy_run_form'],
-          details: `Helppo vauhti n. ${easyKm} km.\nHengitys rauhallinen, voit jutella koko matkan.\nJos väsynyt: lyhennä 30 % tai kävelykatkot ok.`
+          hrTarget: EASY_HR.slice(),
+          details: `Helppo vauhti n. ${easyKm} km.\n${EASY_HR_TEXT}\nHengitys rauhallinen, voit jutella koko matkan.\nJos väsynyt: lyhennä 30 % tai kävelykatkot ok.`
         };
       }
       // ti (2): voima
@@ -539,8 +544,10 @@
           name: 'Pitkä lenkki',
           distanceKm: longKm,
           cueIds: ['long_run_cues', 'easy_run_form'],
+          hrTarget: EASY_HR.slice(),
           details:
             `Pitkä lenkki n. ${longKm} km.\n` +
+            'Syke 115–138: yläpää ok pitkällä, kello hälyttää vasta yli 138.\n' +
             'Aloita rauhallisesti, pidä vauhti helppona koko matkan.\n' +
             'Ota mukaan juotavaa jos yli 90 min. Kävelykatkot ok.'
         };
@@ -554,7 +561,8 @@
           name: 'Palauttava lenkki',
           distanceKm: shortEasy,
           cueIds: ['easy_run_form'],
-          details: `Kevyt ${shortEasy} km tai vaihtoehtoisesti lepo.\nJos pitkä lenkki jäi raskaaksi: lepo tänään.`
+          hrTarget: EASY_HR.slice(),
+          details: `Kevyt ${shortEasy} km tai vaihtoehtoisesti lepo.\nSyke 115–138, palauttavalla pysy alapäässä.\nJos pitkä lenkki jäi raskaaksi: lepo tänään.`
         };
       }
 
@@ -575,6 +583,7 @@
               details:
                 'Salibandy-ilta = kova TE-päivä.\n' +
                 'Laatutreeni siirretty / jätetty väliin. Jos juokset, pidä hyvin kevyenä (~' + round1(Math.min(easyKm, 6)) + ' km).\n' +
+                'Syke 115–138, pysy alapäässä.\n' +
                 'Salibandy riittää viikon kovaksi ärsykkeeksi.'
             };
           } else if (session.type === 'rest') {
@@ -618,7 +627,8 @@
             cueIds: ['easy_run_form'],
             details:
               'Eilinen salibandy oli kova kuormitus.\n' +
-              'Pidä tänään helppona (~' + round1(Math.min(easyKm, 7)) + ' km) – laatutreeni toisena päivänä.'
+              'Pidä tänään helppona (~' + round1(Math.min(easyKm, 7)) + ' km) – laatutreeni toisena päivänä.\n' +
+              'Syke 115–138, pysy alapäässä.'
           };
         }
       }
@@ -947,6 +957,7 @@
       cueIds: ['easy_run_form'],
       details:
         'Helppo vauhti n. ' + km + ' km.\n' +
+        EASY_HR_TEXT + '\n' +
         'Hengitys rauhallinen, voit jutella koko matkan.\n' +
         'Vaihdettu päivän treeniksi – pidä kevyenä.',
       modified: 'tyyppi'
@@ -1037,6 +1048,9 @@
     if (kind === 'lihashuolto') {
       return buildLihashuoltoSession();
     }
+    if (kind === 'hiihto') {
+      return buildSkiSession(current, ctx);
+    }
     if (kind === 'kavely' || kind === 'pyoraily' || kind === 'uinti' ||
         kind === 'salibandy' || kind === 'muu') {
       return buildOtherActivitySession(kind, ctx);
@@ -1074,6 +1088,16 @@
       details:
         'Uinti – kevyt aktiivisuus / ristiin.\n' +
         'Vähäinen isku, hyvä palautukseen. Älä vedä allasvetoja kovalla teholla jos väsynyt.'
+    },
+    hiihto: {
+      name: 'Hiihto',
+      emoji: '⛷️',
+      durationMin: 45,
+      lightLoad: true,
+      details:
+        'Hiihto (perinteinen tai luistelu) – helpon lenkin korvaaja.\n' +
+        'Syke 115–138: väsyneenä alapäässä, kello hälyttää vasta yli 138.\n' +
+        'Hiihtokilometrit lasketaan erikseen, ei juoksukilometreihin.'
     },
     salibandy: {
       name: 'Salibandy',
@@ -1124,6 +1148,34 @@
     if (s.lightLoad) {
       s.mobility = mobilityFor('gentle');
     }
+    return s;
+  }
+
+  /**
+   * Hiihto helpon/palauttavan/pitkän lenkin tilalle: sama kesto (min), sama sykeikkuna 115–138.
+   * Kesto = juoksun durationMin tai km × ~6:45/km, pyöristys 5 min; muuten 45 min.
+   */
+  function buildSkiSession(current, ctx) {
+    const s = buildOtherActivitySession('hiihto', ctx);
+    if ((!current || current.type !== 'run') && ctx && ctx.plannedSession && ctx.plannedSession.type === 'run') {
+      current = ctx.plannedSession;
+    }
+    let min = null;
+    let fromRun = null;
+    if (current && current.type === 'run') {
+      fromRun = current.name || 'Juoksu';
+      if (typeof current.durationMin === 'number' && current.durationMin > 0) min = current.durationMin;
+      else if (current.distanceKm) min = current.distanceKm * 6.75;
+    }
+    if (min) min = Math.max(20, Math.round(min / 5) * 5);
+    s.durationMin = min || OTHER_ACTIVITY_KINDS.hiihto.durationMin;
+    s.hrTarget = EASY_HR.slice();
+    s.replacesRunKm = current && current.type === 'run' && current.distanceKm ? current.distanceKm : null;
+    s.details =
+      'Hiihto ~' + s.durationMin + ' min' + (fromRun ? ' (korvaa: ' + fromRun + (s.replacesRunKm ? ' ' + s.replacesRunKm + ' km' : '') + ', sama kesto)' : '') + '.\n' +
+      'Syke 115–138: väsyneenä ja palauttavana alapäässä, pitkällä yläpää ok – kello hälyttää vasta yli 138.\n' +
+      'Tasainen, rento tekeminen; ylämäet rauhassa, ettei syke karkaa.\n' +
+      'Hiihtokilometrit lasketaan erikseen, ei juoksukilometreihin.';
     return s;
   }
 
@@ -1746,6 +1798,7 @@
       s.details =
         '🏒 Eilinen salibandy oli kova kuormitus (TE jopa 5.0).\n' +
         'Tänään vain helppo palautus ~' + s.distanceKm + ' km tai kävely.\n' +
+        'Syke 115–138, pysy alapäässä.\n' +
         'Ei tempoa, intervalleja eikä pitkää. Laatu aikaisintaan ylihuomenna.\n' +
         'Jos jalat raskaat: vaihda lihashuoltoon tai kävelyyn.';
       s.cueIds = ['easy_run_form'];
@@ -2005,7 +2058,35 @@
       flags: parseCoachFlags(obj.flags),
       feedback: parseCoachFeedback(obj.feedback),
       done: parseCoachDone(obj.done),
+      kmStats: parseKmStats(obj.kmStats),
       days: days
+    };
+  }
+
+  /** Juoksu- ja hiihtokilometrit Garminista (coach-plan.json "kmStats") → siivottu tai null. */
+  function parseKmStats(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    const num = function (v, max) { return typeof v === 'number' && isFinite(v) && v >= 0 && v < (max || 1e5) ? v : 0; };
+    const months = {};
+    Object.keys(raw.months || {}).filter(function (k) { return /^\d{4}-\d{2}$/.test(k); }).sort().forEach(function (k) {
+      const m = raw.months[k] || {};
+      months[k] = { km: num(m.km), runs: num(m.runs), longest: num(m.longest, 200),
+        skiKm: num(m.skiKm), skiMin: num(m.skiMin, 1e6), skis: num(m.skis) };
+    });
+    const dayMap = function (obj) {
+      const out = {};
+      Object.keys(obj || {}).filter(function (k) { return COACH_DATE_RE.test(k); }).forEach(function (k) { out[k] = num(obj[k], 500); });
+      return out;
+    };
+    return {
+      since: COACH_DATE_RE.test(String(raw.since || '')) ? raw.since : '2026-10-23',
+      updatedAt: coachStr(raw.updatedAt, 40),
+      complete: raw.complete !== false,
+      totalKm: num(raw.totalKm), runs: num(raw.runs),
+      skiKm: num(raw.skiKm), skiMin: num(raw.skiMin, 1e6), skis: num(raw.skis),
+      months: months,
+      days: dayMap(raw.days),
+      skiDays: dayMap(raw.skiDays)
     };
   }
 
@@ -2024,8 +2105,8 @@
     return out;
   }
 
-  const DONE_TYPES = ['run', 'walk', 'strength', 'floorball', 'cycle', 'swim', 'mobility', 'other'];
-  const DONE_LABELS = { run: 'Juoksu', walk: 'Kävely', strength: 'Voimatreeni', floorball: 'Salibandy',
+  const DONE_TYPES = ['run', 'ski', 'walk', 'strength', 'floorball', 'cycle', 'swim', 'mobility', 'other'];
+  const DONE_LABELS = { run: 'Juoksu', ski: 'Hiihto', walk: 'Kävely', strength: 'Voimatreeni', floorball: 'Salibandy',
     cycle: 'Pyöräily', swim: 'Uinti', mobility: 'Liikkuvuus', other: 'Liikunta' };
 
   /** Tehdyt treenit (Garmin/käsin): { 'YYYY-MM-DD': [{type, km, min, pace, source, id}] } – vain treenidata. */
@@ -2063,6 +2144,7 @@
     if (s.type === 'other') {
       if (s.subtype === 'kavely' || /kävely/i.test(s.name || '')) return 'walk';
       if (s.subtype === 'pyoraily') return 'cycle';
+      if (s.subtype === 'hiihto') return 'ski';
       if (s.subtype === 'uinti') return 'swim';
       return 'other';
     }
@@ -2074,6 +2156,7 @@
     if (!l) return null;
     if (l.kind) return l.kind;
     if (/salibandy|säbä/i.test(l.name || '')) return 'floorball';
+    if (/hiihto/i.test(l.name || '')) return 'ski';
     if (l.type === 'run' || l.type === 'race') return 'run';
     if (l.type === 'strength') return 'strength';
     if (l.type === 'mobility') return 'mobility';
@@ -2158,6 +2241,9 @@
   }
 
   global.TreeniPlan = {
+    EASY_HR,
+    parseKmStats,
+    buildSkiSession,
     parseCoachPlan,
     parseCoachFeedback,
     latestCoachFeedback,
