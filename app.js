@@ -1026,25 +1026,81 @@
   }
 
   let exLibFilter = 'kaikki';
+  let exLibQuery = '';
+
+  /** Hakukenttä (Liikkeet + liikevalitsin): input + tyhjennysnappi, sama tyyli. */
+  function exSearchFieldHtml(id, value, placeholder) {
+    return `<div class="ex-search" role="search">
+        <span class="ex-search-ico" aria-hidden="true">🔍</span>
+        <input type="search" id="${id}" class="ex-search-input" value="${esc(value || '')}" placeholder="${esc(placeholder || 'Hae liikettä…')}"
+          autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Hae liikkeitä" />
+        <button type="button" class="ex-search-clear" data-clear-for="${id}" aria-label="Tyhjennä haku"${value ? '' : ' hidden'}>✕</button>
+      </div>`;
+  }
+
+  /** Kytkee hakukentän: onChange(q) jokaisella näppäilyllä, ✕ tyhjentää ja palauttaa fokuksen. */
+  function bindExSearchField(root, id, onChange) {
+    const input = root.querySelector('#' + id);
+    const clear = root.querySelector('[data-clear-for="' + id + '"]');
+    if (!input) return null;
+    const sync = () => { if (clear) clear.hidden = !input.value; onChange(input.value); };
+    input.addEventListener('input', sync);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && input.value) { e.preventDefault(); input.value = ''; sync(); }
+      if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+    });
+    if (clear) clear.addEventListener('click', () => { input.value = ''; sync(); input.focus(); });
+    return input;
+  }
+
+  function filterExercises(list, q) {
+    return EX.searchExercises ? EX.searchExercises(q, list) : list;
+  }
+
+  function exLibCardsHtml(list, shoulderOn) {
+    const catLabel = { juoksu: 'Juoksu', voima: 'Voima', liikkuvuus: 'Liikkuvuus' };
+    return list.map((e) => {
+      const hasEmbed = e.video && e.video.type === 'embed';
+      return `<div class="ex-lib-card" data-ex="${esc(e.id)}">
+          <h3>${esc(e.name)}</h3>
+          <div class="meta">${catLabel[e.category] || e.category}
+            · ${(e.equipment || []).length ? esc(e.equipment.join(', ')) : 'ei välineitä'}
+            · ${hasEmbed ? 'upotus' : 'ulkoinen linkki'}</div>
+          ${e.rehab === 'shoulder' ? '<div class="meta rehab-meta">🩹 Olkapään kuntoutus · vain kivuttomalla alueella</div>' : ''}
+          ${shoulderOn && e.loadsShoulder ? '<div class="meta warn-meta">⚠ Kuormittaa olkapäätä – ei olkapäätilassa</div>' : ''}
+        </div>`;
+    }).join('');
+  }
 
   function renderExerciseLibrary() {
     updateHeader();
     const el = document.getElementById('exercises-content');
     const all = EX.listExercises();
-    const filtered = exLibFilter === 'kaikki' ? all
+    const byCat = exLibFilter === 'kaikki' ? all
       : exLibFilter === 'olkapaa' ? all.filter((e) => e.rehab === 'shoulder')
       : all.filter((e) => e.category === exLibFilter);
     const shoulderOn = shoulderRehabActive();
     const voima = all.filter((e) => e.category === 'voima').length;
     const juoksu = all.filter((e) => e.category === 'juoksu').length;
     const liikk = all.filter((e) => e.category === 'liikkuvuus').length;
-    const catLabel = { juoksu: 'Juoksu', voima: 'Voima', liikkuvuus: 'Liikkuvuus' };
+
+    const listHtml = (q) => {
+      const hits = filterExercises(byCat, q);
+      const count = (q || '').trim()
+        ? `<div class="ex-search-count hint">${hits.length} / ${byCat.length} liikettä</div>` : '';
+      if (!hits.length) {
+        return count + `<div class="empty ex-search-empty">Ei osumia haulla ”${esc(q.trim())}”.
+          <div class="hint">Kokeile toista sanaa, esim. lihasryhmää (pakarat, vatsa, pohkeet) tai välinettä (kuminauha, käsipaino)${exLibFilter !== 'kaikki' ? ' – tai valitse Kaikki' : ''}.</div></div>`;
+      }
+      return count + exLibCardsHtml(hits, shoulderOn);
+    };
 
     el.innerHTML = `
       <div class="card">
         <h2>Liikekirjasto</h2>
         <p class="session-desc" style="margin:0">Tekniikka, hyödyt ja videot (${all.length} liikettä: ${voima} voima, ${juoksu} juoksu, ${liikk} liikkuvuus).</p>
-        <div class="ex-library-filters" style="margin-top:12px">
+        <div style="margin-top:12px">${exSearchFieldHtml('ex-lib-q', exLibQuery, 'Hae liikettä, lihasryhmää tai välinettä…')}</div>
+        <div class="ex-library-filters" style="margin-top:10px">
           <button class="btn sm${exLibFilter==='kaikki'?' active':''}" data-filter="kaikki">Kaikki</button>
           <button class="btn sm${exLibFilter==='voima'?' active':''}" data-filter="voima">Voima</button>
           <button class="btn sm${exLibFilter==='juoksu'?' active':''}" data-filter="juoksu">Juoksu</button>
@@ -1053,22 +1109,18 @@
         </div>
         <div class="alert info" style="margin-top:8px;margin-bottom:0">Videot ovat ulkoisia YouTube-demoja. Offline-tilassa näet silti vihjeet.</div>
       </div>
-      ${filtered.map((e) => {
-        const hasEmbed = e.video && e.video.type === 'embed';
-        return `<div class="ex-lib-card" data-ex="${esc(e.id)}">
-          <h3>${esc(e.name)}</h3>
-          <div class="meta">${catLabel[e.category] || e.category}
-            · ${(e.equipment || []).length ? esc(e.equipment.join(', ')) : 'ei välineitä'}
-            · ${hasEmbed ? 'upotus' : 'ulkoinen linkki'}</div>
-          ${e.rehab === 'shoulder' ? '<div class="meta rehab-meta">🩹 Olkapään kuntoutus · vain kivuttomalla alueella</div>' : ''}
-          ${shoulderOn && e.loadsShoulder ? '<div class="meta warn-meta">⚠ Kuormittaa olkapäätä – ei olkapäätilassa</div>' : ''}
-        </div>`;
-      }).join('')}
+      <div id="ex-lib-list">${listHtml(exLibQuery)}</div>
     `;
+    const listEl = el.querySelector('#ex-lib-list');
     el.querySelectorAll('[data-filter]').forEach((btn) => {
       btn.onclick = () => { exLibFilter = btn.getAttribute('data-filter'); renderExerciseLibrary(); };
     });
-    bindExerciseTaps(el);
+    bindExSearchField(el, 'ex-lib-q', (q) => {
+      exLibQuery = q;
+      listEl.innerHTML = listHtml(q);
+      bindExerciseTaps(listEl);
+    });
+    bindExerciseTaps(listEl);
   }
 
 
@@ -2087,10 +2139,12 @@
     function listHtml(cat, q) {
       let items = cat === 'all' ? EX.listExercises() : EX.listExercises(cat);
       if (shoulderRehabActive()) items = items.filter((ex) => !ex.loadsShoulder);
-      const qq = (q || '').trim().toLowerCase();
-      if (qq) items = items.filter((ex) => (ex.name || '').toLowerCase().includes(qq) || (ex.id || '').includes(qq));
       items = items.slice().sort((a, b) => (a.name || '').localeCompare(b.name || '', 'fi'));
-      if (!items.length) return '<div class="empty">Ei osumia.</div>';
+      // Haku: nimi, lihasryhmä, välineet, vihjeet; ä/ö ja isot/pienet kirjaimet samaa
+      if ((q || '').trim()) items = filterExercises(items, q);
+      if (!items.length) {
+        return `<div class="empty ex-search-empty">Ei osumia${(q || '').trim() ? ` haulla ”${esc(q.trim())}”` : ''}.${cat !== 'all' ? '<div class="hint">Kokeile Kaikki-välilehteä.</div>' : ''}</div>`;
+      }
       return '<ul class="ex-picker-list">' + items.map((ex) =>
         `<li><button type="button" class="ex-picker-item" data-pick-id="${esc(ex.id)}">
           <span class="ex-name">${esc(ex.name)}</span>
@@ -2103,8 +2157,7 @@
       <div class="ex-library-filters" id="ex-pick-cats">
         ${cats.map((c, i) => `<button type="button" class="btn sm${i === 0 ? ' active' : ''}" data-cat="${c.id}">${c.label}</button>`).join('')}
       </div>
-      <label class="field"><span>Haku</span>
-        <input type="search" id="ex-pick-q" placeholder="Etsi liikettä…" /></label>
+      ${exSearchFieldHtml('ex-pick-q', '', 'Hae liikettä, lihasryhmää tai välinettä…')}
       ${opts.mode === 'add' ? `<label class="field"><span>Sarjat (valinnainen)</span>
         <input type="text" id="ex-pick-sets" placeholder="esim. 3×8–10" /></label>` : ''}
       <div id="ex-pick-list" style="max-height:42vh;overflow:auto;margin-top:8px">${listHtml(activeCat, '')}</div>
@@ -2153,7 +2206,7 @@
           refresh();
         };
       });
-      if (qEl) qEl.oninput = refresh;
+      bindExSearchField(modal, 'ex-pick-q', refresh);
       bindPicks();
     });
   }
@@ -2859,7 +2912,8 @@
       today: todayISO(),
       logKind: P.logKind
     });
-    const f1 = (x) => String(Math.round((x || 0) * 10) / 10).replace('.', ',');
+    // 2 desimaalia (17,97 km = Garminin luku sellaisenaan, ei pyöristetä 18:aan)
+    const f1 = (x) => String(Math.round((x || 0) * 100) / 100).replace('.', ',');
     const mName = (mk) => TP.formatMonthFi ? TP.formatMonthFi(mk) : mk;
     const cur = k.current, t = cur.target;
     let curHtml;
@@ -2926,21 +2980,21 @@
       completedCount++;
       const s = day.session || day.planned;
       // Kevyt muu liikunta (kävely ym.) ei lisää juoksukilometreihin
-      if (s && s.type !== 'other' && s.distanceKm) weekKm += s.distanceKm;
+      if (s && s.distanceKm && (P.sessionKind ? P.sessionKind(s, day.status) === 'run' : s.type === 'run')) weekKm += s.distanceKm;
       if (s && s.type === 'strength') strengthDone++;
     }
     // Garminin lisäaktiviteetit (ei suunnitelmassa): lasketaan mukaan
     const weekStartIso = P.toISO(weekStart), weekEndIso = P.toISO(P.addDays(weekStart, 6));
     (state.log || []).filter(l => l.extra && l.date >= weekStartIso && l.date <= weekEndIso).forEach(l => {
       completedCount++;
-      if (l.type === 'run' && l.distanceKm) weekKm += l.distanceKm;
+      if (P.logKind(l) === 'run' && l.distanceKm) weekKm += l.distanceKm;
       if (l.type === 'strength') strengthDone++;
     });
     weekKm = Math.round(weekKm * 10) / 10;
 
     const cutoff = P.toISO(P.addDays(now, -28));
     // Juoksukilometrit: kävely/salibandy (type other) ei lisää
-    const logKm = Math.round(state.log.filter(l => l.date >= cutoff && l.type !== 'other')
+    const logKm = Math.round(state.log.filter(l => l.date >= cutoff && P.logKind(l) === 'run')
       .reduce((s, l) => s + (l.distanceKm || 0), 0) * 10) / 10;
 
     let weightBox = '';

@@ -429,7 +429,7 @@
   function kmSummary(opts) {
     const o = opts || {};
     const ks = o.kmStats || null;
-    const today = o.today || new Date().toISOString().slice(0, 10);
+    const today = o.today || (function () { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })();
     const kindOf = typeof o.logKind === 'function' ? o.logKind : function (l) { return l.kind || l.type; };
     const since = KM_SINCE;
     const months = {};
@@ -446,16 +446,26 @@
     }
     const gDays = (ks && ks.days) || {};
     const gSkiDays = (ks && ks.skiDays) || {};
+    // Garmin on totuus: päivät ennen viimeisintä Garmin-päivitystä (kmStats.updatedAt) on synkattu
+    // → käsin ✓ Valmis -merkitty suunnitelman juoksu (suunniteltu km, ei mitattu) ei lisää km:iä niille.
+    // Vasta synkkaamattomat päivät (päivityspäivä ja sen jälkeen) lasketaan käsin, jos Garminilla ei ole juoksua.
+    const gCovered = ks && ks.complete !== false && /^\d{4}-\d{2}-\d{2}/.test(ks.updatedAt || '') ? ks.updatedAt.slice(0, 10) : '';
+    const seen = {};
     let manualRuns = 0;
     (o.log || []).forEach(function (l) {
       if (!l || !l.date || l.date < since || l.date > today) return;
       const kind = kindOf(l);
-      if (kind !== 'run' && kind !== 'ski') return;
+      if (kind !== 'run' && kind !== 'ski') return; // kävely, kuntopiiri, salibandy ym. eivät ole juoksukm:iä
       const km = Number(l.distanceKm) || 0;
       if (!(km > 0)) return;
       if (ks && l.garminId) return;
       if (ks && kind === 'run' && gDays[l.date]) return;
       if (ks && kind === 'ski' && gSkiDays[l.date]) return;
+      if (ks && gCovered && l.date < gCovered && !l.manualKm) return;
+      // sama päivä + laji vain kerran (tuplat ✓ Valmis -painalluksista)
+      const sk = l.date + '|' + kind;
+      if (seen[sk]) return;
+      seen[sk] = true;
       const m = mon(l.date.slice(0, 7));
       if (kind === 'run') { m.km += km; m.runs++; m.longest = Math.max(m.longest, km); m.manualKm += km; manualRuns++; }
       else { m.skiKm += km; m.skiMin += Number(l.minutes) || 0; m.skis++; m.manualSkiKm += km; }

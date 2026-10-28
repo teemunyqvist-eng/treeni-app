@@ -1234,3 +1234,47 @@ details.today-fold-card[open] > .today-fold-sum::before { content: '▾ '; }
 .km-table tr.cur td { background: var(--accent-soft); font-weight: 600; }
 .km-table tr.ok td.num { color: #6fdfa8; }
 .km-table tr.low td.num { color: #e6c35c; }
+
+/* Liikehaku (Liikkeet + liikevalitsin) */
+.ex-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.ex-search-ico {
+  position: absolute;
+  left: 12px;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.ex-search-input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 40px 11px 36px;
+  color: var(--text);
+  font-size: 1rem;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.ex-search-input:focus { border-color: var(--accent); }
+.ex-search-input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+.ex-search-clear {
+  position: absolute;
+  right: 6px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.ex-search-clear:hover { color: var(--text); }
+.ex-search-clear[hidden] { display: none; }
+.ex-search-count { margin: 0 2px 8px; }
+.ex-search-empty .hint { margin-top: 6px; }

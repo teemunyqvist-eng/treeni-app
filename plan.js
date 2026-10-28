@@ -2138,6 +2138,8 @@
     const s = session;
     if (status === 'salibandy' || (s && (s.salibandyDay || s.subtype === 'salibandy' || s.modified === 'salibandy'))) return 'floorball';
     if (!s) return null;
+    // Valmentajan "Kävely"-vaihtoehto juoksupäivälle → kävely, ei juoksu
+    if ((s.type === 'run' || s.type === 'race') && s.coach && WALK_RE.test(s.coach.selected || '')) return 'walk';
     if (s.type === 'run' || s.type === 'race') return 'run';
     if (s.type === 'strength') return 'strength';
     if (s.type === 'mobility') return 'mobility';
@@ -2152,8 +2154,11 @@
   }
 
   /** Lokimerkintä → tyyppi (vanhoissa merkinnöissä ei ole kind-kenttää). */
+  const WALK_RE = /k[äa]vely|walk/i;
   function logKind(l) {
     if (!l) return null;
+    // Juoksupäivä merkitty tehdyksi "Kävely"-vaihtoehdolla (vanhat merkinnät: kind 'run') → kävely
+    if (!l.garminId && WALK_RE.test(l.coach || '') ) return 'walk';
     if (l.kind) return l.kind;
     if (/salibandy|säbä/i.test(l.name || '')) return 'floorball';
     if (/hiihto/i.test(l.name || '')) return 'ski';
@@ -2228,6 +2233,11 @@
     s.name = (s.name || '').replace(/ – .*$/, '') + ' – ' + opt.label;
     s.details = opt.details || s.details;
     if (opt.distanceKm) s.distanceKm = opt.distanceKm;
+    // "Kävely"-vaihtoehto juoksupäivälle: ei juoksukilometrejä (kävely ≠ juoksu)
+    if ((s.type === 'run' || s.type === 'race') && WALK_RE.test(opt.label || '')) {
+      s.type = 'other'; s.subtype = 'kavely'; s.lightLoad = true;
+      s.distanceKm = opt.distanceKm || null;
+    }
     s.modified = /kevenn/i.test(opt.label) ? 'keventa' : /kovenn/i.test(opt.label) ? 'koventa' : 'coach-option';
     s.coach.selected = opt.label;
     return s;

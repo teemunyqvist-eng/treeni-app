@@ -1761,8 +1761,78 @@
     return ex.video.url || null;
   }
 
+  /* ---------- Haku (hakutoiminto): nimi, kategoria, välineet, lihasryhmät, vihjeet ---------- */
+  const CATEGORY_LABEL = { voima: 'Voima', juoksu: 'Juoksu', liikkuvuus: 'Liikkuvuus' };
+
+  /** Pienet kirjaimet + ä/ö/å → a/o/a, muut diakriitit pois (haku ei välitä ä/a, ö/o). */
+  function normalizeSearch(str) {
+    let t = String(str == null ? '' : str).toLowerCase();
+    if (t.normalize) t = t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return t.replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+
+  // Lihasryhmät / arkikielen hakusanat → sanavartalot, joita liikkeiden teksteissä esiintyy
+  const SEARCH_SYNONYMS = {
+    jalat: ['jalk', 'reid', 'reis', 'kyykky', 'pohje', 'pohke', 'pakar'],
+    jalka: ['jalk', 'reid', 'reis', 'pohje', 'pohke', 'pakar'],
+    reidet: ['reid', 'reis'], reisi: ['reid', 'reis'], etureidet: ['etureid', 'etureis', 'quad'], takareidet: ['takareid', 'takareis', 'hamstring'],
+    pakarat: ['pakar', 'glute', 'lonkan ojen'], pakara: ['pakar', 'glute'], peppu: ['pakar', 'glute'],
+    pohkeet: ['pohje', 'pohke', 'calf', 'akilles'], pohje: ['pohje', 'pohke', 'calf'],
+    vatsa: ['vats', 'keskivartalo', 'core', 'plank', 'lankku'], keskivartalo: ['keskivartalo', 'vats', 'core', 'lankku'], core: ['keskivartalo', 'core', 'vats'],
+    selka: ['selk', 'lapa', 'souto', 'leuk'], ylaselka: ['ylaselk', 'lapa', 'souto'], alaselka: ['alaselk', 'lanne'],
+    rinta: ['rint', 'punner', 'penkki'], kadet: ['kasi', 'kade', 'hauis', 'ojentaj', 'tricep', 'bicep'], hauis: ['hauis', 'bicep'], ojentajat: ['ojentaj', 'tricep'],
+    olkapaa: ['olka', 'hartia', 'kiertaj'], olkapaat: ['olka', 'hartia', 'kiertaj'], hartiat: ['hartia', 'olka'],
+    lonkka: ['lonk'], lonkat: ['lonk'], nilkka: ['nilk'], nilkat: ['nilk'], polvi: ['polv'], polvet: ['polv'],
+    venyttely: ['venyt', 'liikkuvuus'], liikkuvuus: ['liikkuvuus', 'venyt'], kuntoutus: ['kuntoutus', 'rehab'],
+    juoksu: ['juoks'], tasapaino: ['tasapain', 'yhden jalan']
+  };
+
+  function searchIndex(ex) {
+    if (!ex) return '';
+    if (ex._search) return ex._search;
+    const parts = [ex.name, ex.id && ex.id.replace(/_/g, ' '), ex.category, CATEGORY_LABEL[ex.category],
+      (ex.equipment || []).join(' '), ex.rehab === 'shoulder' ? 'olkapaa kuntoutus rehab' : '',
+      (ex.benefits || []).join(' '), (ex.cues || []).join(' '), (ex.mistakes || []).join(' '),
+      ex.video && ex.video.label];
+    const idx = ' ' + normalizeSearch(parts.filter(Boolean).join(' ')) + ' ';
+    try { Object.defineProperty(ex, '_search', { value: idx, enumerable: false, configurable: true }); } catch (e) { /* jäädytetty */ }
+    return idx;
+  }
+
+  /**
+   * Suodattaa liikkeet hakusanalla. Jokaisen sanan pitää osua (nimi, kategoria, välineet, hyödyt/vihjeet/virheet
+   * tai lihasryhmän synonyymi). Nimiosumat ensin, muuten alkuperäinen järjestys. Tyhjä haku → lista sellaisenaan.
+   */
+  function searchExercises(query, list) {
+    const items = Array.isArray(list) ? list : listExercises();
+    const q = normalizeSearch(query);
+    if (!q) return items.slice();
+    const tokens = q.split(' ').filter(Boolean);
+    const scored = [];
+    items.forEach(function (ex, i) {
+      const idx = searchIndex(ex);
+      const name = ' ' + normalizeSearch(ex.name) + ' ';
+      let score = 0;
+      for (let t = 0; t < tokens.length; t++) {
+        const tok = tokens[t];
+        if (name.indexOf(' ' + tok) >= 0) { score += 3; continue; }
+        if (name.indexOf(tok) >= 0) { score += 2; continue; }
+        if (idx.indexOf(tok) >= 0) { score += 1; continue; }
+        const syn = SEARCH_SYNONYMS[tok];
+        if (syn && syn.some(function (sv) { return idx.indexOf(sv) >= 0; })) { score += 1; continue; }
+        return;
+      }
+      scored.push({ ex: ex, score: score, i: i });
+    });
+    scored.sort(function (a, b) { return b.score - a.score || a.i - b.i; });
+    return scored.map(function (x) { return x.ex; });
+  }
+
   global.TreeniExercises = {
     EXERCISES,
+    CATEGORY_LABEL,
+    normalizeSearch,
+    searchExercises,
     getExercise,
     listExercises,
     allIds,
