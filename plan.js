@@ -445,6 +445,10 @@
     return base;
   }
 
+  /** Kynnysvedot ohjataan vauhdilla, ei sykkeellä (rannesyke laahaa vedon alussa → liian kova alku). */
+  const THRESHOLD_PACE = '5:15–5:35';
+  const THRESHOLD_TIP = 'Tavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1.';
+
   function qualitySession(phase, fitness) {
     if (phase.id === 'base') {
       return {
@@ -467,9 +471,9 @@
         distanceKm: round1(clamp(fitness.weekly * 0.22, 6, 14)),
         cueIds: ['tempo_cues', 'easy_run_form'],
         details:
-          '10–15 min lämmittely → 20–30 min tasainen tempo\n' +
-          '(puhumisen rajoilla, ei sprintti) → 10 min jäähdyttely.\n' +
-          'Vaihtoehto: 3–4 × 6–8 min tempo, 2 min palautus.'
+          '15 min lämmittely (syke 115–138) → 3 × 8 min kynnys, palautus 2 min hölkkä/kävely → 10 min jäähdyttely.\n' +
+          THRESHOLD_TIP + '\n' +
+          'Kellossa vedoille VAUHTI-tavoite, ei syke (rannesyke laahaa 1–2 min vedon alussa).'
       };
     }
     if (phase.id === 'peak') {
@@ -481,7 +485,8 @@
         cueIds: ['interval_cues'],
         details:
           'Lämmittely 15 min → 5–6 × 3–4 min reipas\n' +
-          '(10 km -vauhdin tuntuma) / 2 min hölkkä → jäähdyttely.\n' +
+          '(10 km -vauhdin tuntuma) / 2 min hölkkä tai kävely → jäähdyttely.\n' +
+          'Kellossa vedoille VAUHTI-tavoite, syke vain jälkikäteen; ylämäessä tuntuman mukaan, viimeinen veto yhtä nopea kuin eka.\n' +
           'Tai 8–10 × 400–600 m, jos rata käytettävissä.'
       };
     }
@@ -2325,6 +2330,8 @@
 
   global.TreeniPlan = {
     capLongRunKm,
+    THRESHOLD_PACE,
+    THRESHOLD_TIP,
     weeklyKmCap,
     MONTH_KM_CAPS,
     LONG_RUN_CAPS,

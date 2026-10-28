@@ -1151,13 +1151,17 @@
         'Rakentaa “reipasta mutta hallittua” tuntumaa'
       ],
       cues: [
-        'Lämmittely 10–15 min helpolla',
-        'Tempo: puhumisen rajoilla, ei sprintti',
+        'Lämmittely 10–15 min helpolla (syke 115–138)',
+        'Tavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan',
+        'Ylämäessä tuntuman mukaan – anna vauhdin hidastua',
+        'Eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1.',
+        'Palautus hölkäten tai kävellen',
         'Tasainen hengitys, rentous hartioissa',
         'Jäähdyttely 8–10 min'
       ],
       mistakes: [
         'Tempo muuttuu intervallisprintiksi',
+        'Syketavoite kellossa: rannesyke laahaa 1–2 min, kello piippaa \u201dliian alhainen\u201d ja alku menee liian kovaa',
         'Liian vähäinen lämmittely',
         'Ei palautuspäiviä tempon ympärillä'
       ],
@@ -1175,7 +1179,7 @@
       ],
       cues: [
         'Huolellinen lämmittely + muutama kiihdytys',
-        'Työjaksot tasaisia, ei täyttä sprinttiä',
+        'Työjaksot tasaisia, ei täyttä sprinttiä – kellossa vauhti-tavoite, ei syke',
         'Palautus hölkäten/kävellen suunnitelman mukaan',
         'Muoto säilyy väsyneenä – lyhennä jos romahtaa'
       ],
