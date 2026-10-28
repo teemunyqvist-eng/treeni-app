@@ -137,6 +137,29 @@
     return round1(clamp(target, 6, 35));
   }
 
+  /**
+   * Pitkän lenkin katto kuukausitavoitteiden mukaan (marras 11–13 km, joulu 13–15 km).
+   * Viikkokohtainen tasainen nousu; kevennysviikolla ~9 km. Avain = viikon maanantai.
+   */
+  const LONG_RUN_CAPS = {
+    '2026-11-16': 12, '2026-11-23': 12.5, '2026-11-30': 13,
+    '2026-12-07': 9, '2026-12-14': 13.5, '2026-12-21': 14, '2026-12-28': 15
+  };
+  const LONG_RUN_MONTH_CAPS = { '2026-10': 12, '2026-11': 13, '2026-12': 15 };
+
+  function capLongRunKm(km, weekStartISO, deload) {
+    let cap = LONG_RUN_CAPS[weekStartISO];
+    if (cap === undefined) cap = LONG_RUN_MONTH_CAPS[String(weekStartISO).slice(0, 7)];
+    if (cap === undefined && weekStartISO > '2026-12-28') {
+      // Joulukuun jälkeen: maltillinen jatko 15 km:stä +0,5 km/vk (ei hyppyä generaattorin arvoon)
+      const weeks = Math.round(daysBetween(parseISO('2026-12-28'), parseISO(weekStartISO)) / 7);
+      cap = round1(15 + 0.5 * weeks);
+    }
+    if (cap === undefined) return km;
+    if (deload && !LONG_RUN_CAPS[weekStartISO]) cap = Math.min(cap, round1(cap * 0.7));
+    return round1(Math.min(km, cap));
+  }
+
   function easyRunKm(weeklyTarget, longKm, deload) {
     const remaining = Math.max(weeklyTarget - longKm, 10);
     let easy = remaining / 3;
@@ -476,7 +499,7 @@
     const phase = getPhase(weeksToRace);
     const deload = isDeloadWeekDate(weekStart) && phase.id !== 'taper';
     const vol = weeklyVolumeTarget(fitness.weekly, weekIndex, weeksToRace, deload);
-    const longKm = longRunKm(fitness.longest, weekIndex, weeksToRace, deload);
+    const longKm = capLongRunKm(longRunKm(fitness.longest, weekIndex, weeksToRace, deload), toISO(weekStart), deload);
     const easyKm = easyRunKm(vol, longKm, deload);
     const prefer = settings.strengthLocation || 'sali';
     const quality = qualitySession(phase, fitness);
@@ -2276,6 +2299,8 @@
   }
 
   global.TreeniPlan = {
+    capLongRunKm,
+    LONG_RUN_CAPS,
     DELOAD_ANCHOR,
     DELOAD_LABEL,
     isDeloadWeekDate,
