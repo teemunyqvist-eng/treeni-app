@@ -146,6 +146,22 @@
     '2026-12-07': 9, '2026-12-14': 13.5, '2026-12-21': 14, '2026-12-28': 15
   };
   const LONG_RUN_MONTH_CAPS = { '2026-10': 12, '2026-11': 13, '2026-12': 15 };
+  /**
+   * Kuukausitavoitteet (pidä synkassa progress.js KM_TARGETS): viikkokm-yläraja + pitkän yläraja.
+   * Automaattinen suunnitelma ei ylitä näitä (kevennysviikolla ×0,7).
+   */
+  const MONTH_KM_CAPS = {
+    '2026-11': { week: 28, long: 13 }, '2026-12': { week: 30, long: 15 },
+    '2027-01': { week: 32, long: 16 }, '2027-02': { week: 35, long: 18 }, '2027-03': { week: 38, long: 20 },
+    '2027-04': { week: 40, long: 22 }, '2027-05': { week: 45, long: 25 }, '2027-06': { week: 50, long: 28 },
+    '2027-07': { week: 52, long: 32 }, '2027-09': { week: 30, long: null }, '2027-10': { week: 30, long: null }
+  };
+
+  function weeklyKmCap(weekStartISO, deload) {
+    const t = MONTH_KM_CAPS[String(weekStartISO).slice(0, 7)];
+    if (!t || !t.week) return null;
+    return round1(deload ? t.week * 0.7 : t.week);
+  }
 
   function capLongRunKm(km, weekStartISO, deload) {
     let cap = LONG_RUN_CAPS[weekStartISO];
@@ -155,6 +171,8 @@
       const weeks = Math.round(daysBetween(parseISO('2026-12-28'), parseISO(weekStartISO)) / 7);
       cap = round1(15 + 0.5 * weeks);
     }
+    const mt = MONTH_KM_CAPS[String(weekStartISO).slice(0, 7)];
+    if (mt && mt.long) cap = cap === undefined ? mt.long : Math.min(cap, mt.long);
     if (cap === undefined) return km;
     if (deload && !LONG_RUN_CAPS[weekStartISO]) cap = Math.min(cap, round1(cap * 0.7));
     return round1(Math.min(km, cap));
@@ -498,11 +516,18 @@
     const weeksToRace = Math.ceil(daysBetween(weekStart, raceDate) / 7);
     const phase = getPhase(weeksToRace);
     const deload = isDeloadWeekDate(weekStart) && phase.id !== 'taper';
-    const vol = weeklyVolumeTarget(fitness.weekly, weekIndex, weeksToRace, deload);
+    const weekCap = weeksToRace > 2 ? weeklyKmCap(toISO(weekStart), deload) : null;
+    let vol = weeklyVolumeTarget(fitness.weekly, weekIndex, weeksToRace, deload);
+    if (weekCap) vol = Math.min(vol, weekCap);
     const longKm = capLongRunKm(longRunKm(fitness.longest, weekIndex, weeksToRace, deload), toISO(weekStart), deload);
-    const easyKm = easyRunKm(vol, longKm, deload);
+    let easyKm = easyRunKm(vol, longKm, deload);
     const prefer = settings.strengthLocation || 'sali';
     const quality = qualitySession(phase, fitness);
+    if (weekCap) {
+      // Viikon juoksut ≈ helppo + laatu + pitkä + palauttava (0,7 × helppo) ≤ kuukausitavoitteen viikkokatto
+      const room = (weekCap - longKm - ((quality && quality.distanceKm) || 0)) / 1.7;
+      easyKm = round1(Math.max(3, Math.min(easyKm, room)));
+    }
 
     const days = [];
     for (let i = 0; i < 7; i++) {
@@ -2300,6 +2325,8 @@
 
   global.TreeniPlan = {
     capLongRunKm,
+    weeklyKmCap,
+    MONTH_KM_CAPS,
     LONG_RUN_CAPS,
     DELOAD_ANCHOR,
     DELOAD_LABEL,
