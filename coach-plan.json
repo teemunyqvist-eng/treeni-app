@@ -1,6 +1,6 @@
 {
-  "version": 19,
-  "updatedAt": "2026-10-28T00:05:15+02:00",
+  "version": 20,
+  "updatedAt": "2026-10-28T11:03:40+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -245,6 +245,229 @@
       "title": "Palautuskävely yövuoron jälkeen",
       "details": "Unet ensin, sitten 40–60 min kävely + 10 min liikkuvuus.",
       "note": "Pitkä lenkki siirtyy sunnuntaille 1.11. jos vuorot sallii."
+    },
+    {
+      "date": "2026-11-02",
+      "type": "juoksu",
+      "subtype": "easy",
+      "title": "Kevyt 6 km (vapaapäivä)",
+      "distanceKm": 6,
+      "warmup": "5 min reipas kävely + dynaamiset liikkeet ~5 min.",
+      "details": "Vapaa arkipäivä – lapset hoidossa/koulussa, aamupäivä vapaa.\n6 km rauhallisesti ~6:45/km, syke 115–138 (pystyt puhumaan).",
+      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, lonkankoukistajat.",
+      "options": [
+        {
+          "label": "Kevennetty",
+          "distanceKm": 4,
+          "details": "4 km kevyesti, sama lämmittely ja venyttely."
+        }
+      ],
+      "note": "Kuormitusviikko 1/3 ennen kevennystä. Vapaa arkiaamu = treeniaamu."
+    },
+    {
+      "date": "2026-11-03",
+      "type": "kavely",
+      "title": "Aamuvuoro 06–14: kävely tai vapaa",
+      "details": "Vuoron jälkeen 20–30 min kävely (vaikka lasten kanssa) + 10 min liikkuvuus: lonkat, nilkat, rintaranka.",
+      "options": [
+        {
+          "label": "Pelkkä lepo",
+          "details": "Jos ilta menee lasten ja ruoan kanssa: lepo on ok."
+        }
+      ],
+      "note": "Aamuvuoropäivät pidetään kevyinä – säästä paukut iltavuoropäiville."
+    },
+    {
+      "date": "2026-11-04",
+      "type": "koti",
+      "title": "Aamuvuoro: lyhyt kotipiiri 20–25 min",
+      "durationMin": 25,
+      "details": "2 kierrosta kun sopii (esim. lasten mentyä nukkumaan):\n• Leuanveto 3–5\n• Punnerrus 12–15\n• Käsipainosoutu 10 / puoli\n• Askelkyykky 10 / jalka\n• Kuminauha face pull 15\n• Lankku 40 s",
+      "options": [
+        {
+          "label": "Kevennetty",
+          "details": "Pelkkä 15 min liikkuvuus."
+        }
+      ],
+      "note": "Lyhyt ja joustava. Huomenna iltavuoro = viikon kova treeni aamulla."
+    },
+    {
+      "date": "2026-11-05",
+      "type": "juoksu",
+      "subtype": "tempo",
+      "title": "Viikon kova: 3 × 8 min kynnys ennen iltavuoroa",
+      "distanceKm": 9,
+      "warmup": "15 min verryttely + 3 rentoa vetoa.",
+      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely, 3 × 8 min kynnysvauhti (~5:20–5:30/km, syke 160–165), palautus 2 min hölkkä, 10 min loppuverkka. Yhteensä ~9 km.",
+      "cooldown": "10 min hölkkä + venyttely.",
+      "options": [
+        {
+          "label": "Kevennetty",
+          "distanceKm": 7,
+          "details": "2 × 8 min kynnys, muuten sama."
+        },
+        {
+          "label": "Kovennettu",
+          "distanceKm": 10,
+          "details": "3 × 10 min kynnys, palautus 2 min."
+        }
+      ],
+      "note": "Iltavuoro 14–22 → aamu on sun. Tämä on viikon tärkein treeni."
+    },
+    {
+      "date": "2026-11-06",
+      "type": "koti",
+      "title": "Kotikuntopiiri ~30 min ennen iltavuoroa",
+      "durationMin": 30,
+      "warmup": "5 min: kävely paikallaan, käsien pyöritykset, kyykyt ilman painoa.",
+      "details": "3 kierrosta:\n• Leuanveto 3–5\n• Punnerrus 12–15\n• Käsipainosoutu 10 / puoli\n• Askelkyykky tai step-up 10 / jalka\n• Kuminauha face pull 15\n• Ab wheel 8–10\n• Lankku 40 s\nLepo kierrosten välissä 1–2 min.",
+      "cooldown": "Venyttely 5–10 min.",
+      "options": [
+        {
+          "label": "Kevennetty",
+          "details": "2 kierrosta."
+        },
+        {
+          "label": "Kävely",
+          "details": "30–40 min reipas kävely, jos jalat painaa eilisestä."
+        }
+      ],
+      "note": "Toinen iltavuoroaamu – voimaa, jalat lepää kynnyksestä."
+    },
+    {
+      "date": "2026-11-07",
+      "type": "kavely",
+      "title": "Lauantai, lapset kotona: kävely / lepo",
+      "details": "Ulkoilu lasten kanssa 30–60 min tai 15 min liikkuvuus. Huomenna pitkä lenkki.",
+      "note": "Viikonloppuna perhe ensin – liike kevyttä."
+    },
+    {
+      "date": "2026-11-08",
+      "type": "juoksu",
+      "subtype": "long",
+      "title": "Pitkä kevyt 11 km ennen ensimmäistä yövuoroa",
+      "distanceKm": 11,
+      "warmup": "5 min reipas kävely + dynaaminen lämmittely ~5 min.",
+      "details": "Aamupäivällä 11 km kevyesti ~6:45/km, syke 115–138 – pitkällä yläpää ok. Tasainen vauhti, vettä mukaan jos yli 75 min.\nIltapäivällä torkut ennen yövuoroa 22–06.",
+      "cooldown": "5 min kävely + venyttely ~10 min.",
+      "options": [
+        {
+          "label": "Kevennetty",
+          "distanceKm": 8,
+          "details": "8 km kevyesti, sama ohje."
+        },
+        {
+          "label": "Kovennettu",
+          "distanceKm": 12,
+          "details": "12 km kevyesti – ei vauhdinnostoa."
+        }
+      ],
+      "note": "Ensimmäinen yövuoropäivä = hyvä treenipäivä. Kuormitusviikon viimeinen isompi treeni ennen kevennystä."
+    },
+    {
+      "date": "2026-11-09",
+      "type": "lepo",
+      "title": "Kevennysviikko · yövuorojen välissä: unta",
+      "details": "Nuku kunnolla yövuoron jälkeen. Halutessa 20 min kävely. Toinen yövuoro 22–06.",
+      "note": "KEVENNYSVIIKKO 9.–15.11.: aamuvuoroja, yövuorojen jälkeistä väsymystä, iltaisin ja viikonloppuna lapset kotona. Lyhyet 20–40 min treenit, siirrä vapaasti viikon sisällä."
+    },
+    {
+      "date": "2026-11-10",
+      "type": "kavely",
+      "title": "Kevennysviikko · palautuskävely yövuoron jälkeen",
+      "durationMin": 30,
+      "details": "Unet ensin. Sitten 30 min kävely + 10 min liikkuvuus: lonkat, nilkat, rintaranka.",
+      "options": [
+        {
+          "label": "Pelkkä lepo",
+          "details": "Jos väsyttää kovasti: lepo. Uni on tänään se treeni."
+        }
+      ],
+      "note": "Kevennysviikko – treenit siirrettävissä viikon sisällä."
+    },
+    {
+      "date": "2026-11-11",
+      "type": "juoksu",
+      "subtype": "easy",
+      "title": "Kevennysviikko · kevyt 5 km (~35 min) + rennot vedot",
+      "distanceKm": 5,
+      "warmup": "5 min kävely + dynaamiset liikkeet.",
+      "details": "Vapaa arkiaamu lasten viennin jälkeen: 5 km rauhallisesti ~6:45/km, syke 115–138. Halutessa lopuksi 4 × 15–20 s rennot vedot (ei kova, vain rento askel).",
+      "cooldown": "5 min kävely + venyttely.",
+      "options": [
+        {
+          "label": "Kevennetty",
+          "distanceKm": 4,
+          "details": "4 km kevyesti, ei vetoja."
+        },
+        {
+          "label": "Kävely",
+          "details": "30–40 min reipas kävely, jos yövuoroväsymys vielä painaa."
+        }
+      ],
+      "note": "Kevennysviikko – ei kovaa laatua. Siirrä toiseen päivään, jos tämä ei sovi."
+    },
+    {
+      "date": "2026-11-12",
+      "type": "lihashuolto",
+      "title": "Kevennysviikko · aamuvuoro: liikkuvuus 15–20 min",
+      "durationMin": 20,
+      "details": "Kun sopii: lonkankoukistajat, pakarat, takareidet, pohkeet, rintaranka, nilkat. Tai 20–30 min kävely.",
+      "options": [
+        {
+          "label": "Pelkkä lepo",
+          "details": "Aamuvuoro + lapset: lepo on ok."
+        }
+      ],
+      "note": "Kevennysviikko – lyhyt ja joustava."
+    },
+    {
+      "date": "2026-11-13",
+      "type": "koti",
+      "title": "Kevennysviikko · lyhyt kotipiiri 20 min",
+      "durationMin": 20,
+      "details": "2 kierrosta, rauhassa:\n• Leuanveto 3\n• Punnerrus 10–12\n• Käsipainosoutu 10 / puoli\n• Askelkyykky 8 / jalka\n• Kuminauha face pull 15\n• Lankku 30–40 s",
+      "options": [
+        {
+          "label": "Kevennetty",
+          "details": "Pelkkä 15 min liikkuvuus."
+        }
+      ],
+      "note": "Kevennysviikko – ylläpitoa, ei väsytystä. Siirrettävissä viikon sisällä."
+    },
+    {
+      "date": "2026-11-14",
+      "type": "juoksu",
+      "subtype": "easy",
+      "title": "Kevennysviikko · lyhyt kevyt 4 km (~25–30 min)",
+      "distanceKm": 4,
+      "details": "Aamuvuoron jälkeen tai kun järjestyy: 4 km rauhallisesti, syke 115–138. Ei tarvitse olla tänään – siirrä perjantaille tai jätä kävelyksi.",
+      "cooldown": "5 min kävely + lyhyt venyttely.",
+      "options": [
+        {
+          "label": "Kävely",
+          "details": "30 min kävely lasten kanssa."
+        }
+      ],
+      "note": "Kevennysviikko – lauantai, aamuvuoro ja lapset kotona: joustava."
+    },
+    {
+      "date": "2026-11-15",
+      "type": "juoksu",
+      "subtype": "long",
+      "title": "Kevennysviikko · kevennetty pitkä 8 km ennen iltavuoroa",
+      "distanceKm": 8,
+      "warmup": "5 min reipas kävely + dynaaminen lämmittely.",
+      "details": "Aamulla/aamupäivällä ennen iltavuoroa 14–22: 8 km kevyesti ~6:45/km, syke 115–138.",
+      "cooldown": "5 min kävely + venyttely ~10 min.",
+      "options": [
+        {
+          "label": "Kevennetty",
+          "distanceKm": 6,
+          "details": "6 km kevyesti (~40 min)."
+        }
+      ],
+      "note": "Kevennysviikon pisin – iltavuoropäivänä. Ensi viikosta (16.11.) taas kuormitusviikot; vuorot 16.11. jälkeen vielä auki."
     }
   ]
 }
