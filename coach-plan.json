@@ -1,6 +1,6 @@
 {
-  "version": 27,
-  "updatedAt": "2026-10-28T13:17:36+02:00",
+  "version": 28,
+  "updatedAt": "2026-10-28T16:38:40+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -505,30 +505,30 @@
           "details": "6 km kevyesti (~40 min)."
         }
       ],
-      "note": "Kevennysviikon pisin – iltavuoropäivänä. Ensi viikosta (16.11.) taas kuormitusviikot; vuorot 16.11. jälkeen vielä auki."
+      "note": "Kevennysviikon pisin – iltavuoropäivänä. Ensi viikosta (16.11.) taas kuormitusviikot; la 21.11. ensimmäinen kuntotesti (5 km)."
     },
     {
       "date": "2026-11-16",
       "type": "juoksu",
       "subtype": "tempo",
-      "title": "Viikon kova: 3 × 9 min kynnys ennen iltavuoroa",
-      "distanceKm": 9,
+      "title": "Viikon kynnys: 2 × 9 min ennen iltavuoroa (testiviikko)",
+      "distanceKm": 7,
       "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely (syke 115–138), 3 × 9 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.",
+      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely (syke 115–138), 2 × 9 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~7 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 2. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.",
       "cooldown": "10 min hölkkä + venyttely.",
       "options": [
         {
           "label": "Kevennetty",
-          "distanceKm": 7,
-          "details": "2 × 9 min kynnys."
+          "distanceKm": 6,
+          "details": "Kevyt 6 km, syke 115–138 + 4 × 20 s rennot vedot – ei kynnystä."
         },
         {
           "label": "Kovennettu",
-          "distanceKm": 10,
-          "details": "4 × 8 min kynnys."
+          "distanceKm": 9,
+          "details": "3 × 9 min kynnys (alkuperäinen) – vain jos jalat ovat tuoreet. Lauantain testi on silti viikon tärkein."
         }
       ],
-      "note": "Kuormitusviikko 1/3. Iltavuoro = aamu on sun. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. Jos tänään ei olekaan iltavuoro, siirrä kynnys pe 20.11."
+      "note": "Kuormitusviikko 1/3 ja testiviikko: kynnys kevyempi (2 vetoa), koska la 21.11. on 5 km testi – se on viikon kova. Iltavuoro 14–22 = aamu on sun."
     },
     {
       "date": "2026-11-17",
@@ -544,21 +544,21 @@
           "details": "2 kierrosta tai 15 min liikkuvuus."
         }
       ],
-      "note": "Ensimmäinen yövuoropäivä – jalat lepää eilisestä kynnyksestä, ylävartalo töihin. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee."
+      "note": "Ensimmäinen yövuoropäivä (yövuorot ti–ke) – jalat lepää eilisestä kynnyksestä, ylävartalo töihin."
     },
     {
       "date": "2026-11-18",
       "type": "lepo",
       "title": "Yövuorojen välissä: unta + lyhyt kävely",
       "details": "Nuku kunnolla. Halutessa 20–30 min kävely. Toinen yövuoro 22–06.",
-      "note": "Uni on treeniä."
+      "note": "Uni on treeniä. Torstaista sunnuntaihin vapaat."
     },
     {
       "date": "2026-11-19",
       "type": "kavely",
       "title": "Palautuskävely yövuoron jälkeen",
       "details": "Unet ensin, sitten 30–45 min kävely + 10 min liikkuvuus: lonkat, nilkat, rintaranka.",
-      "note": "Yövuoron jälkeen ei juosta väkisin – huomenna pitkä.",
+      "note": "Yövuoron jälkeen ei juosta väkisin – lauantaina 5 km testi, jalat tuoreiksi.",
       "options": [
         {
           "label": "Pelkkä lepo",
@@ -568,50 +568,62 @@
     },
     {
       "date": "2026-11-20",
+      "type": "kavely",
+      "title": "Testiä edeltävä päivä: lepo / kävely",
+      "durationMin": 30,
+      "details": "Vapaa päivä: 20–40 min kävely + 10 min liikkuvuus (lonkat, pohkeet, nilkat). Syö normaalisti, juo hyvin, nuku hyvin – huomenna 5 km testi.",
+      "options": [
+        {
+          "label": "Kevyt 3 km + vedot",
+          "distanceKm": 3,
+          "details": "Halutessa 3 km rauhallisesti, syke 115–138 + 3 × 15 s rennot vedot. Ei yhtään enempää."
+        },
+        {
+          "label": "Pelkkä lepo",
+          "details": "Täysi lepo on yhtä hyvä valinta testiä edeltävänä päivänä."
+        }
+      ],
+      "note": "Pitkä lenkki siirretty pe 20.11. → su 22.11., jotta lauantain testiin tullaan levänneenä."
+    },
+    {
+      "date": "2026-11-21",
+      "type": "juoksu",
+      "subtype": "test",
+      "title": "⏱️ 5 km testi (kuntotesti)",
+      "distanceKm": 8.5,
+      "warmup": "Verkka 15 min hölkkä, syke 115–138 + dynaamiset liikkeet + 3–4 × 20 s rennot vedot (viimeinen lähes testivauhtia).",
+      "details": "5 km all-out TASAVAUHTISESTI: eka kilsa maltilla (ei ylilähtöä), kilsat 2–4 tasaisesti kovaa, viimeinen kilsa kovin. Tasainen reitti tai rata – sama reitti kesäkuun vertailutestissä (la 19.6.2027).\nKellossa: juoksu, väliajat 1 km välein. Vauhti tuntuman mukaan – tämä on lähtötason mittaus, ei tavoitetta.\nYhteensä verkkoineen ~8–9 km. Kirjaa aika päivän muistiinpanoon (jää vain omaan laitteeseen).",
+      "cooldown": "Loppuverkka 10 min kevyt hölkkä + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
+      "options": [
+        {
+          "label": "Ei testiä tänään",
+          "distanceKm": 5,
+          "details": "Jos flunssaa, huono yö tai jalat jumissa: kevyt 5 km syke 115–138 ja testi myöhemmin. Väsyneenä testattu tulos ei kerro mitään."
+        }
+      ],
+      "note": "Ensimmäinen kuntotesti – vertailukohta kesäkuun 5 km testille. Lauantai, lapset kotona: testi verkkoineen ~50 min."
+    },
+    {
+      "date": "2026-11-22",
       "type": "juoksu",
       "subtype": "long",
-      "title": "Pitkä kevyt 12 km (vapaa arkipäivä)",
+      "title": "Pitkä kevyt 12 km (siirretty perjantailta)",
       "distanceKm": 12,
       "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
-      "details": "Lasten viennin jälkeen 12 km kevyesti ~6:45/km, syke 115–138 – pitkällä yläpää ok. Tasainen vauhti, vettä mukaan jos yli 75 min.",
+      "details": "Eilisen testin jälkeen 12 km rauhallisesti ~6:45/km tai hitaammin, syke 115–138 – tänään alapäässä, jalat palautuvat testistä. Tasainen vauhti, vettä mukaan jos yli 75 min. Kävelykatkot ok.",
       "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
       "options": [
         {
           "label": "Kevennetty",
           "distanceKm": 9,
-          "details": "9 km kevyesti, sama ohje."
+          "details": "9 km kevyesti, jos testi tuntuu jaloissa."
         },
         {
-          "label": "Kovennettu",
-          "distanceKm": 13,
-          "details": "13 km kevyesti – ei vauhdinnostoa."
+          "label": "Kävely",
+          "details": "60 min kävely lasten kanssa, jos jalat ovat kipeät."
         }
       ],
-      "note": "Vapaa arkiaamu = pitkän lenkin paikka. Kevyt tarkoittaa kevyttä."
-    },
-    {
-      "date": "2026-11-21",
-      "type": "kavely",
-      "title": "Lauantai, lapset kotona: ulkoilu / liikkuvuus",
-      "details": "Ulkoilu lasten kanssa 30–60 min tai 15 min liikkuvuus.",
-      "note": "Viikonloppuna perhe ensin – liike kevyttä."
-    },
-    {
-      "date": "2026-11-22",
-      "type": "juoksu",
-      "subtype": "easy",
-      "title": "Kevyt 4 km (~30 min)",
-      "distanceKm": 4,
-      "details": "Kun järjestyy: 4 km rauhallisesti, syke 115–138, palauttavalla alapäässä. Lopuksi halutessa 4 × 15 s rennot vedot.",
-      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
-      "note": "Lyhyt ja joustava – lapset kotona.",
-      "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
-      "options": [
-        {
-          "label": "Kävely",
-          "details": "40 min kävely lasten kanssa."
-        }
-      ]
+      "note": "Siirretty pe 20.11. → su 22.11. testin takia. Lapset kotona – lenkki kun järjestyy. Viikko yhteensä ~27 km."
     },
     {
       "date": "2026-11-23",
