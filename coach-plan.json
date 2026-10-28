@@ -1,6 +1,6 @@
 {
-  "version": 26,
-  "updatedAt": "2026-10-28T13:11:38+02:00",
+  "version": 27,
+  "updatedAt": "2026-10-28T13:17:36+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -336,7 +336,7 @@
       "title": "Viikon kova: 3 × 8 min kynnys ennen iltavuoroa",
       "distanceKm": 9,
       "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely, 3 × 8 min kynnysvauhti (~5:20–5:30/km, syke 160–165), palautus 2 min hölkkä, 10 min loppuverkka. Yhteensä ~9 km.",
+      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely (syke 115–138), 3 × 8 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.",
       "cooldown": "10 min hölkkä + venyttely.",
       "options": [
         {
@@ -350,7 +350,7 @@
           "details": "3 × 10 min kynnys, palautus 2 min."
         }
       ],
-      "note": "Iltavuoro 14–22 → aamu on sun. Tämä on viikon tärkein treeni."
+      "note": "Iltavuoro 14–22 → aamu on sun. Tämä on viikon tärkein treeni. Treeni on kellossa (Garmin): vedoilla vauhti-tavoite."
     },
     {
       "date": "2026-11-06",
@@ -514,7 +514,7 @@
       "title": "Viikon kova: 3 × 9 min kynnys ennen iltavuoroa",
       "distanceKm": 9,
       "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely, 3 × 9 min kynnysvauhti (~5:20–5:30/km, syke 160–165), palautus 2 min hölkkä, 10 min loppuverkka. Yhteensä ~9 km.",
+      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely (syke 115–138), 3 × 9 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.",
       "cooldown": "10 min hölkkä + venyttely.",
       "options": [
         {
@@ -633,7 +633,7 @@
       "title": "Viikon kova: 5 × 5 min kynnys ennen iltavuoroa",
       "distanceKm": 9,
       "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Aamulla/aamupäivällä: 15 min verryttely, 5 × 5 min kynnysvauhti (~5:20–5:30/km, syke 160–165), palautus 1 min hölkkä, 10 min loppuverkka. Yhteensä ~9 km.",
+      "details": "Aamulla/aamupäivällä: 15 min verryttely (syke 115–138), 5 × 5 min kynnysvauhti 5:10–5:30/km, palautus 1 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:10–5:30/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.",
       "cooldown": "10 min hölkkä + venyttely.",
       "options": [
         {
@@ -783,7 +783,7 @@
       "title": "Viikon kova: 3 × 10 min kynnys ennen iltavuoroa",
       "distanceKm": 9,
       "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Aamulla/aamupäivällä: 15 min verryttely, 3 × 10 min kynnysvauhti (~5:20–5:30/km, syke 160–165), palautus 2 min hölkkä, 10 min loppuverkka. Yhteensä ~9 km.",
+      "details": "Aamulla/aamupäivällä: 15 min verryttely (syke 115–138), 3 × 10 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.",
       "cooldown": "10 min hölkkä + venyttely.",
       "options": [
         {
