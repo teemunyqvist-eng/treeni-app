@@ -1,6 +1,6 @@
 {
-  "version": 20,
-  "updatedAt": "2026-10-28T11:03:40+02:00",
+  "version": 21,
+  "updatedAt": "2026-10-28T11:05:47+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -245,6 +245,29 @@
       "title": "Palautuskävely yövuoron jälkeen",
       "details": "Unet ensin, sitten 40–60 min kävely + 10 min liikkuvuus.",
       "note": "Pitkä lenkki siirtyy sunnuntaille 1.11. jos vuorot sallii."
+    },
+    {
+      "date": "2026-11-01",
+      "type": "juoksu",
+      "subtype": "long",
+      "title": "Pitkä kevyt 10 km (siirretty 31.10.)",
+      "distanceKm": 10,
+      "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
+      "details": "Lauantailta siirretty pitkä lenkki: 10 km kevyesti ~6:45/km, syke 115–138 – pitkällä yläpää ok. Tasainen vauhti alusta loppuun, vettä mukaan jos yli 75 min.\nVapaapäivä, mutta sunnuntai ja lapset kotona – sovi lenkkiaika etukäteen (esim. aamupäivä tai päiväunien aikaan).",
+      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
+      "options": [
+        {
+          "label": "Kevennetty",
+          "distanceKm": 8,
+          "details": "8 km kevyesti, sama ohje. Valitse tämä, jos yövuorojen väsymys vielä painaa."
+        },
+        {
+          "label": "Kovennettu",
+          "distanceKm": 11,
+          "details": "11 km kevyesti – ei vauhdinnostoa."
+        }
+      ],
+      "note": "Toinen vapaa yövuorojen jälkeen – unet ensin, sitten lenkki. Kevyt tarkoittaa kevyttä."
     },
     {
       "date": "2026-11-02",
