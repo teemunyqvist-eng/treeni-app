@@ -518,6 +518,7 @@
       state.planCache.noGym !== noGym() ||
       state.planCache.raceDate !== state.settings.raceDate ||
       !planCoversToday(state.planCache) ||
+      planDeloadStale(state.planCache) ||
       !planHasWarmup(state.planCache) ||
       !planHasGym60(state.planCache);
     if (need) {
@@ -539,6 +540,12 @@
       }
     }
     return true;
+  }
+
+  /** Vanha välimuisti ennen kalenteriin kiinnitettyjä kevennysviikkoja → regeneroi */
+  function planDeloadStale(plan) {
+    if (!plan || !plan.weeks || !plan.weeks.length) return true;
+    return plan.weeks[0].deloadAnchor !== P.DELOAD_ANCHOR;
   }
 
   function planCoversToday(plan) {
@@ -1299,6 +1306,9 @@
       guidance = '<div class="alert warn">Sairas = lepo. Ei treeniä, ei korvausta, ei syyllisyyttä.</div>';
     } else if (day.completed) {
       guidance = '<div class="alert ok">✓ Tehty. Huomenna lasketaan taas nollasta.</div>';
+    }
+    if (day.deload && day.week && day.week.deloadNote && day.status !== 'sairas') {
+      guidance += `<div class="alert info deload-note">🔽 ${esc(day.week.deloadNote)}</div>`;
     }
     if (s && s.salibandyRecovery && !day.completed) {
       guidance += '<div class="alert info">🏒 Palautuspäivä salibandyn jälkeen – pidä kevyenä.</div>';
@@ -2333,7 +2343,8 @@
     }).join('');
     km = Math.round(km * 10) / 10;
     document.getElementById('week-label').textContent = 'Vk ' + range;
-    list.innerHTML = `<div class="week-summary hint">${esc(week.phaseName || '')}${week.deload ? ' · kevyempi viikko' : ''} · juoksua ~${km} km · tehty ${done}/7${coachDays ? ' · 🧭 = valmentajalta' : ''}</div>` + rows;
+    list.innerHTML = `<div class="week-summary hint">${esc(week.phaseName || '')}${week.deload ? ' · ' + esc(week.deloadLabel || 'Kevennysviikko') : ''} · juoksua ~${km} km · tehty ${done}/7${coachDays ? ' · 🧭 = valmentajalta' : ''}</div>` +
+      (week.deload && week.deloadNote ? `<div class="alert info deload-note">🔽 ${esc(week.deloadNote)}</div>` : '') + rows;
 
     list.querySelectorAll('.week-day').forEach(el => {
       el.addEventListener('click', () => {

@@ -90,6 +90,28 @@
     return weekIndex > 0 && (weekIndex + 1) % 4 === 0;
   }
 
+  /**
+   * Kevennysviikot kiinnitetty kalenteriin (ei liu'u sen mukaan, milloin suunnitelma generoitiin):
+   * 3 kuormitusviikkoa + 1 kevennys, ankkuri ma 9.11.2026 → 7.12., 4.1., 1.2. ...
+   */
+  const DELOAD_ANCHOR = '2026-11-09';
+  const DELOAD_LABEL = 'Kevennysviikko';
+  const DELOAD_NOTES = {
+    '2026-11-09': 'Kevennysviikko: paljon aamuvuoroja ja yövuorojen jälkeistä väsymystä, iltaisin lapset kotona. ' +
+      'Lyhyet 20–40 min treenit – siirrä vapaasti viikon sisällä. Pidempi lenkki iltavuoro- tai ensimmäiselle yövuoropäivälle.'
+  };
+  const DELOAD_DEFAULT_NOTE = 'Kevennysviikko: ~30 % vähemmän, ei kovaa laatua. Keho vahvistuu levossa – 3 kuormaviikkoa + 1 kevennys.';
+
+  function isDeloadWeekDate(weekStart) {
+    const ws = typeof weekStart === 'string' ? parseISO(weekStart) : startOfWeek(weekStart);
+    const diff = Math.round(daysBetween(parseISO(DELOAD_ANCHOR), ws) / 7);
+    return ((diff % 4) + 4) % 4 === 0;
+  }
+
+  function deloadNote(weekStartISO) {
+    return DELOAD_NOTES[weekStartISO] || DELOAD_DEFAULT_NOTE;
+  }
+
   /** Progressiivinen pitkä lenkki ~10 % sääntö nykyisestä pisimmästä + deload */
   function longRunKm(baseLongest, weekIndex, weeksToRace, deload) {
     // Aloita hieman alle nykyisen pisimmän (varovainen volyyminosto), kasva ≤10 %/vk
@@ -452,7 +474,7 @@
   function buildWeekPlan(weekStart, weekIndex, raceDate, settings, fitness) {
     const weeksToRace = Math.ceil(daysBetween(weekStart, raceDate) / 7);
     const phase = getPhase(weeksToRace);
-    const deload = isDeloadWeek(weekIndex) && phase.id !== 'taper';
+    const deload = isDeloadWeekDate(weekStart) && phase.id !== 'taper';
     const vol = weeklyVolumeTarget(fitness.weekly, weekIndex, weeksToRace, deload);
     const longKm = longRunKm(fitness.longest, weekIndex, weeksToRace, deload);
     const easyKm = easyRunKm(vol, longKm, deload);
@@ -694,6 +716,9 @@
       phase: phase.id,
       phaseName: phase.name,
       deload,
+      deloadLabel: deload ? DELOAD_LABEL : '',
+      deloadNote: deload ? deloadNote(toISO(weekStart)) : '',
+      deloadAnchor: DELOAD_ANCHOR,
       volumeTargetKm: vol,
       days
     };
@@ -2251,6 +2276,10 @@
   }
 
   global.TreeniPlan = {
+    DELOAD_ANCHOR,
+    DELOAD_LABEL,
+    isDeloadWeekDate,
+    deloadNote,
     EASY_HR,
     parseKmStats,
     buildSkiSession,
