@@ -1,6 +1,6 @@
 {
-  "version": 22,
-  "updatedAt": "2026-10-28T11:20:33+02:00",
+  "version": 23,
+  "updatedAt": "2026-10-28T11:24:18+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -896,11 +896,11 @@
       "date": "2026-12-12",
       "type": "juoksu",
       "subtype": "easy",
-      "title": "Kevennysviikko · lyhyt kevyt 4 km (~25–30 min) ennen iltavuoroa",
+      "title": "Kevennysviikko · kevyt 4 km (~25–30 min), joustava",
       "distanceKm": 4,
-      "details": "Aamulla ennen iltavuoroa 14–22, kun lasten kanssa järjestyy: 4 km rauhallisesti, syke 115–138. Voi siirtää ke 9.12. yhteyteen tai jättää kävelyksi.",
+      "details": "4 km tai 25–30 min rauhallisesti, syke 115–138. Voi korvata 30 min kävelyllä.",
       "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
-      "note": "Kevennysviikko – lauantai, lapset kotona ja iltavuoro: joustava.",
+      "note": "Lauantain vuoro vaihtelee (aamu/ilta): aamuvuorossa juokse/kävele vuoron jälkeen tai siirrä perjantaille, iltavuorossa aamulla ennen vuoroa.",
       "options": [
         {
           "label": "Kävely",
