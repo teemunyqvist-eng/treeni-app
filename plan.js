@@ -507,6 +507,175 @@
   const EASY_HR = [115, 138];
   const EASY_HR_TEXT = 'Syke 115–138: väsyneenä ja palauttavilla pysy alapäässä, pitkällä yläpää ok – kello hälyttää vasta yli 138.';
 
+  // --- Välitavoitteet: kuntotestit + B-kisa (julkista dataa: päivä, matka, ohje – ei tuloksia) ---
+  /**
+   * Kiinteät välitavoitteet. Generaattori huomioi nämä päiväkohtaisesti (milestoneAdjust):
+   *  testi: testipäivä korvaa päivän treenin, samalla viikolla ei kynnystä/intervalleja ennen testiä,
+   *         päivää ennen kevyt, lauantain testin jälkeen pitkä siirtyy sunnuntaille.
+   *  kisa:  kisaviikolla ei kovaa (avoimet jalat), voima lyhyenä, kevyet −30 %; 3 palauttavaa päivää jälkeen.
+   * Tulokset kirjataan vain omaan laitteeseen (päivän muistiinpano), ei tähän tiedostoon.
+   */
+  const MILESTONES_VERSION = 1;
+  const HCH_URL = 'https://helsinkicityrun.fi/helsinkicityhalf-puolimaraton/';
+  const MILESTONES = [
+    {
+      id: 'test5k-2026-11', date: '2026-11-21', kind: 'test', icon: '⏱️', name: '5 km testi', testKm: 5, totalKm: 8.5,
+      short: 'Kuntotesti 5 km (lähtötaso)',
+      details: 'Verkka 15 min (syke 115–138) + 3–4 rentoa 20 s vetoa → 5 km all-out TASAVAUHTISESTI ' +
+        '(eka kilsa maltilla, ei ylilähtöä, viimeinen kilsa kovin) → loppuverkka 10 min hölkkä.\n' +
+        'Tasainen reitti tai rata – sama reitti kesäkuun vertailutestissä (19.6.2027).\n' +
+        'Kirjaa aika päivän muistiinpanoon (jää vain omaan laitteeseen).'
+    },
+    {
+      id: 'cooper-2027-01', date: '2027-01-15', kind: 'test', icon: '⏱️', name: 'Cooper-testi 12 min', totalKm: 6,
+      short: 'Kuntotesti Cooper 12 min',
+      details: 'Verkka 15 min (syke 115–138) + 3 rentoa vetoa → 12 min mahdollisimman pitkälle tasaisella vauhdilla → loppuverkka 10 min.\n' +
+        'Pito ratkaisee: kuiva tie, sisärata tai juoksumatto 1 % kulmalla (ei liukasta tietä).\n' +
+        'Kirjaa matka metreinä päivän muistiinpanoon.'
+    },
+    {
+      id: 'test10k-2027-03', date: '2027-03-13', kind: 'test', icon: '⏱️', name: '10 km testi', testKm: 10, totalKm: 13.5,
+      short: 'Kuntotesti 10 km',
+      details: 'Verkka 15 min (syke 115–138) + 3–4 rentoa vetoa → 10 km all-out tasavauhtisesti ' +
+        '(ensimmäiset 3 km maltilla, viimeiset 2 km kovin) → loppuverkka 10 min.\n' +
+        'Antaa puolimaratonin (8.5.) tavoitevauhdin. Kirjaa aika päivän muistiinpanoon.'
+    },
+    {
+      id: 'hch-2027', date: '2027-05-08', kind: 'race', icon: '🏅', name: 'Helsinki City Half 21,1 km',
+      fullName: 'OP Uusimaa Helsinki City Half (puolimaraton)', short: 'Välikisa: puolimaraton',
+      distanceKm: 21.1, totalKm: 23, startTime: '14.20', place: 'Helsinki', goal: '~1:50–1:52', url: HCH_URL,
+      details: 'OP Uusimaa Helsinki City Half, Helsinki · lähtö klo 14.20.\n' +
+        'Tavoite ~1:50–1:52 (≈ 5:13–5:18/km). Ensimmäiset 5 km maltilla ~5:20/km, sitten tasaisesti; viimeiset 5 km saa kiristää.\n' +
+        'Verkka 10–15 min hölkkä + 3 rentoa vetoa. Kunnon ateria ~3–4 h ennen lähtöä, juo huoltopisteillä.\n' +
+        'B-kisa ja harjoituskisa – päätavoite on Paavo Nurmi Marathon 21.8.2027.'
+    },
+    {
+      id: 'test5k-2027-06', date: '2027-06-19', kind: 'test', icon: '⏱️', name: '5 km testi', testKm: 5, totalKm: 8.5,
+      short: 'Kuntotesti 5 km (vertailu marraskuuhun)', compareTo: 'test5k-2026-11',
+      details: 'Sama protokolla ja mieluiten sama reitti kuin 21.11.2026: verkka 15 min (syke 115–138) + 3–4 vetoa → ' +
+        '5 km all-out tasavauhtisesti → loppuverkka 10 min.\nVertaa aikaa marraskuun testiin. Kirjaa aika päivän muistiinpanoon.'
+    },
+    {
+      id: 'test10k-2027-07', date: '2027-07-17', kind: 'test', icon: '⏱️', name: '10 km testi', testKm: 10, totalKm: 13.5,
+      short: 'Kuntotesti 10 km (~5 vk ennen maratonia)', compareTo: 'test10k-2027-03',
+      details: 'Verkka 15 min (syke 115–138) + 3–4 vetoa → 10 km all-out tasavauhtisesti → loppuverkka 10 min.\n' +
+        '~5 vk ennen maratonia: tulos tarkentaa maratonvauhdin (sub 4 h ≈ 5:41/km). Vertaa maaliskuun testiin. Kirjaa aika muistiinpanoon.'
+    }
+  ];
+
+  function milestoneOn(iso) {
+    for (let i = 0; i < MILESTONES.length; i++) if (MILESTONES[i].date === iso) return MILESTONES[i];
+    return null;
+  }
+
+  /** Tulevat välitavoitteet (sis. tämän päivän) päivämääräjärjestyksessä. */
+  function upcomingMilestones(fromIso, limit) {
+    const list = MILESTONES.filter(function (m) { return m.date >= fromIso; })
+      .sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    return limit ? list.slice(0, limit) : list;
+  }
+
+  function milestoneSession(m) {
+    if (m.kind === 'race') {
+      return {
+        type: 'race', subtype: 'halfmarathon', name: m.icon + ' ' + m.name + ' (välikisa)',
+        distanceKm: m.distanceKm, milestone: m.id, url: m.url, cueIds: ['easy_run_form'], details: m.details
+      };
+    }
+    return {
+      type: 'run', subtype: 'test', name: m.icon + ' ' + m.name + ' (kuntotesti)',
+      distanceKm: m.totalKm, milestone: m.id, cueIds: ['easy_run_form'], details: m.details
+    };
+  }
+
+  function isHardRun(s) {
+    return !!s && s.type === 'run' && (s.subtype === 'tempo' || s.subtype === 'intervals');
+  }
+
+  function easyMilestoneRun(name, km, why) {
+    return {
+      type: 'run', subtype: 'easy', name: name, distanceKm: km, cueIds: ['easy_run_form'], hrTarget: EASY_HR.slice(),
+      details: 'Kevyt ' + km + ' km, syke 115–138 (alapäässä).\n' + why
+    };
+  }
+
+  function shortStrengthSession(session) {
+    const sh = shortStrength(session);
+    return Object.assign({}, sh, {
+      type: 'strength', subtype: session.subtype, location: session.location, altId: session.altId, durationMin: 25
+    });
+  }
+
+  /**
+   * Generaattorin päiväkohtainen hook välitavoitteille. ctx: { longKm, easyKm }.
+   * Palauttaa (mahdollisesti) korvatun session.
+   */
+  function milestoneAdjust(session, iso, ctx) {
+    const d = parseISO(iso);
+    const here = milestoneOn(iso);
+    if (here) return milestoneSession(here);
+    for (let i = 0; i < MILESTONES.length; i++) {
+      const m = MILESTONES[i];
+      const md = parseISO(m.date);
+      const k = daysBetween(d, md); // >0: ennen välitavoitetta, <0: jälkeen
+      if (k > 7 || k < -5) continue;
+      const sameWeek = toISO(startOfWeek(d)) === toISO(startOfWeek(md));
+      if (m.kind === 'test') {
+        if (k === 1) {
+          if (session && session.type === 'run' && session.subtype !== 'easy') {
+            return easyMilestoneRun('Kevyt testiä edeltävänä päivänä', round1(Math.min(ctx.easyKm || 5, 5)),
+              'Huomenna ' + m.name + ' – tänään vain rento hölkkä (+ halutessa 3 × 15 s rennot vedot).');
+          }
+          if (session && session.type === 'strength') return shortStrengthSession(session);
+        } else if (k > 1 && sameWeek && isHardRun(session)) {
+          return Object.assign(easyMilestoneRun('Helppo + kiihdytykset (testiviikko)', round1(Math.min(ctx.easyKm || 6, 7)),
+            'Testiviikko: ' + m.name + ' ' + DOW_FI[md.getDay()] + ' on viikon kova – ei kynnystä tänään.\nLopuksi 4 × 20 s rennot kiihdytykset.'),
+          { subtype: 'strides' });
+        } else if (k === -1 && md.getDay() === 6 && d.getDay() === 0 && ctx.longKm) {
+          // Lauantain testi korvasi pitkän → pitkä sunnuntaille (10 km testin jälkeen lyhyempi)
+          const km = round1(m.testKm >= 10 ? ctx.longKm * 0.7 : ctx.longKm);
+          return {
+            type: 'run', subtype: 'long', name: 'Pitkä kevyt (siirretty testin jälkeen)', distanceKm: km,
+            cueIds: ['long_run_cues', 'easy_run_form'], hrTarget: EASY_HR.slice(),
+            details: 'Pitkä lenkki n. ' + km + ' km – siirretty lauantailta testin takia.\n' +
+              'Syke 115–138, eilisen testin jälkeen rauhallisesti alapäässä. Kävelykatkot ok.'
+          };
+        } else if (k === -1 && isHardRun(session)) {
+          return easyMilestoneRun('Palauttava (testin jälkeen)', round1(Math.min(ctx.easyKm || 5, 6)), 'Eilen testi – tänään kevyesti.');
+        }
+      } else if (m.kind === 'race') {
+        if (k >= 1 && k <= 6 && sameWeek) {
+          if (isHardRun(session) || (session && session.type === 'run' && session.subtype === 'strides')) {
+            return Object.assign(easyMilestoneRun('Avoimet jalat (kisaviikko)', 5,
+              'Kisaviikko: ' + m.name + ' ' + DOW_FI[md.getDay()] + ' – ei kovaa 4 vrk ennen.\nLopuksi 4 × 15–20 s rennot kiihdytykset.'),
+            { subtype: 'strides' });
+          }
+          if (session && session.type === 'run') {
+            const km = round1(Math.max(3, Math.min((session.distanceKm || 5) * 0.7, k <= 1 ? 4 : 6)));
+            return easyMilestoneRun(k === 1 ? 'Kevyt 20–25 min (kisaa edeltävä päivä)' : 'Kevyt (kisaviikko)', k === 1 ? Math.min(km, 4) : km,
+              'Kisaviikko: määrä −30 %, vauhti kevyt. ' + (k === 1 ? 'Halutessa 3 × 15 s rennot vedot. Tai lepo.' : ''));
+          }
+          if (session && session.type === 'strength') return shortStrengthSession(session);
+        } else if (k === -1) {
+          return {
+            type: 'rest', subtype: 'rest', name: 'Palautus: lepo / kävely (kisan jälkeen)',
+            details: 'Eilen puolimaraton. Lepo tai 20–40 min kävely, kevyt liikkuvuus. Syö ja juo hyvin.'
+          };
+        } else if (k <= -2 && k >= -3) {
+          if (session && (session.type === 'run' || session.type === 'race')) {
+            return easyMilestoneRun('Palauttava kevyt (kisan jälkeen)', round1(Math.min(session.distanceKm || 4, 5)),
+              'Puolimaratonin jälkeinen palautus: lyhyt ja kevyt, tai kävely jos jalat ovat jumissa.');
+          }
+          if (session && session.type === 'strength') return shortStrengthSession(session);
+        } else if (k === -4 && isHardRun(session)) {
+          return easyMilestoneRun('Helppo (palautus kisasta)', round1(Math.min(ctx.easyKm || 6, 6)),
+            'Ei vielä kovaa – laatu palaa ensi viikolla.');
+        }
+      }
+    }
+    return session;
+  }
+
   /**
    * Viikkorakenne (ma–su):
    * ma: helppo TAI lepo
@@ -535,6 +704,7 @@
     }
 
     const days = [];
+    let weekBaseKm = 0; // viikon juoksukm ennen välitavoitemuutoksia
     for (let i = 0; i < 7; i++) {
       const date = addDays(weekStart, i);
       const iso = toISO(date);
@@ -729,6 +899,10 @@
         });
       }
 
+      // Välitavoitteet (kuntotestit, B-kisa): testipäivä korvaa treenin, taper/palautus ympärille
+      if (session && (session.type === 'run' || session.type === 'race')) weekBaseKm += session.distanceKm || 0;
+      session = milestoneAdjust(session, iso, { longKm: longKm, easyKm: easyKm });
+
       // Kilpailupäivä
       if (iso === toISO(raceDate)) {
         session = {
@@ -760,6 +934,36 @@
         modified: null,
         note: ''
       });
+    }
+
+    // Testiviikko: testi + siirretty pitkä voivat nostaa viikkokm:iä → pidä ≈ normaaliviikon tasolla (ja ≤ kk-katto):
+    // leikkaa ensin kevyistä (min 3 km), sitten pitkästä. Kisaviikkoa (B-kisa) ei leikata – kisa on kisa.
+    const msDays = days.filter(function (x) { return x.planned && x.planned.milestone; });
+    const weekLimit = Math.min(weekCap || Infinity, round1(weekBaseKm + 1));
+    if (msDays.length && msDays.every(function (x) { return x.planned.type !== 'race'; }) && isFinite(weekLimit)) {
+      const weekCapX = weekLimit;
+      const runKm = function () {
+        return days.reduce(function (a, x) {
+          return a + (x.planned && (x.planned.type === 'run' || x.planned.type === 'race') ? (x.planned.distanceKm || 0) : 0);
+        }, 0);
+      };
+      let over = runKm() - weekCapX;
+      const easyDays = days.filter(function (x) {
+        return x.planned && x.planned.type === 'run' && !x.planned.milestone && x.planned.subtype !== 'long';
+      }).sort(function (a, b) { return (b.planned.distanceKm || 0) - (a.planned.distanceKm || 0); });
+      for (let j = 0; j < easyDays.length && over > 0.05; j++) {
+        const pl = easyDays[j].planned;
+        const cut = Math.min(over, Math.max(0, (pl.distanceKm || 0) - 3));
+        if (cut <= 0) continue;
+        pl.distanceKm = round1(pl.distanceKm - cut);
+        pl.details = (pl.details || '').replace(/\d+(?:\.\d+)? km/, pl.distanceKm + ' km');
+        over = runKm() - weekCapX;
+      }
+      const longDay = days.find(function (x) { return x.planned && x.planned.subtype === 'long' && !x.planned.milestone; });
+      if (over > 0.05 && longDay) {
+        longDay.planned.distanceKm = round1(Math.max(6, longDay.planned.distanceKm - over));
+        longDay.planned.details = (longDay.planned.details || '').replace(/\d+(?:\.\d+)? km/, longDay.planned.distanceKm + ' km');
+      }
     }
 
     return {
@@ -807,6 +1011,7 @@
       generatedAt: new Date().toISOString(),
       raceDate: toISO(raceDate),
       raceName: settings.raceName || 'Paavo Nurmi Marathon 2027',
+      milestonesVersion: MILESTONES_VERSION,
       fitness,
       weeks
     };
@@ -2329,6 +2534,12 @@
   }
 
   global.TreeniPlan = {
+    MILESTONES,
+    MILESTONES_VERSION,
+    milestoneOn,
+    upcomingMilestones,
+    milestoneSession,
+    milestoneAdjust,
     capLongRunKm,
     THRESHOLD_PACE,
     THRESHOLD_TIP,

@@ -1278,3 +1278,17 @@ details.today-fold-card[open] > .today-fold-sum::before { content: '▾ '; }
 .ex-search-clear[hidden] { display: none; }
 .ex-search-count { margin: 0 2px 8px; }
 .ex-search-empty .hint { margin-top: 6px; }
+
+/* Välitavoitteet: kuntotestit + välikisa */
+.ms-card .ms-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-weight: 600; margin-bottom: 6px; flex-wrap: wrap; }
+.ms-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+.ms-row:first-of-type { border-top: 0; }
+.ms-ico { font-size: 1.3em; width: 1.6em; text-align: center; }
+.ms-main { flex: 1; min-width: 0; }
+.ms-name { font-weight: 600; }
+.ms-cd { font-weight: 700; color: var(--accent-light); white-space: nowrap; }
+.ms-race .ms-name { color: #e8c35a; }
+.ms-past { opacity: 0.55; }
+.ms-past .ms-cd { color: inherit; font-weight: 400; }
+.ms-mini { color: #e8c35a; }
+.ms-alert a { color: inherit; text-decoration: underline; }

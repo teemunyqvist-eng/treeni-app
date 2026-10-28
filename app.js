@@ -519,6 +519,7 @@
       state.planCache.raceDate !== state.settings.raceDate ||
       !planCoversToday(state.planCache) ||
       planDeloadStale(state.planCache) ||
+      planMilestonesStale(state.planCache) ||
       !planHasWarmup(state.planCache) ||
       !planHasGym60(state.planCache);
     if (need) {
@@ -540,6 +541,82 @@
       }
     }
     return true;
+  }
+
+  /** Vanha välimuisti ilman välitavoitteita (kuntotestit, B-kisa) → regeneroi */
+  function planMilestonesStale(plan) {
+    return !plan || plan.milestonesVersion !== P.MILESTONES_VERSION;
+  }
+
+  // ---------- Välitavoitteet: kuntotestit + välikisa (plan.js MILESTONES) ----------
+  function milestoneCountdown(m, fromIso) {
+    const n = P.daysBetween(P.parseISO(fromIso), P.parseISO(m.date));
+    if (n < 0) return 'mennyt';
+    if (n === 0) return 'tänään';
+    if (n === 1) return 'huomenna';
+    if (n <= 21) return n + ' pv';
+    const w = Math.floor(n / 7), d = n % 7;
+    return w + ' vk' + (d ? ' ' + d + ' pv' : '');
+  }
+
+  function milestoneWhen(m) {
+    const dow = P.DOW_FI[P.parseISO(m.date).getDay()];
+    return dow + ' ' + formatFiDate(m.date).replace(/^0/, '').replace('.0', '.') + (m.startTime ? ' klo ' + m.startTime : '');
+  }
+
+  function milestoneRowHtml(m, fromIso) {
+    const cd = milestoneCountdown(m, fromIso);
+    const past = cd === 'mennyt';
+    const meta = [milestoneWhen(m), m.place, m.goal ? 'tavoite ' + m.goal : ''].filter(Boolean).join(' · ');
+    return `<div class="ms-row${m.kind === 'race' ? ' ms-race' : ''}${past ? ' ms-past' : ''}">
+      <div class="ms-ico">${m.icon || '🎯'}</div>
+      <div class="ms-main"><div class="ms-name">${esc(m.kind === 'race' ? (m.fullName || m.name) : m.short || m.name)}</div>
+        <div class="hint">${esc(meta)}${m.url ? ` · <a href="${esc(m.url)}" target="_blank" rel="noopener">kisasivu ↗</a>` : ''}</div></div>
+      <div class="ms-cd">${esc(cd)}</div>
+    </div>`;
+  }
+
+  /** Tänään-näkymä: seuraava testi + välikisa (pääkisa pysyy yläpalkissa). */
+  function renderMilestoneCard(iso) {
+    if (!P.upcomingMilestones) return '';
+    const up = P.upcomingMilestones(iso);
+    if (!up.length) return '';
+    const pick = [];
+    const nextTest = up.find(m => m.kind === 'test');
+    const race = up.find(m => m.kind === 'race');
+    [nextTest, race].filter(Boolean).sort((a, b) => a.date < b.date ? -1 : 1).forEach(m => pick.push(m));
+    return `<div class="card ms-card"><div class="ms-head"><span>🎯 Välitavoitteet</span><span class="hint">päätavoite ${esc(state.settings.raceName)} · ${esc(formatFiDate(state.settings.raceDate))}</span></div>
+      ${pick.map(m => milestoneRowHtml(m, iso)).join('')}</div>`;
+  }
+
+  /** Edistyminen: kaikki välitavoitteet + pääkisa. */
+  function renderMilestoneList() {
+    if (!P.MILESTONES) return '';
+    const iso = todayISO();
+    const main = { date: state.settings.raceDate, kind: 'race', icon: '🏁', fullName: state.settings.raceName + ' (päätavoite)',
+      place: 'Turku', goal: state.settings.marathonGoal || '' };
+    const list = P.MILESTONES.slice().sort((a, b) => a.date < b.date ? -1 : 1);
+    return `<div class="card ms-card"><h2>Kuntotestit &amp; välikisa</h2>
+      <div class="hint" style="margin-bottom:6px">Testit näkyvät suunnitelmassa omina päivinään. Kirjaa tulos päivän muistiinpanoon – se jää vain tähän laitteeseen.</div>
+      ${list.map(m => milestoneRowHtml(m, iso)).join('')}${milestoneRowHtml(main, iso)}</div>`;
+  }
+
+  /** Päiväkortin huomio välitavoitepäivälle / kisaviikolle. */
+  function milestoneAlertHtml(iso) {
+    if (!P.milestoneOn) return '';
+    const m = P.milestoneOn(iso);
+    if (m) {
+      return `<div class="alert info ms-alert">${m.icon} ${esc(m.kind === 'race' ? 'Välikisa: ' + (m.fullName || m.name) : 'Kuntotesti: ' + m.name)}` +
+        `${m.startTime ? ' · lähtö klo ' + esc(m.startTime) : ''}${m.goal ? ' · tavoite ' + esc(m.goal) : ''}` +
+        `${m.url ? ` · <a href="${esc(m.url)}" target="_blank" rel="noopener">kisasivu ↗</a>` : ''}</div>`;
+    }
+    const soon = P.upcomingMilestones(iso, 1)[0];
+    if (soon) {
+      const n = P.daysBetween(P.parseISO(iso), P.parseISO(soon.date));
+      if (soon.kind === 'race' && n <= 6) return `<div class="alert info ms-alert">🏅 Kisaviikko: ${esc(soon.name)} ${esc(milestoneWhen(soon))} – ei kovia treenejä, kevyet lyhyinä.</div>`;
+      if (soon.kind === 'test' && n === 1) return `<div class="alert info ms-alert">⏱️ Huomenna ${esc(soon.name)} – tänään kevyesti.</div>`;
+    }
+    return '';
   }
 
   /** Vanha välimuisti ennen kalenteriin kiinnitettyjä kevennysviikkoja → regeneroi */
@@ -781,7 +858,8 @@
       html += `<span class="badge other">${esc(lab)}</span>`;
       if (s.lightLoad) html += '<span class="badge mod">Kevyt</span>';
     }
-    if (s.type === 'race') html += '<span class="badge run">Kisa</span>';
+    if (s.type === 'race') html += `<span class="badge run">${s.subtype === 'halfmarathon' ? 'Välikisa' : 'Kisa'}</span>`;
+    if (s.subtype === 'test') html += '<span class="badge run">Kuntotesti</span>';
     if (s.coach) html += '<span class="badge coach">Valmentajalta</span>';
     if (day.completed) html += day.garmin && day.garmin.source === 'garmin'
       ? '<span class="badge done garmin">Garmin ✓</span>' : '<span class="badge done">Tehty</span>';
@@ -1307,6 +1385,7 @@
     } else if (day.completed) {
       guidance = '<div class="alert ok">✓ Tehty. Huomenna lasketaan taas nollasta.</div>';
     }
+    guidance += milestoneAlertHtml(iso);
     if (day.deload && day.week && day.week.deloadNote && day.status !== 'sairas') {
       guidance += `<div class="alert info deload-note">🔽 ${esc(day.week.deloadNote)}</div>`;
     }
@@ -1381,6 +1460,7 @@
 
     el.innerHTML = `
       ${renderMotivationLine(iso, day)}
+      ${renderMilestoneCard(iso)}
       ${shoulderCard}
       <div class="card today-main${day.completed ? ' is-done' : ''}">
         <div class="today-date">Tänään · ${dow} ${formatFiDate(iso)}</div>
@@ -2294,6 +2374,8 @@
     if (eff.status === 'salibandy' || (s && s.salibandyDay)) return '🏒';
     if (!s) return '•';
     if (s.type === 'rest') return '💤';
+    if (s.subtype === 'test') return '⏱️';
+    if (s.subtype === 'halfmarathon') return '🏅';
     if (s.type === 'run') return '🏃';
     if (s.type === 'strength') return s.location === 'koti' ? '🏠' : '🏋️';
     if (s.type === 'race') return '🏁';
@@ -2332,7 +2414,7 @@
         : (s.durationMin ? '~' + s.durationMin + ' min' : '');
       return `<div class="week-day${d.date === todayI ? ' today' : ''}${eff.completed ? ' done' : ''}${s.coach ? ' coach' : ''}" data-date="${d.date}">
         <div><div class="dow">${P.DOW_FI[d.dow]}</div><div class="date">${formatFiDate(d.date).replace(/\d{4}$/, '')}</div></div>
-        <div><div class="name">${s.coach ? '🧭 ' : ''}${esc(s.name)}</div>${detail ? `<div class="detail">${esc(detail)}</div>` : ''}${(() => { const fb = feedbackFor(d.date); return fb ? `<div class="detail pt-fb-mini">💬 PT: ${esc(fb.title || 'palaute')}</div>` : ''; })()}${(() => {
+        <div><div class="name">${s.coach ? '🧭 ' : ''}${esc(s.name)}</div>${detail ? `<div class="detail">${esc(detail)}</div>` : ''}${(() => { const m = P.milestoneOn && P.milestoneOn(d.date); return m ? `<div class="detail ms-mini">${m.icon} ${esc(m.kind === 'race' ? 'Välikisa' : 'Kuntotesti')}: ${esc(m.name)}</div>` : ''; })()}${(() => { const fb = feedbackFor(d.date); return fb ? `<div class="detail pt-fb-mini">💬 PT: ${esc(fb.title || 'palaute')}</div>` : ''; })()}${(() => {
           const g = [];
           if (eff.garmin && eff.garmin.source === 'garmin') g.push(doneSummary({ distanceKm: eff.garmin.km, minutes: eff.garmin.min }));
           doneExtrasFor(d.date).forEach(l => g.push('+ ' + l.name + (doneSummary(l) ? ' ' + doneSummary(l) : '')));
@@ -2363,6 +2445,7 @@
       day.dowLabel + ' ' + formatFiDate(iso),
       `<div class="session-title">${esc(s.name)}</div>
        <div class="session-meta" style="margin:8px 0">${sessionBadges(day)}</div>
+       ${milestoneAlertHtml(iso)}
        ${renderSessionBody(s)}
        ${renderFeedbackCard(feedbackFor(iso), { inline: true })}
        <button class="btn primary block" id="d-done" style="margin-top:14px"${day.completed ? ' disabled' : ''}>✓ Merkitse tehdyksi</button>
@@ -3029,6 +3112,7 @@
         ${weightBox}
       </div>
       ${renderKmSection()}
+      ${renderMilestoneList()}
       ${renderFeedbackHistory()}
       ${renderMonthlySection()}
       <div class="card">
