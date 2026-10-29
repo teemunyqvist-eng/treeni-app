@@ -1,6 +1,6 @@
 {
-  "version": 29,
-  "updatedAt": "2026-10-29T16:11:30+02:00",
+  "version": 30,
+  "updatedAt": "2026-10-29T16:12:22+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -21,6 +21,10 @@
     "2026-10-28": {
       "title": "Kynnys 3 × 8 min – liian kovaa",
       "text": "3 × 8 min kynnys tehty, 9,2 km. Hyvää: kaikki kolme vetoa vedettiin loppuun, verryttely täydet 15 min ja palautukset pidettiin rauhallisina. Pieleen: vauhti karkasi liian kovaksi, vedot 4:56, 4:43 ja 5:13 kun tavoite oli 5:20–5:30. Toinen veto oli kilpailu, ei kynnys, ja kolmas hyytyi siksi. Ensi kerralla ensimmäinen kilometri tarkoituksella 5:25 ja tasaisesti loppuun, kolmannen vedon pitää olla yhtä nopea kuin ensimmäisen. Huomenna lyhyt kotipiiri ennen yövuoroa, kevennetty versio on täysin ok, sitten torkut."
+    },
+    "2026-10-29": {
+      "title": "Kotipiiri + leuat myötäotteella",
+      "text": "Lyhyt kotipiiri ennen yövuoroa tehty, 34 min. Ensimmäinen leukasessio myötäotteella: 5 ja 4 myötä + 6 vastaotteella. Hyvä alku, myötäote on oikeasti vaikeampi ja silti tuli enemmän kuin minimi. Kuorma pysyi sopivana yövuoron alle, ei ylilyöntiä. Seuraava tavoite 5-5 myötä + 6 vasta. Nyt torkut ennen vuoroa, huomenna lepo ja unta, lauantaina kävely, pitkä kevyt sunnuntaina."
     }
   },
   "done": {
