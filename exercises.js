@@ -1728,8 +1728,198 @@
         'Unohtaa vastakkaisen jalan'
       ],
       video: { type: 'link', url: ytSearch('towel stretch plantar fascia'), label: 'Katso video (YouTube-haku)' }
+    },
+
+    // ---- Päivärutiini: kehonpainoliikkeet ja tasapaino ----
+    chin_up: {
+      id: 'chin_up',
+      loadsShoulder: true,
+      name: 'Leuanveto vastaotteella',
+      category: 'voima',
+      equipment: ['leuanvetotanko'],
+      benefits: [
+        'Hauis mukana → yleensä helpompi kuin myötäote, hyvä volyymin kerääjä',
+        'Kehittää samaa vetovoimaa, jota myötäotteen 3×8 vaatii',
+        'Sopii grease the groove -tyyliin: pienet sarjat pitkin päivää'
+      ],
+      cues: [
+        'Kämmenet itseesi päin, ote hartioiden levyinen',
+        'Lapaluut alas ja taakse ennen vetoa',
+        'Rinta kohti tankoa, leuka tangon yli',
+        'Laske hallitusti suorille käsille – ei pudotusta'
+      ],
+      mistakes: [
+        'Sarja viedään uupumukseen (GtG: aina reilusti varaa)',
+        'Heilahdus tai potku',
+        'Puolikas liikerata alhaalla'
+      ],
+      video: { type: 'link', url: ytSearch('chin up proper form'), label: 'Katso video (YouTube-haku)' }
+    },
+    bulgarian_split_squat: {
+      id: 'bulgarian_split_squat',
+      name: 'Bulgarialainen askelkyykky',
+      category: 'voima',
+      equipment: ['tuoli / penkki'],
+      benefits: [
+        'Yhden jalan voima: pakara ja etureisi',
+        'Lantion hallinta ja puolierot kuntoon juoksijalle',
+        'Kova liike ilman painoja'
+      ],
+      cues: [
+        'Takajalan nilkka tuolille, etujalka reilu askel eteen',
+        'Laske suoraan alas, etupolvi varpaiden suuntaan',
+        'Ylävartalo hieman eteen, paino etukantapäällä',
+        'Työnnä ylös etujalalla – 2–3 toistoa jää varaan'
+      ],
+      mistakes: [
+        'Etupolvi romahtaa sisään',
+        'Liian lyhyt asento → kantapää nousee',
+        'Ponnistus takajalalla'
+      ],
+      video: { type: 'link', url: ytSearch('bulgarian split squat bodyweight form'), label: 'Katso video (YouTube-haku)' }
+    },
+    side_plank: {
+      id: 'side_plank',
+      loadsShoulder: true,
+      name: 'Kylkilankku',
+      category: 'voima',
+      equipment: [],
+      benefits: [
+        'Vinot vatsalihakset ja lonkan loitontajat',
+        'Pitää lantion tasaisena juoksuaskeleessa',
+        'Suojaa alaselkää'
+      ],
+      cues: [
+        'Kyynärpää olkapään alla, jalat päällekkäin tai porrastettuna',
+        'Lantio ylös – päästä nilkkoihin suora linja',
+        'Hengitä rauhassa, älä pidätä',
+        'Helpotus: alempi polvi maassa'
+      ],
+      mistakes: [
+        'Lantio painuu alas',
+        'Vartalo kiertyy eteen',
+        'Olkapää korvissa'
+      ],
+      video: { type: 'link', url: ytSearch('side plank proper form'), label: 'Katso video (YouTube-haku)' }
+    },
+    chair_dip: {
+      id: 'chair_dip',
+      loadsShoulder: true,
+      name: 'Dippi tuolilla',
+      category: 'voima',
+      equipment: ['tukeva tuoli'],
+      benefits: [
+        'Ojentajat ja rinnan alaosa',
+        'Tasapainottaa vetoliikkeitä (leuanveto)',
+        'Ei välineitä'
+      ],
+      cues: [
+        'Kädet tuolin reunalla sormet eteenpäin, selkä lähellä tuolia',
+        'Laske kunnes kyynärpäät ~90°, ei syvemmälle',
+        'Kyynärpäät taakse, ei sivuille',
+        'Helpotus: polvet koukussa; vaikeutus: jalat suorana'
+      ],
+      mistakes: [
+        'Liian syvä lasku → olkapään etuosa kipeytyy',
+        'Hartiat nousevat korviin',
+        'Lantio karkaa kauas tuolista'
+      ],
+      video: { type: 'link', url: ytSearch('chair dips proper form'), label: 'Katso video (YouTube-haku)' }
+    },
+    sl_glute_bridge: {
+      id: 'sl_glute_bridge',
+      name: 'Yhden jalan lantionnosto lattialla',
+      category: 'voima',
+      equipment: [],
+      benefits: [
+        'Pakaran voima yksi jalka kerrallaan',
+        'Lantion vakaus juoksuun',
+        'Kevyt – sopii melkein mihin päivään tahansa'
+      ],
+      cues: [
+        'Selinmakuu, yksi jalka koukussa maassa, toinen polvi rintaa kohti',
+        'Työnnä kantapäällä lantio ylös, purista pakaraa 1–2 s',
+        'Lantio pysyy vaakatasossa',
+        'Laske hallitusti'
+      ],
+      mistakes: [
+        'Nosto alaselällä (notko)',
+        'Lantio kallistuu',
+        'Liian nopea tempo'
+      ],
+      video: { type: 'link', url: ytSearch('single leg glute bridge form'), label: 'Katso video (YouTube-haku)' }
+    },
+    sl_balance: {
+      id: 'sl_balance',
+      name: 'Tasapaino: yhden jalan seisonta',
+      category: 'liikkuvuus',
+      equipment: [],
+      benefits: [
+        'Nilkan ja jalkaterän hallinta – vähentää nyrjähdyksiä',
+        'Parantaa juoksuaskeleen tukivaihetta',
+        'Hyvä mihin päivään tahansa'
+      ],
+      cues: [
+        'Seiso yhdellä jalalla paljain jaloin, polvi pehmeänä',
+        'Lantio tasaisena, katse yhteen pisteeseen',
+        'Eteneminen: silmät kiinni tai pehmeä alusta (tyyny)',
+        '3 × 30 s / jalka'
+      ],
+      mistakes: [
+        'Polvi lukossa',
+        'Lantio roikkuu vapaan jalan puolelle',
+        'Pidätät hengitystä'
+      ],
+      video: { type: 'link', url: ytSearch('single leg balance exercise eyes closed'), label: 'Katso video (YouTube-haku)' }
+    },
+    tandem_stance: {
+      id: 'tandem_stance',
+      name: 'Tasapaino: tandemseisonta',
+      category: 'liikkuvuus',
+      equipment: [],
+      benefits: [
+        'Sivuttaissuunnan tasapaino ja nilkkojen hallinta',
+        'Helppo aloittaa, helppo vaikeuttaa',
+        'Ei kuormita palautumista'
+      ],
+      cues: [
+        'Toisen jalan kantapää toisen varpaiden eteen samalle linjalle',
+        'Kädet rinnalla, vartalo pitkänä',
+        'Eteneminen: silmät kiinni tai pää kääntyy hitaasti puolelta toiselle',
+        '3 × 30 s, vaihda etujalkaa'
+      ],
+      mistakes: [
+        'Jalat eri linjalla (helpottaa liikaa)',
+        'Ylävartalo heiluu käsien varassa',
+        'Liian lyhyet pidot'
+      ],
+      video: { type: 'link', url: ytSearch('tandem stance balance exercise'), label: 'Katso video (YouTube-haku)' }
+    },
+    sl_reach: {
+      id: 'sl_reach',
+      name: 'Tasapaino: yhden jalan kurotus',
+      category: 'liikkuvuus',
+      equipment: [],
+      benefits: [
+        'Dynaaminen tasapaino ja pakaran hallinta',
+        'Polven linjaus yhden jalan kuormassa',
+        'Tähtikurotus kehittää nilkkaa joka suuntaan'
+      ],
+      cues: [
+        'Seiso yhdellä jalalla, polvi kevyesti koukussa',
+        'Kurota vapaalla jalalla eteen, sivulle ja taakse (tähti) – kosketa kevyesti',
+        'Tukipolvi pysyy varpaiden linjassa',
+        '2 × 6 kurotusta / jalka'
+      ],
+      mistakes: [
+        'Tukipolvi kääntyy sisään',
+        'Paino siirtyy kurottavalle jalalle',
+        'Kiirehtiminen'
+      ],
+      video: { type: 'link', url: ytSearch('star excursion balance exercise single leg reach'), label: 'Katso video (YouTube-haku)' }
     }
   };
+
 
   function getExercise(id) {
     return EXERCISES[id] || null;

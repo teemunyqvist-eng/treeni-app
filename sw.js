@@ -1,5 +1,5 @@
 /* Treeni-app service worker – caches app shell for offline use */
-const CACHE = 'treeni-shell-v33';
+const CACHE = 'treeni-shell-v34';
 const ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const ASSETS = [
   './exercises.js',
   './garmin.js',
   './progress.js',
+  './routine.js',
   './manifest.json',
   './icon.svg'
 ];

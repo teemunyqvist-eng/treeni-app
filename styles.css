@@ -1292,3 +1292,29 @@ details.today-fold-card[open] > .today-fold-sum::before { content: '▾ '; }
 .ms-past .ms-cd { color: inherit; font-weight: 400; }
 .ms-mini { color: #e8c35a; }
 .ms-alert a { color: inherit; text-decoration: underline; }
+
+/* Päivärutiini (kevyt päivittäinen lisätreeni) */
+.routine-card { padding: 12px 14px; border: 1px solid var(--border); }
+.routine-card.rt-boost { border-left: 4px solid var(--accent-light); background: linear-gradient(135deg, var(--accent-soft), var(--bg-card)); }
+.routine-card.rt-light { border-left: 4px solid var(--info); background: linear-gradient(135deg, var(--info-soft), var(--bg-card)); }
+.modal .routine-card { margin-top: 12px; }
+.rt-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.rt-title { font-weight: 700; font-size: 0.98rem; }
+.rt-count { font-size: 0.82rem; font-weight: 700; color: var(--text-muted); white-space: nowrap; }
+.rt-all-done .rt-count { color: var(--accent-light); }
+.rt-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+.rt-reason { font-size: 0.86rem; color: var(--text-muted); margin: 6px 0 8px; }
+.rt-list { list-style: none; display: grid; gap: 8px; }
+.rt-item { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-elevated); padding: 8px 10px; }
+.rt-item.on { border-color: var(--accent); background: var(--accent-soft); }
+.rt-item.on .rt-name { text-decoration: line-through; opacity: 0.8; }
+.rt-check { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; cursor: pointer; min-height: 32px; }
+.rt-check input { width: 22px; height: 22px; flex: none; accent-color: var(--accent); }
+.rt-name { font-weight: 600; font-size: 0.92rem; }
+.rt-dose { font-size: 0.85rem; color: var(--accent-light); font-weight: 600; }
+.rt-light .rt-dose { color: #8cc4ee; }
+.rt-cue { font-size: 0.82rem; color: var(--text-muted); margin: 4px 0 0 32px; }
+.rt-item .cue-chip-row { margin: 6px 0 0 32px; gap: 6px; }
+.rt-sets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0 0 32px; font-size: 0.8rem; color: var(--text-muted); }
+.rt-set { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-input); color: var(--text); font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+.rt-set.on { background: var(--accent); border-color: var(--accent-light); color: #fff; }

@@ -2504,6 +2504,7 @@
     });
     if (day.distanceKm) s.distanceKm = day.distanceKm;
     if (day.durationMin) s.durationMin = day.durationMin;
+    if (/^(boost|light|none)$/.test(day.routine || '')) s.coach.routine = day.routine; // Päivärutiini-ohitus
     return s;
   }
 

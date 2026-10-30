@@ -9,6 +9,7 @@
   const PREV_STORAGE_KEYS = ['treeni-app-v6', 'treeni-app-v5', 'treeni-app-v4', 'treeni-app-v3'];
   const P = TreeniPlan;
   const EX = TreeniExercises;
+  const RT = typeof TreeniRoutine !== 'undefined' ? TreeniRoutine : null;
 
   const DEFAULTS = {
     settings: {
@@ -41,6 +42,7 @@
     garmin: null, // täyttyy varmuuskopion tuonnista (vanha Garmin-yhteenveto)
     dayOverrides: {}, // iso -> { status, completed, session, note, completedAt }
     log: [],
+    routineLog: {}, // Päivärutiini: iso -> { liikeavain: true, pullSets: n }
     garminApplied: {}, // done-merkinnän id -> { date, kind } (idempotentti Garmin ✓ Valmis)
     planCache: null,
     health: {
@@ -1347,6 +1349,113 @@
     return `<div class="moti-card moti-${ctx}" role="status"><p class="moti-text">${esc(line)}</p></div>`;
   }
 
+  // ---------- Päivärutiini (kevyt päivittäinen lisätreeni) ----------
+  function routineFor(iso) {
+    if (!RT) return null;
+    const day = getEffectiveDay(iso);
+    if (!day) return null;
+    const nb = (d) => {
+      const x = getEffectiveDay(P.toISO(P.addDays(P.parseISO(iso), d)));
+      return x ? { session: x.session || x.planned, status: x.status } : null;
+    };
+    return RT.buildRoutine(iso, {
+      session: day.session || day.planned,
+      status: day.status,
+      prev: nb(-1),
+      next: nb(1),
+      deload: !!day.deload,
+      shoulderRehab: !!day.shoulderRehab
+    });
+  }
+  function routineLogFor(iso) {
+    return Object.assign({}, (state.routineLog || {})[iso] || {});
+  }
+  function setRoutineLog(iso, patch) {
+    state.routineLog = state.routineLog || {};
+    const cur = Object.assign(routineLogFor(iso), patch);
+    Object.keys(cur).forEach((k) => { if (!cur[k]) delete cur[k]; });
+    if (Object.keys(cur).length) state.routineLog[iso] = cur; else delete state.routineLog[iso];
+    // Säilytä 120 vrk
+    const cut = P.toISO(P.addDays(new Date(), -120));
+    Object.keys(state.routineLog).forEach((k) => { if (k < cut) delete state.routineLog[k]; });
+    saveState();
+  }
+  function renderRoutineCard(iso) {
+    const r = routineFor(iso);
+    if (!r || r.mode === 'none' || !r.items.length) return '';
+    const lg = routineLogFor(iso);
+    const boost = r.mode === 'boost';
+    const doneCount = r.items.filter((it) => lg[it.key]).length;
+    const allDone = doneCount === r.items.length;
+    const items = r.items.map((it) => {
+      const on = !!lg[it.key];
+      const exIds = it.exs || [it.ex];
+      const chips = exIds.map((id) => {
+        const lib = EX.getExercise(id);
+        return lib ? `<button type="button" class="cue-chip" data-ex="${esc(id)}">${esc(lib.name)} ›</button>` : '';
+      }).join('');
+      let sets = '';
+      if (it.sets) {
+        const c = Math.min(lg.pullSets || 0, it.sets);
+        sets = `<div class="rt-sets" aria-label="Sarjat">Sarjat: ${Array.from({ length: it.sets }, (_, i) =>
+          `<button type="button" class="rt-set${i < c ? ' on' : ''}" data-rt-set="${i + 1}" aria-label="Sarja ${i + 1}">${i + 1}</button>`).join('')}</div>`;
+      }
+      return `<li class="rt-item${on ? ' on' : ''}${it.balance ? ' rt-balance' : ''}">
+          <label class="rt-check"><input type="checkbox" data-rt="${esc(it.key)}"${on ? ' checked' : ''} />
+            <span class="rt-name">${it.balance ? '⚖️ ' : ''}${esc(it.name)}</span><span class="rt-dose">${esc(it.dose)}</span></label>
+          <div class="rt-cue">${esc(it.cue)}</div>
+          ${sets}
+          <div class="cue-chip-row">${chips}</div>
+        </li>`;
+    }).join('');
+    return `<div class="card routine-card ${boost ? 'rt-boost' : 'rt-light'}${allDone ? ' rt-all-done' : ''}" data-routine="${esc(iso)}">
+        <div class="rt-head">
+          <span class="rt-title">${boost ? '⚡' : '🧘'} Päivärutiini · ${esc(r.title)}</span>
+          <span class="rt-count">${allDone ? '✓ Tehty' : doneCount + '/' + r.items.length}</span>
+        </div>
+        <div class="rt-meta">${esc(r.minutes)}</div>
+        <p class="rt-reason">${esc(r.reason)}</p>
+        <ul class="rt-list">${items}</ul>
+      </div>`;
+  }
+  function bindRoutineCard(root, iso) {
+    const card = root && root.querySelector('.routine-card[data-routine="' + iso + '"]');
+    if (!card) return;
+    const refresh = () => {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = renderRoutineCard(iso);
+      const fresh = tmp.firstElementChild;
+      if (fresh) { card.replaceWith(fresh); bindRoutineCard(fresh.parentNode, iso); bindExerciseTaps(fresh); }
+    };
+    card.querySelectorAll('[data-rt]').forEach((cb) => {
+      cb.addEventListener('change', () => {
+        const key = cb.getAttribute('data-rt');
+        setRoutineLog(iso, { [key]: cb.checked });
+        refresh();
+        const lg = routineLogFor(iso);
+        const r = routineFor(iso);
+        if (cb.checked && r && r.items.every((it) => lg[it.key])) toast('Päivärutiini tehty 💪');
+      });
+    });
+    card.querySelectorAll('[data-rt-set]').forEach((b) => {
+      b.addEventListener('click', () => {
+        const i = Number(b.getAttribute('data-rt-set'));
+        const lg = routineLogFor(iso);
+        const cur = lg.pullSets || 0;
+        const next = cur === i ? i - 1 : i;
+        const r = routineFor(iso);
+        const pull = r && r.items.find((it) => it.key === 'pull');
+        const patch = { pullSets: next };
+        if (pull) patch.pull = next >= pull.sets;
+        setRoutineLog(iso, patch);
+        refresh();
+      });
+    });
+  }
+  if (typeof window !== 'undefined') {
+    window.TreeniRoutineUI = { routineFor: (iso) => routineFor(iso), log: (iso) => routineLogFor(iso) };
+  }
+
   function renderToday() {
     updateHeader();
     const iso = todayISO();
@@ -1499,6 +1608,7 @@
           </div>
         </details>
       </div>
+      ${renderRoutineCard(iso)}
       ${renderDoneExtras(iso)}
       ${renderFeedbackCard(feedbackFor(iso) || feedbackFor(yIso))}
       ${condPromptsHtml}
@@ -1539,6 +1649,7 @@
     });
     bindExerciseTaps(el);
     bindExerciseEdit(el, iso);
+    bindRoutineCard(el, iso);
   }
 
   function esc(t) {
@@ -2447,6 +2558,7 @@
        <div class="session-meta" style="margin:8px 0">${sessionBadges(day)}</div>
        ${milestoneAlertHtml(iso)}
        ${renderSessionBody(s)}
+       ${renderRoutineCard(iso)}
        ${renderFeedbackCard(feedbackFor(iso), { inline: true })}
        <button class="btn primary block" id="d-done" style="margin-top:14px"${day.completed ? ' disabled' : ''}>✓ Merkitse tehdyksi</button>
        <div class="status-grid two" style="margin-top:8px">
@@ -2464,6 +2576,7 @@
         root.querySelector('#d-sairas').onclick = () => go('sairas');
         bindExerciseTaps(root);
         bindFeedbackToggles(root);
+        bindRoutineCard(root, iso);
       }
     );
   }
