@@ -1,6 +1,6 @@
 {
-  "version": 31,
-  "updatedAt": "2026-10-31T16:09:58+02:00",
+  "version": 32,
+  "updatedAt": "2026-10-31T16:10:42+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -25,6 +25,10 @@
     "2026-10-29": {
       "title": "Kotipiiri + leuat myötäotteella",
       "text": "Lyhyt kotipiiri ennen yövuoroa tehty, 34 min. Ensimmäinen leukasessio myötäotteella: 5 ja 4 myötä + 6 vastaotteella. Hyvä alku, myötäote on oikeasti vaikeampi ja silti tuli enemmän kuin minimi. Kuorma pysyi sopivana yövuoron alle, ei ylilyöntiä. Seuraava tavoite 5-5 myötä + 6 vasta. Nyt torkut ennen vuoroa, huomenna lepo ja unta, lauantaina kävely, pitkä kevyt sunnuntaina."
+    },
+    "2026-10-31": {
+      "title": "Palautuskävely – kevyesti, kuten piti",
+      "text": "Palautuskävely tehty: 6 km, 1 h 7 min, vauhti 11:12/km. Juuri sitä mitä tilattiin – rauhallista liikettä yövuoron jälkeen, ei mitään urheilua. Hyvä, ettet lähtenyt väsyneenä juoksemaan pitkää. Mutta: muista ne 10 min liikkuvuutta perään, se on osa treeniä eikä bonus. Huomenna pitkä kevyt 10 km: jos yö menee hyvin, aja koko matka tasaisesti ja pidä vauhti oikeasti kevyenä alusta asti. Jos olo on vielä vetämätön, ota kevennetty versio ilman huonoa omaatuntoa. Lepää tänään kunnolla, perkele – huominen ratkaistaan tänä iltana sängyssä."
     }
   },
   "done": {
