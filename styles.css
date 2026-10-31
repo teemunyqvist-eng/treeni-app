@@ -1318,3 +1318,10 @@ details.today-fold-card[open] > .today-fold-sum::before { content: '▾ '; }
 .rt-sets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0 0 32px; font-size: 0.8rem; color: var(--text-muted); }
 .rt-set { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-input); color: var(--text); font-weight: 700; font-size: 0.8rem; cursor: pointer; }
 .rt-set.on { background: var(--accent); border-color: var(--accent-light); color: #fff; }
+
+/* Kävelyn jälkeinen liikkuvuusosio: kuittaus */
+.recovery-done-btn { margin-top: 10px; }
+.recovery-done-btn.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-light); }
+.session-block.is-recovery-done { border-left: 3px solid var(--accent); background: var(--accent-soft); }
+.session-block.is-recovery-done .ex-name { text-decoration: line-through; opacity: 0.8; }
+.badge.recovery-badge { background: var(--accent-soft); color: var(--accent-light); }

@@ -943,7 +943,9 @@
     const teeMyos = optional && block.teeMyos
       ? '<div class="block-kicker">Tee myös <span class="hint-inline">(voit ohittaa)</span></div>'
       : '';
-    let html = `<div class="session-block${optional ? ' is-optional' : (kind === 'rehab' ? ' is-rehab' : ' is-warmup')}">`;
+    const rec = block.id === 'recovery_mobility' && block.iso;
+    if (rec) badge += `<span class="badge done recovery-badge"${block.done ? '' : ' style="display:none"'}>✓ Tehty</span>`;
+    let html = `<div class="session-block${optional ? ' is-optional' : (kind === 'rehab' ? ' is-rehab' : ' is-warmup')}${rec ? ' is-recovery' + (block.done ? ' is-recovery-done' : '') : ''}"${rec ? ` data-recovery-block="${esc(block.iso)}"` : ''}>`;
     html += `<div class="block-head"><div class="block-title">${esc(title)}${esc(dur)}</div><div class="block-badges">${badge}</div></div>`;
     html += teeMyos;
     if (block.note) html += `<div class="hint" style="margin-bottom:8px">${esc(block.note)}</div>`;
@@ -954,6 +956,9 @@
       html += `</details>`;
     } else {
       html += renderExList(block.exercises);
+    }
+    if (rec) {
+      html += `<button type="button" class="btn sm block recovery-done-btn${block.done ? ' on' : ''}" data-recovery-done="${esc(block.iso)}" aria-pressed="${block.done ? 'true' : 'false'}">${block.done ? '✓ Liikkuvuus tehty' : '✓ Kuittaa liikkuvuus tehdyksi'}</button>`;
     }
     html += '</div>';
     return html;
@@ -1373,7 +1378,39 @@
     let r = null;
     try { r = routineFor(iso); } catch (e) { r = null; }
     const block = RT.recoveryMobility(iso, s, r);
-    return block ? Object.assign({}, s, { mobility: block }) : s;
+    if (!block) return s;
+    block.iso = iso;
+    block.done = recoveryDone(iso);
+    return Object.assign({}, s, { mobility: block });
+  }
+  // Kävelyn jälkeisen liikkuvuusosion kuittaus (routineLog[iso].recovery). Ei terveysdataa.
+  // Siemen: päivät, jotka on kuitattu tehdyksi ennen kuin kuittausnappi oli olemassa.
+  const RECOVERY_DONE_SEED = { '2026-10-31': true };
+  function recoveryDone(iso) {
+    const v = routineLogFor(iso).recovery;
+    if (v === 'off') return false;
+    return v === true || !!RECOVERY_DONE_SEED[iso];
+  }
+  function setRecoveryDone(iso, on) {
+    setRoutineLog(iso, { recovery: on ? true : (RECOVERY_DONE_SEED[iso] ? 'off' : false) });
+  }
+  if (typeof document !== 'undefined') {
+    document.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest && e.target.closest('[data-recovery-done]');
+      if (!btn) return;
+      e.preventDefault(); e.stopPropagation();
+      const iso = btn.getAttribute('data-recovery-done');
+      const on = !recoveryDone(iso);
+      setRecoveryDone(iso, on);
+      document.querySelectorAll('[data-recovery-block="' + iso + '"]').forEach((blk) => {
+        blk.classList.toggle('is-recovery-done', on);
+        const b = blk.querySelector('[data-recovery-done]');
+        if (b) { b.textContent = on ? '✓ Liikkuvuus tehty' : '✓ Kuittaa liikkuvuus tehdyksi'; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+        const badge = blk.querySelector('.recovery-badge');
+        if (badge) badge.style.display = on ? '' : 'none';
+      });
+      if (on) toast('Liikkuvuus tehty 🧘');
+    });
   }
   function routineLogFor(iso) {
     return Object.assign({}, (state.routineLog || {})[iso] || {});
