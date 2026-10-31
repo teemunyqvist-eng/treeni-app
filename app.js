@@ -1367,6 +1367,14 @@
       shoulderRehab: !!day.shoulderRehab
     });
   }
+  /** Palautuskävely-/lepopäivän liikkuvuusosio treenikorttiin (ei muuta tallennettua sessiota). */
+  function withRecoveryMobility(iso, s) {
+    if (!RT || !RT.recoveryMobility || !s || s.mobility) return s;
+    let r = null;
+    try { r = routineFor(iso); } catch (e) { r = null; }
+    const block = RT.recoveryMobility(iso, s, r);
+    return block ? Object.assign({}, s, { mobility: block }) : s;
+  }
   function routineLogFor(iso) {
     return Object.assign({}, (state.routineLog || {})[iso] || {});
   }
@@ -1576,7 +1584,7 @@
         <div class="session-title today-title">${esc(s.name)}</div>
         <div class="session-meta">${sessionBadges(day)}</div>
         ${guidance}
-        ${renderSessionBody(s, { editable: !day.completed && !s.coach && (s.type === 'strength' || s.type === 'mobility'), coachActions: !day.completed })}
+        ${renderSessionBody(withRecoveryMobility(iso, s), { editable: !day.completed && !s.coach && (s.type === 'strength' || s.type === 'mobility'), coachActions: !day.completed })}
         ${voiceBtn}
 
         <button class="btn primary block done-btn" data-act="done"${day.completed ? ' disabled' : ''}>${day.completed ? '✓ Tehty' : '✓ Valmis'}</button>
@@ -2557,7 +2565,7 @@
       `<div class="session-title">${esc(s.name)}</div>
        <div class="session-meta" style="margin:8px 0">${sessionBadges(day)}</div>
        ${milestoneAlertHtml(iso)}
-       ${renderSessionBody(s)}
+       ${renderSessionBody(withRecoveryMobility(iso, s))}
        ${renderRoutineCard(iso)}
        ${renderFeedbackCard(feedbackFor(iso), { inline: true })}
        <button class="btn primary block" id="d-done" style="margin-top:14px"${day.completed ? ' disabled' : ''}>✓ Merkitse tehdyksi</button>

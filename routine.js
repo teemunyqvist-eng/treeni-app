@@ -167,5 +167,61 @@
     };
   }
 
-  global.TreeniRoutine = { buildRoutine, sessionKind, nightHeavy, pullDose, dayNum, STRETCH, BALANCE, LEGS, UPPER };
+  // ---------- Palautuskävelyn / lepopäivän liikkuvuusosio ----------
+  // Näkyy itse treenikortissa (erillään Päivärutiinista). Välttää päivän Päivärutiinin liikkeet.
+  const RECOVERY_CORE = [
+    { key: 'hipflex', id: 'hip_flexor_stretch', sets: '2 × 30 s / puoli' },
+    { key: 'ham', id: 'hamstring_stretch', sets: '2 × 30 s / puoli' },
+    { key: 'calfst', id: 'calf_stretch', sets: '30 s suora + 30 s koukku / puoli' },
+    { key: 'glute', id: 'figure4_stretch', sets: '2 × 30 s / puoli' },
+    { key: 'thor', id: 'thoracic_opener', sets: '8 / puoli' },
+    { key: 'catcow', id: 'cat_cow', sets: '10 hidasta' }
+  ];
+  const RECOVERY_SUBS = [
+    { key: 'wgs', id: 'worlds_greatest_stretch', sets: '5 / puoli' },
+    { key: 'quad', id: 'quad_stretch', sets: '2 × 30 s / puoli' },
+    { key: 'child', id: 'childs_pose', sets: '45–60 s' },
+    { key: 'hipop', id: 'hip_opener', sets: '8 / puoli' },
+    { key: 'ankle', id: 'ankle_mobility', sets: '10 / puoli' }
+  ];
+  const RECOVERY_BAL = [
+    { key: 'bal1', id: 'sl_balance', sets: '2 × 30 s / jalka' },
+    { key: 'bal3', id: 'tandem_stance', sets: '2 × 30 s' },
+    { key: 'bal4', id: 'sl_reach', sets: '2 × 5 / jalka' },
+    { key: 'bal2', id: 'sl_rdl_bw', sets: '2 × 6 / jalka' }
+  ];
+  const MOBILITY_TEXT = /liikkuvuu|venyt/i;
+  /**
+   * Palautuskävely- tai lepopäivän ~10 min liikkuvuus + tasapaino -osio (session.mobility-muotoinen).
+   * @param {object} s päivän sessio · @param {object} routine päivän buildRoutine-tulos (vältettävät liikkeet)
+   * @returns {null | {id,label,durationMin,note,optional,exercises}}
+   */
+  function recoveryMobility(iso, s, routine) {
+    if (!s || s.mobility || s.subtype === 'sick') return null;
+    const kind = sessionKind(s);
+    const text = [s.details, s.coach && s.coach.cooldown].filter(Boolean).join(' ');
+    const mentions = MOBILITY_TEXT.test(text);
+    if (kind !== 'walk' && !(kind === 'rest' && mentions)) return null;
+    const avoid = {};
+    ((routine && routine.items) || []).forEach((x) => { avoid[x.key] = true; });
+    const ex = RECOVERY_CORE.filter((x) => !avoid[x.key]);
+    for (let i = 0; ex.length < 6 && i < RECOVERY_SUBS.length; i++) {
+      if (!avoid[RECOVERY_SUBS[i].key]) ex.push(RECOVERY_SUBS[i]);
+    }
+    const n = dayNum(iso);
+    const bals = RECOVERY_BAL.filter((x) => !avoid[x.key]);
+    ex.push((bals.length ? bals : RECOVERY_BAL)[((n % (bals.length || 4)) + (bals.length || 4)) % (bals.length || 4)]);
+    const skipped = RECOVERY_CORE.length - RECOVERY_CORE.filter((x) => !avoid[x.key]).length;
+    return {
+      id: 'recovery_mobility',
+      label: kind === 'walk' ? 'Kävelyn jälkeen: liikkuvuus + tasapaino' : 'Liikkuvuus + tasapaino',
+      durationMin: 10,
+      optional: kind === 'rest',
+      note: 'Rauhassa, hengitys pitkänä, ei kipua.' +
+        (skipped ? ' Päivärutiinissa jo tehdyt liikkeet on vaihdettu muihin.' : ''),
+      exercises: ex.map((x) => ({ id: x.id, sets: x.sets }))
+    };
+  }
+
+  global.TreeniRoutine = { buildRoutine, recoveryMobility, sessionKind, nightHeavy, pullDose, dayNum, STRETCH, BALANCE, LEGS, UPPER };
 })(typeof window !== 'undefined' ? window : global);
