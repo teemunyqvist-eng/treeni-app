@@ -1,6 +1,6 @@
 {
-  "version": 33,
-  "updatedAt": "2026-11-01T10:04:52+02:00",
+  "version": 34,
+  "updatedAt": "2026-11-01T10:08:06+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -29,6 +29,10 @@
     "2026-10-31": {
       "title": "Palautuskävely – kevyesti, kuten piti",
       "text": "Palautuskävely tehty: 6 km, 1 h 7 min, vauhti 11:12/km. Juuri sitä mitä tilattiin – rauhallista liikettä yövuoron jälkeen, ei mitään urheilua. Hyvä, ettet lähtenyt väsyneenä juoksemaan pitkää. Mutta: muista ne 10 min liikkuvuutta perään, se on osa treeniä eikä bonus. Huomenna pitkä kevyt 10 km: jos yö menee hyvin, aja koko matka tasaisesti ja pidä vauhti oikeasti kevyenä alusta asti. Jos olo on vielä vetämätön, ota kevennetty versio ilman huonoa omaatuntoa. Lepää tänään kunnolla, perkele – huominen ratkaistaan tänä iltana sängyssä."
+    },
+    "2026-11-01": {
+      "title": "Pitkä kevyt 10 km – kuri piti",
+      "text": "Tätä vittu haettiin. 10 km tasaisesti, kilometrit 6:52–7:32, ja koko lenkki pysyi kevyellä alueella alusta loppuun – ei yhtään karkaamista, vaikka ennen kevyet lenkit lähti käsistä. Korjattavaa: viimeisellä kilsalla 6:52 alkoi jo kiristää, eli loppukiri pois pitkiltä vielä talven ajan, ja venyttely heti perään. Huomenna 6 km kevyesti samalla otteella, sitten aamuvuoropäivät kevyinä."
     }
   },
   "done": {
