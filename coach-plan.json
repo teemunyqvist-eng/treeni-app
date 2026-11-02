@@ -1,6 +1,6 @@
 {
-  "version": 34,
-  "updatedAt": "2026-11-01T10:08:06+02:00",
+  "version": 35,
+  "updatedAt": "2026-11-02T15:02:46+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -33,6 +33,10 @@
     "2026-11-01": {
       "title": "Pitkä kevyt 10 km – kuri piti",
       "text": "Tätä vittu haettiin. 10 km tasaisesti, kilometrit 6:52–7:32, ja koko lenkki pysyi kevyellä alueella alusta loppuun – ei yhtään karkaamista, vaikka ennen kevyet lenkit lähti käsistä. Korjattavaa: viimeisellä kilsalla 6:52 alkoi jo kiristää, eli loppukiri pois pitkiltä vielä talven ajan, ja venyttely heti perään. Huomenna 6 km kevyesti samalla otteella, sitten aamuvuoropäivät kevyinä."
+    },
+    "2026-11-02": {
+      "title": "Kevyt 6 km – tasainen ja hallittu",
+      "text": "6 km, 44:38, keskivauhti 7:25/km. Kilsat 7:18–7:25 ja viimeinen mäkisempi 7:51 – pysyit lähes koko lenkin kevyellä alueella, eikä mikään kilsa karannut. Märällä ja liukkaalla kelillä juuri oikea ratkaisu: ei väkisin ohjevauhtiin, vaan tuntuma ja kevyt alue päättivät vauhdin. Eilisen pitkän jälkeen rasitus nousi loppua kohti vain vähän, eli palautuminen toimii. Korjattavaa: askeltiheys jäi taas noin 163:een. Kevyillä lenkeillä tavoite kohti 166–170: lyhyempi ja nopeampi askel, varsinkin alamäissä ja liukkaalla, se on myös turvallisempaa. Venyttely perään. Huomenna aamuvuoro ja vain kävely, torstaina kynnys – ja siellä pätee yksi sääntö: älä ahnehdi."
     }
   },
   "done": {
@@ -137,14 +141,24 @@
         "source": "garmin",
         "id": "gbc49ce49d8"
       }
+    ],
+    "2026-11-02": [
+      {
+        "type": "run",
+        "km": 6.02,
+        "min": 44.6,
+        "pace": "7:25",
+        "source": "garmin",
+        "id": "gb9e3802a19"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-01T10:04:52+02:00",
+    "updatedAt": "2026-11-02T15:02:46+02:00",
     "complete": true,
-    "totalKm": 37.18,
-    "runs": 4,
+    "totalKm": 43.2,
+    "runs": 5,
     "skiKm": 0,
     "skiMin": 0,
     "skis": 0,
@@ -155,8 +169,8 @@
         "longest": 11.01
       },
       "2026-11": {
-        "km": 10.0,
-        "runs": 1,
+        "km": 16.02,
+        "runs": 2,
         "longest": 10.0
       }
     },
@@ -164,7 +178,8 @@
       "2026-10-23": 11.01,
       "2026-10-27": 6.96,
       "2026-10-28": 9.21,
-      "2026-11-01": 10.0
+      "2026-11-01": 10.0,
+      "2026-11-02": 6.02
     }
   },
   "days": [
@@ -382,7 +397,7 @@
       "title": "Viikon kova: 3 × 8 min kynnys ennen iltavuoroa",
       "distanceKm": 9,
       "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely (syke 115–138), 3 × 8 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.",
+      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely (syke 115–138), 3 × 8 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.\nAlmgrenin sääntö: älä ahnehdi. Vedot mukavan kovaa (pystyt puhumaan lyhyitä lauseita). Jos syke nousee vedosta toiseen eikä tasaannu, hidasta seuraavaa vetoa – parempi jäädä vähän vajaaksi kuin mennä yli.",
       "cooldown": "10 min hölkkä + venyttely.",
       "options": [
         {
@@ -560,7 +575,7 @@
       "title": "Viikon kynnys: 2 × 9 min ennen iltavuoroa (testiviikko)",
       "distanceKm": 7,
       "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely (syke 115–138), 2 × 9 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~7 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 2. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.",
+      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely (syke 115–138), 2 × 9 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~7 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 2. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.\nAlmgrenin sääntö: älä ahnehdi. Vedot mukavan kovaa (pystyt puhumaan lyhyitä lauseita). Jos syke nousee vedosta toiseen eikä tasaannu, hidasta seuraavaa vetoa – parempi jäädä vähän vajaaksi kuin mennä yli.",
       "cooldown": "10 min hölkkä + venyttely.",
       "options": [
         {
@@ -691,7 +706,7 @@
       "title": "Viikon kova: 5 × 5 min kynnys ennen iltavuoroa",
       "distanceKm": 9,
       "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Aamulla/aamupäivällä: 15 min verryttely (syke 115–138), 5 × 5 min kynnysvauhti 5:10–5:30/km, palautus 1 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:10–5:30/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.",
+      "details": "Aamulla/aamupäivällä: 15 min verryttely (syke 115–138), 5 × 5 min kynnysvauhti 5:10–5:30/km, palautus 1 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:10–5:30/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.\nAlmgrenin sääntö: älä ahnehdi. Vedot mukavan kovaa (pystyt puhumaan lyhyitä lauseita). Jos syke nousee vedosta toiseen eikä tasaannu, hidasta seuraavaa vetoa – parempi jäädä vähän vajaaksi kuin mennä yli.",
       "cooldown": "10 min hölkkä + venyttely.",
       "options": [
         {
@@ -841,7 +856,7 @@
       "title": "Viikon kova: 3 × 10 min kynnys ennen iltavuoroa",
       "distanceKm": 9,
       "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Aamulla/aamupäivällä: 15 min verryttely (syke 115–138), 3 × 10 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.",
+      "details": "Aamulla/aamupäivällä: 15 min verryttely (syke 115–138), 3 × 10 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.\nAlmgrenin sääntö: älä ahnehdi. Vedot mukavan kovaa (pystyt puhumaan lyhyitä lauseita). Jos syke nousee vedosta toiseen eikä tasaannu, hidasta seuraavaa vetoa – parempi jäädä vähän vajaaksi kuin mennä yli.",
       "cooldown": "10 min hölkkä + venyttely.",
       "options": [
         {
