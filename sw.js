@@ -1,5 +1,5 @@
 /* Treeni-app service worker – caches app shell for offline use */
-const CACHE = 'treeni-shell-v36';
+const CACHE = 'treeni-shell-v37';
 const ASSETS = [
   './',
   './index.html',

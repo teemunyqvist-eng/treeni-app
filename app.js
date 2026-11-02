@@ -664,7 +664,7 @@
     const coachDay = coachDayFor(iso);
     let coachSession = null;
     if (coachDay) {
-      coachSession = P.coachDayToSession(coachDay, coachPlan);
+      coachSession = P.coachDayToSession(coachDay, coachPlan, state.settings.salibandyDow);
       planned = coachSession;
       // Vanha muokkaus (ennen valmentajan päivitystä) ei peitä uutta valmentajan treeniä.
       const fresh = override.completed || override.coachKey === coachSession.coach.key;
@@ -1034,6 +1034,7 @@
     if (c.warmup) html += `<div class="coach-sub"><strong>Lämmittely:</strong> ${esc(c.warmup)}</div>`;
     html += `<div class="session-details">${esc(s.details || '')}</div>`;
     if (c.cooldown) html += `<div class="coach-sub"><strong>Lopuksi:</strong> ${esc(c.cooldown)}</div>`;
+    if (c.salibandy) html += '<div class="coach-sub coach-sali">🏒 <strong>Illalla salibandy</strong> – lasketaan kovaksi treeniksi. Ei laatua huomisaamuna.</div>';
     if (c.options && c.options.length) {
       html += '<div class="section-title">Vaihtoehdot</div><ul class="coach-options">';
       c.options.forEach((o, i) => {

@@ -2324,6 +2324,7 @@
         distanceKm: typeof d.distanceKm === 'number' && d.distanceKm > 0 && d.distanceKm < 60 ? d.distanceKm : null,
         durationMin: typeof d.durationMin === 'number' && d.durationMin > 0 && d.durationMin < 400 ? d.durationMin : null,
         subtype: coachStr(d.subtype, 30),
+        salibandy: typeof d.salibandy === 'boolean' ? d.salibandy : null, // false = säbä jää väliin (esim. iltavuoro)
         options: (Array.isArray(d.options) ? d.options : []).slice(0, 6).map(function (o) {
           return {
             label: coachStr(o && o.label, 60) || 'Vaihtoehto',
@@ -2476,8 +2477,22 @@
     return null;
   }
 
-  /** Muuntaa valmentajan päivän sovelluksen sessio-objektiksi. */
-  function coachDayToSession(day, meta) {
+  const COACH_SALI_SKIP_RE = /(säbä|salibandy)\S*\s+(jää|jätetään)\s+väliin|ei\s+(säbää|salibandyä)/i;
+
+  /**
+   * Onko valmentajan päivänä salibandy-ilta? Valmentajan päivä ohittaa generaattorin, joten
+   * salibandy (Asetukset → salibandyDow, oletus ti) lisätään erikseen iltasessioksi, ellei päivä
+   * jätä sitä pois ("salibandy": false tai "säbä jää väliin" tekstissä). "salibandy": true = myös muuna päivänä.
+   */
+  function coachSalibandy(day, saliDow) {
+    if (!day || saliDow === null || saliDow === undefined || saliDow === '' || saliDow === 'none') return false;
+    if (day.salibandy === true || day.salibandy === false) return day.salibandy;
+    if (!COACH_DATE_RE.test(String(day.date || '')) || parseISO(day.date).getDay() !== +saliDow) return false;
+    return !COACH_SALI_SKIP_RE.test([day.title, day.note, day.details].join(' '));
+  }
+
+  /** Muuntaa valmentajan päivän sovelluksen sessio-objektiksi (saliDow = asetusten salibandy-ilta). */
+  function coachDayToSession(day, meta, saliDow) {
     if (!day) return null;
     let base;
     switch (day.type) {
@@ -2505,6 +2520,7 @@
     if (day.distanceKm) s.distanceKm = day.distanceKm;
     if (day.durationMin) s.durationMin = day.durationMin;
     if (/^(boost|light|none)$/.test(day.routine || '')) s.coach.routine = day.routine; // Päivärutiini-ohitus
+    if (coachSalibandy(day, saliDow)) { s.salibandyDay = true; s.coach.salibandy = true; } // 🏒 iltasessio
     return s;
   }
 
@@ -2564,6 +2580,7 @@
     coachKey,
     findCoachDay,
     coachDayToSession,
+    coachSalibandy,
     applyCoachOption,
     coachOptionIndex,
     COACH_TYPES,
