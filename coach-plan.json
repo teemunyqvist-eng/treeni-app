@@ -1,6 +1,6 @@
 {
-  "version": 37,
-  "updatedAt": "2026-11-03T22:05:35+02:00",
+  "version": 38,
+  "updatedAt": "2026-11-03T22:06:57+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -37,6 +37,10 @@
     "2026-11-02": {
       "title": "Kevyt 6 km – tasainen ja hallittu",
       "text": "6 km, 44:38, keskivauhti 7:25/km. Kilsat 7:18–7:25 ja viimeinen mäkisempi 7:51 – pysyit lähes koko lenkin kevyellä alueella, eikä mikään kilsa karannut. Märällä ja liukkaalla kelillä juuri oikea ratkaisu: ei väkisin ohjevauhtiin, vaan tuntuma ja kevyt alue päättivät vauhdin. Eilisen pitkän jälkeen rasitus nousi loppua kohti vain vähän, eli palautuminen toimii. Korjattavaa: askeltiheys jäi taas noin 163:een. Kevyillä lenkeillä tavoite kohti 166–170: lyhyempi ja nopeampi askel, varsinkin alamäissä ja liukkaalla, se on myös turvallisempaa. Venyttely perään. Huomenna aamuvuoro ja vain kävely, torstaina kynnys – ja siellä pätee yksi sääntö: älä ahnehdi."
+    },
+    "2026-11-03": {
+      "title": "Säbä – viikon kova paketti",
+      "text": "Säbä 62 min täysillä, plus kävelyt ennen ja jälkeen. Tämä oli viikon kovin treeni, ja se näkyy: kuorma on nyt korkealla, koska viikonloppuna juostiin 16 km ja tänään tuli säbä. Rengastyöt ja aamuvuoro samana päivänä, ja silti pelasit tosissasi, hyvä. Seuraavaksi: huomenna aamuvuoro, joten tee kotipiirin kevennetty versio (15 min liikkuvuus) tai korkeintaan kevyet 2 kierrosta. Petiin ajoissa tänään. Torstain kynnystreeni (3 × 8 min) tehdään vain, jos jalat tuntuvat raikkailta. Jos ei, siirrytään kevyeen lenkkiin."
     }
   },
   "done": {
