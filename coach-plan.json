@@ -1,6 +1,6 @@
 {
-  "version": 36,
-  "updatedAt": "2026-11-02T20:59:53+02:00",
+  "version": 37,
+  "updatedAt": "2026-11-03T22:05:35+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -151,11 +151,35 @@
         "source": "garmin",
         "id": "gb9e3802a19"
       }
+    ],
+    "2026-11-03": [
+      {
+        "type": "walk",
+        "km": 1.63,
+        "min": 13.9,
+        "pace": "8:34",
+        "source": "garmin",
+        "id": "ged288684fa"
+      },
+      {
+        "type": "floorball",
+        "min": 62.1,
+        "source": "garmin",
+        "id": "g396473d764"
+      },
+      {
+        "type": "walk",
+        "km": 1.68,
+        "min": 24.5,
+        "pace": "14:35",
+        "source": "garmin",
+        "id": "gbfefcff8a1"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-02T15:02:46+02:00",
+    "updatedAt": "2026-11-03T22:05:35+02:00",
     "complete": true,
     "totalKm": 43.2,
     "runs": 5,
