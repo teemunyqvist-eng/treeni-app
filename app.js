@@ -371,6 +371,12 @@
       s.salibandyFix = 1;
     }
     if (s.noGymCard === undefined) s.noGymCard = true;
+    // Tilapäinen testilippu pois: ei enää oletuksena paikallista kuntoutustilaa
+    if (!st.health) st.health = {};
+    if (st.health.shoulderRehabCleared !== 1) {
+      st.health.shoulderRehab = false;
+      st.health.shoulderRehabCleared = 1;
+    }
   }
 
   function deepMerge(base, over) {
@@ -1109,8 +1115,6 @@
     openModal(
       ex.name,
       `<div class="session-meta"><span class="badge ${catBadge}">${cat}</span>${tags}</div>
-       ${ex.rehab === 'shoulder' ? '<div class="alert info">🩹 Olkapään kuntoutusliike: kevyt kuorma, 2–3×10–15. <strong>Tee vain kivuttomalla alueella.</strong></div>' : ''}
-       ${ex.loadsShoulder ? `<div class="alert warn">⚠ Kuormittaa olkapäätä${shoulderRehabActive() ? ' – ei käytössä olkapään kuntoutustilassa.' : '.'}</div>` : ''}
        <div class="ex-detail-section"><h3>Hyödyt</h3>${bullets(ex.benefits)}</div>
        <div class="ex-detail-section"><h3>Tekniikkavihjeet</h3>${bullets(ex.cues)}</div>
        <div class="ex-detail-section"><h3>Yleiset virheet</h3>${bullets(ex.mistakes)}</div>
@@ -1150,7 +1154,7 @@
     return EX.searchExercises ? EX.searchExercises(q, list) : list;
   }
 
-  function exLibCardsHtml(list, shoulderOn) {
+  function exLibCardsHtml(list) {
     const catLabel = { juoksu: 'Juoksu', voima: 'Voima', liikkuvuus: 'Liikkuvuus' };
     return list.map((e) => {
       const hasEmbed = e.video && e.video.type === 'embed';
@@ -1159,8 +1163,6 @@
           <div class="meta">${catLabel[e.category] || e.category}
             · ${(e.equipment || []).length ? esc(e.equipment.join(', ')) : 'ei välineitä'}
             · ${hasEmbed ? 'upotus' : 'ulkoinen linkki'}</div>
-          ${e.rehab === 'shoulder' ? '<div class="meta rehab-meta">🩹 Olkapään kuntoutus · vain kivuttomalla alueella</div>' : ''}
-          ${shoulderOn && e.loadsShoulder ? '<div class="meta warn-meta">⚠ Kuormittaa olkapäätä – ei olkapäätilassa</div>' : ''}
         </div>`;
     }).join('');
   }
@@ -1170,9 +1172,7 @@
     const el = document.getElementById('exercises-content');
     const all = EX.listExercises();
     const byCat = exLibFilter === 'kaikki' ? all
-      : exLibFilter === 'olkapaa' ? all.filter((e) => e.rehab === 'shoulder')
       : all.filter((e) => e.category === exLibFilter);
-    const shoulderOn = shoulderRehabActive();
     const voima = all.filter((e) => e.category === 'voima').length;
     const juoksu = all.filter((e) => e.category === 'juoksu').length;
     const liikk = all.filter((e) => e.category === 'liikkuvuus').length;
@@ -1185,7 +1185,7 @@
         return count + `<div class="empty ex-search-empty">Ei osumia haulla ”${esc(q.trim())}”.
           <div class="hint">Kokeile toista sanaa, esim. lihasryhmää (pakarat, vatsa, pohkeet) tai välinettä (kuminauha, käsipaino)${exLibFilter !== 'kaikki' ? ' – tai valitse Kaikki' : ''}.</div></div>`;
       }
-      return count + exLibCardsHtml(hits, shoulderOn);
+      return count + exLibCardsHtml(hits);
     };
 
     el.innerHTML = `
@@ -1198,7 +1198,6 @@
           <button class="btn sm${exLibFilter==='voima'?' active':''}" data-filter="voima">Voima</button>
           <button class="btn sm${exLibFilter==='juoksu'?' active':''}" data-filter="juoksu">Juoksu</button>
           <button class="btn sm${exLibFilter==='liikkuvuus'?' active':''}" data-filter="liikkuvuus">Liikkuvuus</button>
-          <button class="btn sm${exLibFilter==='olkapaa'?' active':''}" data-filter="olkapaa">🩹 Olkapää</button>
         </div>
         <div class="alert info" style="margin-top:8px;margin-bottom:0">Videot ovat ulkoisia YouTube-demoja. Offline-tilassa näet silti vihjeet.</div>
       </div>
@@ -1230,10 +1229,6 @@
     {
       title: 'Vaihda treeni',
       body: 'Juoksu · Sali · Koti · Lihashuolto · Kävely · Muu laji vaihtavat päivän tyypin. Muu tilanne -kohdasta: sairas (= lepo), salibandy (huominen kevyeksi), siirrä tai lyhyt versio.'
-    },
-    {
-      title: 'Olkapään kuntoutustila',
-      body: 'Kun tila on päällä (Asetukset → Kivut tai valmentajan asetus), olkapäätä kuormittavat liikkeet korvataan jalka-/keskivartaloliikkeillä ja voimapäiviin lisätään kevyt olkapääblokki. Tänään-kortissa: kylmähoito 2× ja 10 min rutiini.'
     },
     {
       title: 'Liikkeet',
@@ -3436,8 +3431,8 @@
           <summary>Kivut &amp; vammat${activePains().length ? ` <span class="badge warn-pain">${activePains().length} aktiivinen</span>` : ''}${shs.active ? ' <span class="badge rehab">🩹 olkapäätila</span>' : ''}</summary>
           <div class="shoulder-toggle">
             <label class="toggle-row"><input type="checkbox" id="set-shoulder-rehab"${shs.local ? ' checked' : ''} />
-              <span><strong>Olkapää (oikea kiertäjäkalvo) – kuntoutustila</strong><br/>
-              <span class="hint">Poistaa olkapäätä kuormittavat liikkeet, lisää kevyen kuntoutusblokin ja päivän muistutuksen.</span></span></label>
+              <span><strong>Olkapäätila (valinnainen)</strong><br/>
+              <span class="hint">Jos päällä: suodattaa tietyt ylävartaloliikkeet ja näyttää kevyen blokin. Normaaliharjoittelussa pidä pois.</span></span></label>
             ${shs.source === 'coach'
               ? `<div class="alert ${shs.coach ? 'warn' : 'info'}" style="margin-top:8px">Valmentaja on asettanut tilan: <strong>${shs.coach ? 'PÄÄLLÄ' : 'POIS'}</strong>. Valmentajan asetus on voimassa; oma valintasi otetaan käyttöön, jos valmentaja poistaa asetuksen.</div>`
               : ''}

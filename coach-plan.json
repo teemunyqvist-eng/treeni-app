@@ -1,6 +1,6 @@
 {
-  "version": 40,
-  "updatedAt": "2026-11-05T13:08:35+02:00",
+  "version": 41,
+  "updatedAt": "2026-11-05T15:17:01+02:00",
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -1063,5 +1063,8 @@
       ],
       "note": "Kevennysviikon pisin – iltavuoropäivänä. Ensi viikosta (14.12.) taas kuormitusviikot. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee."
     }
-  ]
+  ],
+  "flags": {
+    "shoulderRehab": false
+  }
 }
