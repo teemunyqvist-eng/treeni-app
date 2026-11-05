@@ -42,7 +42,7 @@
     garmin: null, // täyttyy varmuuskopion tuonnista (vanha Garmin-yhteenveto)
     dayOverrides: {}, // iso -> { status, completed, session, note, completedAt }
     log: [],
-    routineLog: {}, // Päivärutiini: iso -> { liikeavain: true, pullSets: n }
+    routineLog: {}, // Päivärutiini: iso -> { am:true, pm:true, liikeavain: true, pullSets: n }
     garminApplied: {}, // done-merkinnän id -> { date, kind } (idempotentti Garmin ✓ Valmis)
     planCache: null,
     health: {
@@ -1426,71 +1426,118 @@
     Object.keys(state.routineLog).forEach((k) => { if (k < cut) delete state.routineLog[k]; });
     saveState();
   }
-  function renderRoutineCard(iso) {
-    const r = routineFor(iso);
-    if (!r || r.mode === 'none' || !r.items.length) return '';
-    const lg = routineLogFor(iso);
-    const boost = r.mode === 'boost';
-    const doneCount = r.items.filter((it) => lg[it.key]).length;
-    const allDone = doneCount === r.items.length;
-    const items = r.items.map((it) => {
-      const on = !!lg[it.key];
+  function renderRoutineItems(items, lg, opts) {
+    opts = opts || {};
+    const blockDone = !!opts.blockDone;
+    return (items || []).map((it) => {
+      const on = blockDone || !!lg[it.key];
       const exIds = it.exs || [it.ex];
       const chips = exIds.map((id) => {
         const lib = EX.getExercise(id);
         return lib ? `<button type="button" class="cue-chip" data-ex="${esc(id)}">${esc(lib.name)} ›</button>` : '';
       }).join('');
       let sets = '';
-      if (it.sets) {
+      if (it.sets && !opts.blockToggle) {
         const c = Math.min(lg.pullSets || 0, it.sets);
         sets = `<div class="rt-sets" aria-label="Sarjat">Sarjat: ${Array.from({ length: it.sets }, (_, i) =>
           `<button type="button" class="rt-set${i < c ? ' on' : ''}" data-rt-set="${i + 1}" aria-label="Sarja ${i + 1}">${i + 1}</button>`).join('')}</div>`;
       }
+      const check = opts.blockToggle
+        ? ''
+        : `<label class="rt-check"><input type="checkbox" data-rt="${esc(it.key)}"${on ? ' checked' : ''} />
+            <span class="rt-name">${it.balance ? '⚖️ ' : ''}${esc(it.name)}</span><span class="rt-dose">${esc(it.dose)}</span></label>`;
+      const nameOnly = opts.blockToggle
+        ? `<div class="rt-check"><span class="rt-name">${it.balance ? '⚖️ ' : ''}${esc(it.name)}</span><span class="rt-dose">${esc(it.dose)}</span></div>`
+        : '';
       return `<li class="rt-item${on ? ' on' : ''}${it.balance ? ' rt-balance' : ''}">
-          <label class="rt-check"><input type="checkbox" data-rt="${esc(it.key)}"${on ? ' checked' : ''} />
-            <span class="rt-name">${it.balance ? '⚖️ ' : ''}${esc(it.name)}</span><span class="rt-dose">${esc(it.dose)}</span></label>
+          ${check}${nameOnly}
           <div class="rt-cue">${esc(it.cue)}</div>
           ${sets}
           <div class="cue-chip-row">${chips}</div>
         </li>`;
     }).join('');
-    return `<div class="card routine-card ${boost ? 'rt-boost' : 'rt-light'}${allDone ? ' rt-all-done' : ''}" data-routine="${esc(iso)}">
+  }
+  function renderMobilityBlock(iso, which, block, lg) {
+    if (!block || !block.items || !block.items.length) return '';
+    const done = !!lg[which];
+    const icon = which === 'am' ? '🌅' : '🌙';
+    const label = which === 'am' ? 'Aamu' : 'Ilta';
+    return `<div class="card routine-card rt-mob rt-${which}${done ? ' rt-all-done' : ''}" data-routine="${esc(iso)}" data-rt-block="${which}">
         <div class="rt-head">
-          <span class="rt-title">${boost ? '⚡' : '🧘'} Päivärutiini · ${esc(r.title)}</span>
-          <span class="rt-count">${allDone ? '✓ Tehty' : doneCount + '/' + r.items.length}</span>
+          <span class="rt-title">${icon} ${label} · ${esc(block.title)}</span>
+          <label class="rt-block-done"><input type="checkbox" data-rt-block-done="${which}"${done ? ' checked' : ''} /> <span>${done ? '✓ Tehty' : 'Merkitse tehdyksi'}</span></label>
         </div>
-        <div class="rt-meta">${esc(r.minutes)}</div>
-        <p class="rt-reason">${esc(r.reason)}</p>
-        <ul class="rt-list">${items}</ul>
+        <div class="rt-meta">${esc(block.minutes)}</div>
+        <ul class="rt-list">${renderRoutineItems(block.items, lg, { blockToggle: true, blockDone: done })}</ul>
       </div>`;
   }
+  function renderBoostBlock(iso, boost, lg) {
+    if (!boost || !boost.items || !boost.items.length) return '';
+    const doneCount = boost.items.filter((it) => lg[it.key]).length;
+    const allDone = doneCount === boost.items.length;
+    return `<div class="card routine-card rt-boost${allDone ? ' rt-all-done' : ''}" data-routine="${esc(iso)}" data-rt-block="boost">
+        <div class="rt-head">
+          <span class="rt-title">⚡ Boost · ${esc(boost.title)}</span>
+          <span class="rt-count">${allDone ? '✓ Tehty' : doneCount + '/' + boost.items.length}</span>
+        </div>
+        <div class="rt-meta">${esc(boost.minutes)}</div>
+        <p class="rt-reason">${esc(boost.reason)}</p>
+        <ul class="rt-list">${renderRoutineItems(boost.items, lg)}</ul>
+      </div>`;
+  }
+  function renderRoutineCard(iso) {
+    const r = routineFor(iso);
+    if (!r || r.mode === 'none') return '';
+    if (!r.am && !r.pm && !(r.boost && r.boost.items && r.boost.items.length) && !(r.items && r.items.length)) return '';
+    const lg = routineLogFor(iso);
+    const timing = r.timing
+      ? `<p class="rt-timing"><strong>Milloin tänään:</strong> ${esc(r.timing)}</p>`
+      : '';
+    const am = renderMobilityBlock(iso, 'am', r.am, lg);
+    const pm = renderMobilityBlock(iso, 'pm', r.pm, lg);
+    const boost = renderBoostBlock(iso, r.boost || (r.mode === 'boost' ? { title: r.title, minutes: r.minutes, reason: r.reason, items: r.items } : null), lg);
+    // Yksi wrapper, jotta bind löytää kaikki kortit
+    return `<div class="routine-wrap" data-routine-wrap="${esc(iso)}">${timing}${am}${pm}${boost}</div>`;
+  }
   function bindRoutineCard(root, iso) {
-    const card = root && root.querySelector('.routine-card[data-routine="' + iso + '"]');
-    if (!card) return;
+    const wrap = root && (root.matches && root.matches('[data-routine-wrap="' + iso + '"]')
+      ? root
+      : root.querySelector('[data-routine-wrap="' + iso + '"]'));
+    if (!wrap) return;
     const refresh = () => {
       const tmp = document.createElement('div');
       tmp.innerHTML = renderRoutineCard(iso);
       const fresh = tmp.firstElementChild;
-      if (fresh) { card.replaceWith(fresh); bindRoutineCard(fresh.parentNode, iso); bindExerciseTaps(fresh); }
+      if (fresh) { wrap.replaceWith(fresh); bindRoutineCard(fresh.parentNode, iso); bindExerciseTaps(fresh); }
     };
-    card.querySelectorAll('[data-rt]').forEach((cb) => {
+    wrap.querySelectorAll('[data-rt-block-done]').forEach((cb) => {
+      cb.addEventListener('change', () => {
+        const which = cb.getAttribute('data-rt-block-done');
+        setRoutineLog(iso, { [which]: cb.checked });
+        refresh();
+        if (cb.checked) toast(which === 'am' ? 'Aamun liikkuvuus tehty 🌅' : 'Illan venyttely tehty 🌙');
+      });
+    });
+    wrap.querySelectorAll('[data-rt]').forEach((cb) => {
       cb.addEventListener('change', () => {
         const key = cb.getAttribute('data-rt');
         setRoutineLog(iso, { [key]: cb.checked });
         refresh();
         const lg = routineLogFor(iso);
         const r = routineFor(iso);
-        if (cb.checked && r && r.items.every((it) => lg[it.key])) toast('Päivärutiini tehty 💪');
+        const boostItems = (r && r.boost && r.boost.items) || (r && r.items) || [];
+        if (cb.checked && boostItems.length && boostItems.every((it) => lg[it.key])) toast('Boost tehty 💪');
       });
     });
-    card.querySelectorAll('[data-rt-set]').forEach((b) => {
+    wrap.querySelectorAll('[data-rt-set]').forEach((b) => {
       b.addEventListener('click', () => {
         const i = Number(b.getAttribute('data-rt-set'));
         const lg = routineLogFor(iso);
         const cur = lg.pullSets || 0;
         const next = cur === i ? i - 1 : i;
         const r = routineFor(iso);
-        const pull = r && r.items.find((it) => it.key === 'pull');
+        const boostItems = (r && r.boost && r.boost.items) || (r && r.items) || [];
+        const pull = boostItems.find((it) => it.key === 'pull');
         const patch = { pullSets: next };
         if (pull) patch.pull = next >= pull.sets;
         setRoutineLog(iso, patch);

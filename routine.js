@@ -1,8 +1,8 @@
 /**
- * Päivärutiini – kevyt päivittäinen lisätreeni (grease the groove).
- * Deterministinen generaattori: päivän treenityyppi + edellinen/seuraava päivä → joko
- *  - "boost" (2–3 submaksimaalista kehonpainoliikettä, ei koskaan uupumukseen) tai
- *  - "light" (10–15 min liikkuvuus/venyttely + tasapaino).
+ * Päivärutiini – päivittäinen aamu-/ilta-liikkuvuus + erillinen GtG-boost sopivina päivinä.
+ * Deterministinen generaattori: päivän treenityyppi + edellinen/seuraava päivä →
+ *  - am + pm joka päivä (paitsi sairas/none)
+ *  - boost (2–3 submaksimaalista kehonpainoliikettä) vain sopivina päivinä
  * Kierto päivämäärän mukaan → peräkkäiset päivät eroavat. Ei terveysdataa.
  */
 (function (global) {
@@ -22,8 +22,10 @@
     return { sets: 6, reps: '4' };
   }
 
+  const SIDE_CUE = 'Aloita sillä puolella, joka tuntuu kireämmältä tai heikommalta; tee toinen puoli samalla määrällä.';
+  const RDL_CUE = 'Kallistu lonkasta, selkä neutraalina. Älä pakota syvyyttä – vain niin pitkälle kuin hallinta säilyy. ' + SIDE_CUE;
+
   // ---------- Liikkeet ----------
-  // legs: jalkaliike (ei kovaa/pitkää edeltävänä päivänä) · shoulder: kuormittaa olkapäätä
   function pullItem(iso, n) {
     const under = n % 2 === 1;
     const d = pullDose(iso);
@@ -31,27 +33,53 @@
       key: 'pull', ex: under ? 'chin_up' : 'pullup',
       name: under ? 'Leuanveto vastaotteella (GtG)' : 'Leuanveto myötäotteella (GtG)',
       dose: d.sets + ' × ' + d.reps + ' pitkin päivää',
-      cue: 'Pienet sarjat pitkin päivää, ≥ 15 min välein. Lopeta sarja kun 2 toistoa jäisi vielä varaan – ei koskaan uupumukseen.',
+      cue: 'Täysi ote: peukalo tangon alle. Pienet sarjat pitkin päivää, ≥ 15 min välein. Lopeta sarja kun 2 toistoa jäisi vielä varaan – ei koskaan uupumukseen.',
       sets: d.sets, shoulder: true
     };
   }
   const UPPER = {
     push: { key: 'push', ex: 'push_up', name: 'Punnerrus', dose: '3 × 10', cue: 'Vartalo suorana, kyynärpäät ~45°. Jos 10. toisto hidastuu, tee 8.', shoulder: true },
     dip: { key: 'dip', ex: 'chair_dip', name: 'Dippi tuolilla', dose: '2 × 8–12', cue: 'Kyynärpäät 90°, ei syvemmälle. Hartiat alhaalla.', shoulder: true },
-    core: { key: 'core', ex: 'plank', exs: ['plank', 'side_plank'], name: 'Lankku + kylkilankku', dose: '3 × 30–45 s + 2 × 20–30 s / puoli', cue: 'Pakarat ja vatsa tiukkana, lantio linjassa. Lopeta kun asento alkaa pettää.', shoulder: true }
+    core: { key: 'core', ex: 'plank', exs: ['plank', 'side_plank'], name: 'Lankku + kylkilankku', dose: '3 × 30–45 s + 2 × 20–30 s / puoli', cue: 'Pakarat ja vatsa tiukkana, lantio linjassa. Lopeta kun asento alkaa pettää. ' + SIDE_CUE, shoulder: true }
   };
   const LEGS = [
-    { key: 'bss', ex: 'bulgarian_split_squat', name: 'Bulgarialainen askelkyykky', dose: '2 × 8–10 / jalka', cue: 'Takajalka tuolille, etupolvi varpaiden suuntaan. 2–3 toistoa varaan.', legs: true },
-    { key: 'calf', ex: 'calf_raise', name: 'Yhden jalan pohjenosto rappusella', dose: '2 × 15 / jalka', cue: 'Täysi liike: kanta alas venytykseen, ylös varpaille. Hitaasti alas (3 s).', legs: true },
-    { key: 'bridge', ex: 'sl_glute_bridge', name: 'Yhden jalan lantionnosto', dose: '2 × 10 / jalka', cue: 'Työnnä kantapäällä, purista pakaraa ylhäällä 1–2 s, lantio vaakatasossa.', legs: true },
-    { key: 'lunge', ex: 'lunge', name: 'Askelkyykky taaksepäin', dose: '2 × 10 / jalka', cue: 'Askel taakse, etupolvi nilkan päällä, rinta pystyssä.', legs: true }
+    { key: 'bss', ex: 'bulgarian_split_squat', name: 'Bulgarialainen askelkyykky', dose: '2 × 8–10 / jalka', cue: 'Takajalka tuolille, etupolvi varpaiden suuntaan. 2–3 toistoa varaan. ' + SIDE_CUE, legs: true },
+    { key: 'calf', ex: 'calf_raise', name: 'Yhden jalan pohjenosto rappusella', dose: '2 × 15 / jalka', cue: 'Täysi liike: kanta alas venytykseen, ylös varpaille. Hitaasti alas (3 s). ' + SIDE_CUE, legs: true },
+    { key: 'bridge', ex: 'sl_glute_bridge', name: 'Yhden jalan lantionnosto', dose: '2 × 10 / jalka', cue: 'Työnnä kantapäällä, purista pakaraa ylhäällä 1–2 s, lantio vaakatasossa. ' + SIDE_CUE, legs: true },
+    { key: 'lunge', ex: 'lunge', name: 'Askelkyykky taaksepäin', dose: '2 × 10 / jalka', cue: 'Askel taakse, etupolvi nilkan päällä, rinta pystyssä. ' + SIDE_CUE, legs: true }
   ];
   const BALANCE = [
-    { key: 'bal1', ex: 'sl_balance', name: 'Yhden jalan seisonta', dose: '3 × 30 s / jalka', cue: 'Paljain jaloin, polvi pehmeänä. Helppoa? Silmät kiinni.', balance: true },
-    { key: 'bal2', ex: 'sl_rdl_bw', name: 'Yhden jalan RDL ilman painoja', dose: '2 × 8 / jalka', cue: 'Kallistu lonkasta, selkä suorana, vapaa jalka taakse. Hitaasti.', balance: true },
+    { key: 'bal1', ex: 'sl_balance', name: 'Yhden jalan seisonta', dose: '3 × 30 s / jalka', cue: 'Paljain jaloin, polvi pehmeänä. Helppoa? Silmät kiinni. ' + SIDE_CUE, balance: true },
+    { key: 'bal2', ex: 'sl_rdl_bw', name: 'Yhden jalan RDL ilman painoja', dose: '2 × 8 / jalka', cue: RDL_CUE, balance: true },
     { key: 'bal3', ex: 'tandem_stance', name: 'Tandemseisonta', dose: '3 × 30 s', cue: 'Kantapää varpaiden eteen samalle linjalle. Eteneminen: silmät kiinni.', balance: true },
-    { key: 'bal4', ex: 'sl_reach', name: 'Yhden jalan kurotus (tähti)', dose: '2 × 6 / jalka', cue: 'Kurota eteen, sivulle ja taakse – tukipolvi varpaiden linjassa.', balance: true }
+    { key: 'bal4', ex: 'sl_reach', name: 'Yhden jalan kurotus (tähti)', dose: '2 × 6 / jalka', cue: 'Kurota eteen, sivulle ja taakse – tukipolvi varpaiden linjassa. ' + SIDE_CUE, balance: true }
   ];
+
+  // Aamu: dynaaminen liikkuvuus (lonkat, nilkat, rintaranka + kevyt aktivointi)
+  const AM_POOL = [
+    { key: 'am_swing', ex: 'leg_swings', name: 'Jalan heilautukset', dose: '10 / suunta / jalka', cue: 'Rento heilautus eteen–taakse ja sivulle. Pidä lantio vakaana. ' + SIDE_CUE },
+    { key: 'am_hip', ex: 'hip_opener', name: 'Lonkan avaus (dynaaminen)', dose: '8 / puoli', cue: 'Hallittu liike, ei kipua. ' + SIDE_CUE },
+    { key: 'am_ankle', ex: 'ankle_mobility', name: 'Nilkan liikkuvuus (polvi seinään)', dose: '8 / puoli', cue: 'Kantapää maassa, vie polvi kohti seinää varpaiden linjassa. ' + SIDE_CUE },
+    { key: 'am_thor', ex: 'thoracic_opener', name: 'Rintarangan kierto', dose: '6 / puoli', cue: 'Nelinkontin tai kyljellään: kierrä rintakea auki uloshengityksellä. ' + SIDE_CUE },
+    { key: 'am_wgs', ex: 'worlds_greatest_stretch', name: 'World’s greatest stretch', dose: '5 / puoli', cue: 'Askel eteen, kyynärpää kohti maata, avaa rintakea. Dynaaminen, ei staattista venytystä. ' + SIDE_CUE },
+    { key: 'am_arm', ex: 'arm_circles', name: 'Käsien pyöritykset', dose: '10 / suunta', cue: 'Isot, rennät ympyrät – hartiat alas.' },
+    { key: 'am_glute', ex: 'glute_activation', name: 'Pakaran aktivointi', dose: '10 / puoli', cue: 'Kevyt aktivointi, ei uupumukseen. ' + SIDE_CUE },
+    { key: 'am_cat', ex: 'cat_cow', name: 'Kissa–lehmä', dose: '8 hidasta', cue: 'Liike nikama kerrallaan, hengitys ohjaa.' }
+  ];
+
+  // Ilta: venyttely + liikkuvuus (pohkeet/akilles, takareidet, lonkankoukistajat, pakarat, selkä)
+  const PM_STRETCH = [
+    { key: 'pm_calf', ex: 'calf_stretch', name: 'Pohje- ja akillesvenytys', dose: '2 × 30 s / puoli (suora + koukku)', cue: 'Seinää vasten: ensin takapolvi suorana, sitten koukussa. ' + SIDE_CUE },
+    { key: 'pm_ham', ex: 'hamstring_stretch', name: 'Takareiden venytys', dose: '2 × 30–40 s / puoli', cue: 'Selkä suorana, kallistu lonkasta. Venytys reiden takaosaan. ' + SIDE_CUE },
+    { key: 'pm_hipflex', ex: 'hip_flexor_stretch', name: 'Lonkankoukistajan venytys', dose: '2 × 40 s / puoli', cue: 'Polviseisonta, purista takajalan pakaraa ja työnnä lantiota eteen – ei notkoa. ' + SIDE_CUE },
+    { key: 'pm_glute', ex: 'figure4_stretch', name: 'Pakaravenytys (kyyhky / figure-4)', dose: '2 × 40 s / puoli', cue: 'Nilkka vastakkaisen polven päälle, vedä reittä rintaa kohti. Lantio tasaisena. ' + SIDE_CUE },
+    { key: 'pm_quad', ex: 'quad_stretch', name: 'Etureiden venytys', dose: '2 × 30 s / puoli', cue: 'Seisten tai kyljellään, vedä kantapäätä pakaraan. Lantio eteen. ' + SIDE_CUE },
+    { key: 'pm_thor', ex: 'thoracic_opener', name: 'Rintarangan kierto (ilta)', dose: '6 / puoli', cue: 'Rauhallinen avaus, hengitys pitkänä. ' + SIDE_CUE },
+    { key: 'pm_cat', ex: 'cat_cow', name: 'Kissa–lehmä', dose: '8–10 hidasta', cue: 'Rauhallinen selän liikkuvuus illalla.' },
+    { key: 'pm_child', ex: 'childs_pose', name: 'Lapsen asento', dose: '45–60 s', cue: 'Hengitä kylkiin, rentouta alaselkä.' }
+  ];
+
+  // Vanha STRETCH-alias (testit / recovery-yhteensopivuus)
   const STRETCH = [
     { key: 'hipflex', ex: 'hip_flexor_stretch', name: 'Lonkankoukistajan venytys', dose: '2 × 40 s / puoli', cue: 'Polviseisonta, purista takajalan pakaraa ja työnnä lantiota eteen – ei notkoa.' },
     { key: 'calfst', ex: 'calf_stretch', name: 'Pohje- ja akillesvenytys', dose: '2 × 30 s / puoli (suora + koukku)', cue: 'Seinää vasten: ensin takapolvi suorana, sitten koukussa (akilles/leveä kantalihas).' },
@@ -89,17 +117,134 @@
     return !!s && /yövuor/i.test(String(s.name || ''));
   }
 
+  function shiftHint(s) {
+    const name = String((s && s.name) || '');
+    if (/iltavuor/i.test(name)) return 'iltavuoro';
+    if (/aamuvuor/i.test(name)) return 'aamuvuoro';
+    if (/yövuor/i.test(name)) return 'yövuoro';
+    return null;
+  }
+
+  /** Lyhyt "Milloin tänään" -vinkki AM/PM:lle suhteessa treeniin ja vuoroon. */
+  function timingTip(s, kind) {
+    if (!s) return null;
+    const shift = shiftHint(s);
+    const name = String(s.name || '');
+    if (kind === 'hard') {
+      if (shift === 'iltavuoro' || /ennen iltavuoro/i.test(name)) {
+        return 'AM: dynaaminen liikkuvuus kotona ennen kovaa treeniä. PM: venyttely kovan treenin jälkeen, ennen iltavuoroa.';
+      }
+      if (shift === 'aamuvuoro') {
+        return 'AM: lyhyt dynaaminen liikkuvuus ennen aamuvuoroa / treeniä. PM: venyttely treenin jälkeen illalla.';
+      }
+      return 'AM: dynaaminen liikkuvuus ennen kovaa treeniä (ei staattista venytystä juuri ennen). PM: venyttely treenin jälkeen.';
+    }
+    if (kind === 'long') {
+      return 'AM: kevyt dynaaminen liikkuvuus ennen pitkää. PM: venyttely pitkän jälkeen.';
+    }
+    if (kind === 'easy') {
+      if (shift === 'iltavuoro' || /ennen iltavuoro/i.test(name)) {
+        return 'AM: dynaaminen liikkuvuus aamulla. PM: venyttely lenkin jälkeen / ennen iltavuoroa.';
+      }
+      if (shift === 'aamuvuoro') {
+        return 'AM: lyhyt liikkuvuus ennen aamuvuoroa tai lenkkiä. PM: venyttely illalla.';
+      }
+      return 'AM: dynaaminen liikkuvuus ennen helppoa lenkkiä. PM: venyttely lenkin jälkeen.';
+    }
+    if (kind === 'strength') {
+      if (/salibandy/i.test(name) || (s.subtype === 'salibandy')) {
+        return 'AM: kevyt dynaaminen liikkuvuus. PM: venyttely salibandyn jälkeen.';
+      }
+      if (shift === 'iltavuoro' || /ennen iltavuoro/i.test(name)) {
+        return 'AM: dynaaminen liikkuvuus. PM: venyttely kotipiirin jälkeen, ennen iltavuoroa.';
+      }
+      if (shift === 'yövuoro' || /ennen yövuoro/i.test(name)) {
+        return 'AM: lyhyt dynaaminen liikkuvuus. PM: venyttely piirin jälkeen, ennen torkkuja / yövuoroa.';
+      }
+      if (shift === 'aamuvuoro') {
+        return 'AM: lyhyt liikkuvuus ennen aamuvuoroa tai piiriä. PM: venyttely illalla.';
+      }
+      return 'AM: dynaaminen liikkuvuus ennen voimaa. PM: venyttely treenin jälkeen.';
+    }
+    if (kind === 'walk') {
+      if (shift === 'aamuvuoro') return 'AM: lyhyt liikkuvuus aamulla. PM: venyttely kävelyn jälkeen illalla.';
+      if (shift === 'yövuoro') return 'AM: kevyt liikkuvuus kun jaksat. PM: venyttely kävelyn jälkeen.';
+      return 'AM: dynaaminen liikkuvuus. PM: venyttely kävelyn jälkeen (jos kävelykortissa on jo liikkuvuus, PM voi olla lyhyempi).';
+    }
+    if (kind === 'mobility') {
+      return 'AM: lyhyt dynaaminen avaus. PM: illan venyttely + tasapaino – vältä samaa kuin lihashuoltotreenissä.';
+    }
+    if (kind === 'rest') {
+      if (shift === 'yövuoro') return 'AM: vain jos jaksat. PM: kevyt venyttely ennen unta.';
+      return 'AM: lyhyt dynaaminen avaus. PM: rauhallinen venyttely illalla.';
+    }
+    return 'AM: dynaaminen liikkuvuus aamulla. PM: venyttely illalla.';
+  }
+
+  function pickRotated(pool, n, count, step) {
+    const out = [];
+    const len = pool.length;
+    const start = ((n % len) + len) % len;
+    const st = step || 1;
+    const seen = {};
+    for (let i = 0; out.length < count && i < len * 2; i++) {
+      const idx = (start + i * st) % len;
+      if (seen[idx]) continue;
+      seen[idx] = true;
+      out.push(pool[idx]);
+    }
+    // Täydennä järjestyksessä jos step jätti aukkoja (parillinen pool + step 2)
+    for (let i = 0; out.length < count && i < len; i++) {
+      const idx = (start + i) % len;
+      if (seen[idx]) continue;
+      seen[idx] = true;
+      out.push(pool[idx]);
+    }
+    return out.map((x) => Object.assign({}, x));
+  }
+
+  function buildAm(iso) {
+    const n = dayNum(iso);
+    // 4 dynaamista liikettä (~5–8 min)
+    const items = pickRotated(AM_POOL, n, 4, 2);
+    return {
+      title: 'Aamun liikkuvuus',
+      minutes: '5–8 min',
+      items: items
+    };
+  }
+
+  function buildPm(iso, includeBalance) {
+    const n = dayNum(iso);
+    // 5 venytystä (~8–12 min); askel 2 → eri setti peräkkäisinä päivinä
+    const items = pickRotated(PM_STRETCH, n, 5, 2);
+    if (includeBalance) {
+      items.push(Object.assign({}, BALANCE[((n % 4) + 4) % 4]));
+    }
+    return {
+      title: 'Illan venyttely',
+      minutes: includeBalance ? '8–12 min' : '8–10 min',
+      items: items
+    };
+  }
+
+  function collectKeys(block) {
+    const keys = {};
+    (block || []).forEach((x) => { if (x && x.key) keys[x.key] = true; });
+    return keys;
+  }
+
   /**
    * @param {string} iso
    * @param {{session, status, prev:{session,status}, next:{session,status}, deload:boolean, shoulderRehab:boolean}} ctx
-   * @returns {{mode:'boost'|'light'|'none', title, reason, minutes, items:[]}}
+   * @returns {{mode:'boost'|'light'|'none', title?, reason, minutes?, items:[], am?, pm?, boost?, timing?}}
    */
   function buildRoutine(iso, ctx) {
     ctx = ctx || {};
     const s = ctx.session;
     const n = dayNum(iso);
     if (!s || ctx.status === 'sairas' || s.subtype === 'sick') {
-      return { mode: 'none', reason: 'Sairas = lepo, ei päivärutiinia.', items: [] };
+      return { mode: 'none', reason: 'Sairas = lepo, ei päivärutiinia.', items: [], am: null, pm: null, boost: null, timing: null };
     }
     const kind = sessionKind(s);
     const prevS = ctx.prev && ctx.prev.status !== 'sairas' ? ctx.prev.session : null;
@@ -107,82 +252,99 @@
     const prevKind = sessionKind(prevS), nextKind = sessionKind(nextS);
     const forced = s.routine || (s.coach && s.coach.routine) || null;
 
-    let light = null;
-    if (kind === 'strength') light = s.subtype === 'salibandy' ? 'Salibandypäivä – tänään vain liikkuvuutta ja tasapainoa.' : 'Kuntopiiri-/voimapäivä – ei lisävoimaa, tilalle liikkuvuus ja tasapaino.';
-    else if (kind === 'hard') light = 'Kova juoksupäivä – palauttava liikkuvuus riittää.';
-    else if (kind === 'long') light = 'Pitkän lenkin päivä – venyttely ja liikkuvuus lenkin jälkeen.';
-    else if (nightHeavy(s)) light = 'Yövuoropäivä / vähän unta – vain kevyt liikkuvuus.';
-    else if (prevKind === 'long') light = 'Pitkän lenkin jälkeinen päivä – palautuminen ensin.';
-    else if (prevS && prevS.subtype === 'salibandy') light = 'Salibandyn jälkeinen päivä – palautuminen ensin.';
-    else if (kind === 'mobility') light = 'Lihashuoltopäivä – lisää tasapaino ja pari venytystä.';
-    if (forced === 'light' && !light) light = 'Valmentaja: tänään kevyt päivärutiini.';
-    if (forced === 'boost') light = null;
-    if (forced === 'none') return { mode: 'none', reason: 'Valmentaja: ei päivärutiinia tänään.', items: [] };
+    if (forced === 'none') {
+      return { mode: 'none', reason: 'Valmentaja: ei päivärutiinia tänään.', items: [], am: null, pm: null, boost: null, timing: null };
+    }
 
-    if (light) {
-      // 4 venytystä (askel 2 → peräkkäiset päivät eri setti) + 1 tasapaino
-      const st = [];
-      const start = ((n % 7) + 7) % 7;
-      for (let i = 0; i < 4; i++) st.push(STRETCH[(start + i * 2) % 7]);
-      const bal = BALANCE[((n % 4) + 4) % 4];
-      const items = kind === 'mobility' ? [bal, BALANCE[((n + 2) % 4 + 4) % 4], st[0], st[1]] : st.concat([bal]);
-      return {
-        mode: 'light', title: 'Liikkuvuus + tasapaino', minutes: '10–15 min', reason: light,
+    // Boost estetty samoilla säännöillä kuin ennen (light-päivät)
+    let noBoost = null;
+    if (kind === 'strength') noBoost = s.subtype === 'salibandy' ? 'Salibandypäivä – ei GtG-lisää.' : 'Kuntopiiri-/voimapäivä – ei lisävoimaa.';
+    else if (kind === 'hard') noBoost = 'Kova juoksupäivä – ei GtG-lisää.';
+    else if (kind === 'long') noBoost = 'Pitkän lenkin päivä – ei GtG-lisää.';
+    else if (nightHeavy(s)) noBoost = 'Yövuoropäivä / vähän unta – ei GtG-lisää.';
+    else if (prevKind === 'long') noBoost = 'Pitkän lenkin jälkeinen päivä – ei GtG-lisää.';
+    else if (prevS && prevS.subtype === 'salibandy') noBoost = 'Salibandyn jälkeinen päivä – ei GtG-lisää.';
+    else if (kind === 'mobility') noBoost = 'Lihashuoltopäivä – ei GtG-lisää.';
+    if (forced === 'light' && !noBoost) noBoost = 'Valmentaja: tänään kevyt päivärutiini (ei GtG).';
+    if (forced === 'boost') noBoost = null;
+
+    // Balance most evenings (≈ every other evening by day number)
+    const balTonight = (n % 2) === 0 || kind === 'mobility' || kind === 'rest' || kind === 'walk';
+    const am = buildAm(iso);
+    const pm = buildPm(iso, balTonight);
+    const timing = timingTip(s, kind);
+
+    let boost = null;
+    if (!noBoost) {
+      const legsOk = !(nextKind === 'hard' || nextKind === 'long') && !(nextS && nextS.type === 'race');
+      const shoulderOk = !ctx.shoulderRehab;
+      const deload = !!ctx.deload || /kevennysviikko/i.test(String(s.name || ''));
+      const upperPool = [UPPER.push, UPPER.core, UPPER.dip, UPPER.core];
+      const items = [];
+      if (shoulderOk) {
+        items.push(pullItem(iso, n));
+        items.push(upperPool[((n % 4) + 4) % 4]);
+      } else {
+        items.push(BALANCE[((n % 4) + 4) % 4]);
+      }
+      if (!deload || !shoulderOk) {
+        if (legsOk) {
+          const pool = LEGS.concat([BALANCE[((n >> 1) % 4 + 4) % 4]]);
+          items.push(pool[((n % 5) + 5) % 5]);
+          if (!shoulderOk) items.push(LEGS[((n + 2) % 4 + 4) % 4]);
+        } else {
+          const b = BALANCE.filter((x) => x.key !== 'bal2');
+          let pick = b[((n % 3) + 3) % 3];
+          if (items.some((x) => x.key === pick.key)) pick = b[((n + 1) % 3 + 3) % 3];
+          items.push(pick);
+        }
+      }
+      let reason = 'Kevyt lisävoima: submaksimaalinen, ei koskaan uupumukseen. Täysi ote leuoissa (peukalo tangon alle).';
+      if (!legsOk) reason += ' Huomenna kova/pitkä → ei jalkaliikkeitä tänään.';
+      if (deload && shoulderOk) reason += ' Kevennysviikko → vain 2 liikettä.';
+      if (!shoulderOk) reason += ' Olkapäätila: ei veto-/työntöliikkeitä.';
+      boost = {
+        title: 'Kevyt lisävoima (GtG)',
+        minutes: '10–15 min (leuat pitkin päivää)',
+        reason: reason,
         items: items.map((x) => Object.assign({}, x))
       };
     }
 
-    // Boost-päivä
-    const legsOk = !(nextKind === 'hard' || nextKind === 'long') && !(nextS && nextS.type === 'race');
-    const shoulderOk = !ctx.shoulderRehab;
-    const deload = !!ctx.deload || /kevennysviikko/i.test(String(s.name || ''));
-    const upperPool = [UPPER.push, UPPER.core, UPPER.dip, UPPER.core];
-    const items = [];
-    if (shoulderOk) {
-      items.push(pullItem(iso, n));
-      items.push(upperPool[((n % 4) + 4) % 4]);
-    } else {
-      items.push(BALANCE[((n % 4) + 4) % 4]);
-    }
-    if (!deload || !shoulderOk) {
-      if (legsOk) {
-        // 5 vaihtoehtoa: 4 jalkaliikettä + tasapaino (tasapaino mukana "joskus")
-        const pool = LEGS.concat([BALANCE[((n >> 1) % 4 + 4) % 4]]);
-        items.push(pool[((n % 5) + 5) % 5]);
-        if (!shoulderOk) items.push(LEGS[((n + 2) % 4 + 4) % 4]);
-      } else {
-        const b = BALANCE.filter((x) => x.key !== 'bal2');
-        let pick = b[((n % 3) + 3) % 3];
-        if (items.some((x) => x.key === pick.key)) pick = b[((n + 1) % 3 + 3) % 3];
-        items.push(pick);
-      }
-    }
-    let reason = 'Kevyt lisävoima: submaksimaalinen, ei koskaan uupumukseen.';
-    if (!legsOk) reason += ' Huomenna kova/pitkä → ei jalkaliikkeitä tänään.';
-    if (deload && shoulderOk) reason += ' Kevennysviikko → vain 2 liikettä.';
-    if (!shoulderOk) reason += ' Olkapäätila: ei veto-/työntöliikkeitä.';
+    const mode = boost ? 'boost' : 'light';
+    const reason = boost
+      ? boost.reason
+      : (noBoost || 'Tänään aamu- ja iltaliikkuvuus.');
+    // items = boost-liikkeet (yhteensopivuus vanhoihin kutsuijiin) tai [] light-päivinä
     return {
-      mode: 'boost', title: 'Kevyt lisävoima', minutes: '10–15 min (leuat pitkin päivää)', reason,
-      items: items.map((x) => Object.assign({}, x))
+      mode: mode,
+      title: boost ? boost.title : 'Aamu- ja iltaliikkuvuus',
+      reason: reason,
+      minutes: boost ? boost.minutes : 'AM 5–8 + PM 8–12 min',
+      items: boost ? boost.items : [],
+      am: am,
+      pm: pm,
+      boost: boost,
+      timing: timing
     };
   }
 
   // ---------- Palautuskävelyn / lepopäivän liikkuvuusosio ----------
-  // Näkyy itse treenikortissa (erillään Päivärutiinista). Välttää päivän Päivärutiinin liikkeet.
+  // Näkyy itse treenikortissa (erillään Päivärutiinista). Välttää päivän AM/PM/boost-liikkeet.
   const RECOVERY_CORE = [
-    { key: 'hipflex', id: 'hip_flexor_stretch', sets: '2 × 30 s / puoli' },
-    { key: 'ham', id: 'hamstring_stretch', sets: '2 × 30 s / puoli' },
-    { key: 'calfst', id: 'calf_stretch', sets: '30 s suora + 30 s koukku / puoli' },
-    { key: 'glute', id: 'figure4_stretch', sets: '2 × 30 s / puoli' },
-    { key: 'thor', id: 'thoracic_opener', sets: '8 / puoli' },
-    { key: 'catcow', id: 'cat_cow', sets: '10 hidasta' }
+    { key: 'hipflex', id: 'hip_flexor_stretch', sets: '2 × 30 s / puoli', ex: 'hip_flexor_stretch' },
+    { key: 'ham', id: 'hamstring_stretch', sets: '2 × 30 s / puoli', ex: 'hamstring_stretch' },
+    { key: 'calfst', id: 'calf_stretch', sets: '30 s suora + 30 s koukku / puoli', ex: 'calf_stretch' },
+    { key: 'glute', id: 'figure4_stretch', sets: '2 × 30 s / puoli', ex: 'figure4_stretch' },
+    { key: 'thor', id: 'thoracic_opener', sets: '8 / puoli', ex: 'thoracic_opener' },
+    { key: 'catcow', id: 'cat_cow', sets: '10 hidasta', ex: 'cat_cow' }
   ];
   const RECOVERY_SUBS = [
-    { key: 'wgs', id: 'worlds_greatest_stretch', sets: '5 / puoli' },
-    { key: 'quad', id: 'quad_stretch', sets: '2 × 30 s / puoli' },
-    { key: 'child', id: 'childs_pose', sets: '45–60 s' },
-    { key: 'hipop', id: 'hip_opener', sets: '8 / puoli' },
-    { key: 'ankle', id: 'ankle_mobility', sets: '10 / puoli' }
+    { key: 'wgs', id: 'worlds_greatest_stretch', sets: '5 / puoli', ex: 'worlds_greatest_stretch' },
+    { key: 'quad', id: 'quad_stretch', sets: '2 × 30 s / puoli', ex: 'quad_stretch' },
+    { key: 'child', id: 'childs_pose', sets: '45–60 s', ex: 'childs_pose' },
+    { key: 'hipop', id: 'hip_opener', sets: '8 / puoli', ex: 'hip_opener' },
+    { key: 'ankle', id: 'ankle_mobility', sets: '10 / puoli', ex: 'ankle_mobility' }
   ];
   const RECOVERY_BAL = [
     { key: 'bal1', id: 'sl_balance', sets: '2 × 30 s / jalka' },
@@ -191,10 +353,27 @@
     { key: 'bal2', id: 'sl_rdl_bw', sets: '2 × 6 / jalka' }
   ];
   const MOBILITY_TEXT = /liikkuvuu|venyt/i;
+
+  function routineAvoidEx(routine) {
+    const avoidEx = {};
+    const avoidKey = {};
+    function add(items) {
+      (items || []).forEach((x) => {
+        if (x.key) avoidKey[x.key] = true;
+        (x.exs || (x.ex ? [x.ex] : [])).forEach((id) => { avoidEx[id] = true; });
+      });
+    }
+    if (!routine) return { avoidEx: avoidEx, avoidKey: avoidKey };
+    add(routine.items);
+    if (routine.am) add(routine.am.items);
+    if (routine.pm) add(routine.pm.items);
+    if (routine.boost) add(routine.boost.items);
+    return { avoidEx: avoidEx, avoidKey: avoidKey };
+  }
+
   /**
    * Palautuskävely- tai lepopäivän ~10 min liikkuvuus + tasapaino -osio (session.mobility-muotoinen).
-   * @param {object} s päivän sessio · @param {object} routine päivän buildRoutine-tulos (vältettävät liikkeet)
-   * @returns {null | {id,label,durationMin,note,optional,exercises}}
+   * Välttää päällekkäisyydet päivän AM/PM/boost-liikkeiden kanssa.
    */
   function recoveryMobility(iso, s, routine) {
     if (!s || s.mobility || s.subtype === 'sick') return null;
@@ -202,26 +381,37 @@
     const text = [s.details, s.coach && s.coach.cooldown].filter(Boolean).join(' ');
     const mentions = MOBILITY_TEXT.test(text);
     if (kind !== 'walk' && !(kind === 'rest' && mentions)) return null;
-    const avoid = {};
-    ((routine && routine.items) || []).forEach((x) => { avoid[x.key] = true; });
-    const ex = RECOVERY_CORE.filter((x) => !avoid[x.key]);
+    const av = routineAvoidEx(routine);
+    const ex = RECOVERY_CORE.filter((x) => !av.avoidEx[x.id] && !av.avoidKey[x.key] && !av.avoidKey['pm_' + x.key.replace(/st$/, '')] && !av.avoidKey['pm_' + x.key]);
+    // Prefer subs whose exercise id is not already in AM/PM
     for (let i = 0; ex.length < 6 && i < RECOVERY_SUBS.length; i++) {
-      if (!avoid[RECOVERY_SUBS[i].key]) ex.push(RECOVERY_SUBS[i]);
+      const sub = RECOVERY_SUBS[i];
+      if (!av.avoidEx[sub.id] && !av.avoidKey[sub.key] && !av.avoidKey['am_' + sub.key] && !av.avoidKey['pm_' + sub.key]) {
+        ex.push(sub);
+      }
+    }
+    // If still short, fill from core/subs ignoring soft key overlaps but still avoiding exact ex id
+    for (let i = 0; ex.length < 6 && i < RECOVERY_SUBS.length; i++) {
+      const sub = RECOVERY_SUBS[i];
+      if (!av.avoidEx[sub.id] && !ex.some((e) => e.id === sub.id)) ex.push(sub);
     }
     const n = dayNum(iso);
-    const bals = RECOVERY_BAL.filter((x) => !avoid[x.key]);
+    const bals = RECOVERY_BAL.filter((x) => !av.avoidKey[x.key]);
     ex.push((bals.length ? bals : RECOVERY_BAL)[((n % (bals.length || 4)) + (bals.length || 4)) % (bals.length || 4)]);
-    const skipped = RECOVERY_CORE.length - RECOVERY_CORE.filter((x) => !avoid[x.key]).length;
+    const skipped = RECOVERY_CORE.length - RECOVERY_CORE.filter((x) => !av.avoidEx[x.id]).length;
     return {
       id: 'recovery_mobility',
       label: kind === 'walk' ? 'Kävelyn jälkeen: liikkuvuus + tasapaino' : 'Liikkuvuus + tasapaino',
       durationMin: 10,
       optional: kind === 'rest',
       note: 'Rauhassa, hengitys pitkänä, ei kipua.' +
-        (skipped ? ' Päivärutiinissa jo tehdyt liikkeet on vaihdettu muihin.' : ''),
+        (skipped ? ' Päivän aamu-/iltarutiinissa jo olevat liikkeet on vaihdettu muihin.' : ''),
       exercises: ex.map((x) => ({ id: x.id, sets: x.sets }))
     };
   }
 
-  global.TreeniRoutine = { buildRoutine, recoveryMobility, sessionKind, nightHeavy, pullDose, dayNum, STRETCH, BALANCE, LEGS, UPPER };
+  global.TreeniRoutine = {
+    buildRoutine, recoveryMobility, sessionKind, nightHeavy, pullDose, dayNum,
+    timingTip, STRETCH, BALANCE, LEGS, UPPER, AM_POOL, PM_STRETCH
+  };
 })(typeof window !== 'undefined' ? window : global);
