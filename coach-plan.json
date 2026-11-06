@@ -1,6 +1,6 @@
 {
-  "version": 44,
-  "updatedAt": "2026-11-06T16:03:52+02:00",
+  "version": 45,
+  "updatedAt": "2026-11-06T16:04:17+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -739,7 +739,7 @@
       "type": "kavely",
       "title": "Aamuvuoro 06–14: kävely tai vapaa",
       "details": "Vuoron jälkeen 20–30 min kävely + 10 min liikkuvuus.",
-      "note": "Kevyt päivä ennen kahta iltavuoroa. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee.",
+      "note": "Kevyt päivä ennen kahta iltavuoroa. Vuoro vahvistettu (aamuvuoro 06–14).",
       "options": [
         {
           "label": "Pelkkä lepo",
@@ -768,7 +768,7 @@
           "details": "6 × 5 min kynnys."
         }
       ],
-      "note": "Kuormitusviikko 2/3. Iltavuoroaamu – viikon tärkein treeni. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. Säbä jää väliin (iltavuoro 14–22).",
+      "note": "Kuormitusviikko 2/3. Iltavuoroaamu – viikon tärkein treeni. Vuoro vahvistettu (iltavuoro 14–22). Säbä jää väliin (iltavuoro 14–22).",
       "salibandy": false
     },
     {
@@ -789,7 +789,7 @@
           "details": "30–40 min reipas kävely."
         }
       ],
-      "note": "Toinen iltavuoroaamu – voimaa, jalat lepää. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee."
+      "note": "Toinen iltavuoroaamu – voimaa, jalat lepää. Vuoro vahvistettu (iltavuoro 14–22)."
     },
     {
       "date": "2026-11-26",
@@ -812,7 +812,7 @@
           "details": "13,5 km kevyesti – ei vauhdinnostoa."
         }
       ],
-      "note": "Ensimmäinen yövuoropäivä = hyvä treenipäivä. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee."
+      "note": "Ensimmäinen yövuoropäivä = hyvä treenipäivä. Vuoro vahvistettu (yövuoro 22–06)."
     },
     {
       "date": "2026-11-27",
@@ -859,7 +859,7 @@
       "distanceKm": 6,
       "details": "Vapaa arkipäivä, lapset hoidossa/koulussa: 6 km rauhallisesti ~6:45/km, syke 115–138.",
       "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
-      "note": "Kuormitusviikko 3/3. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee.",
+      "note": "Kuormitusviikko 3/3. Vuoro vahvistettu (vapaa). Uusi työtehtävä voi muuttaa myöhempiä vuoroja.",
       "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
       "options": [
         {
