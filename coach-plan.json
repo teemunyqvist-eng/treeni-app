@@ -1,6 +1,6 @@
 {
-  "version": 42,
-  "updatedAt": "2026-11-06T13:13:50+02:00",
+  "version": 43,
+  "updatedAt": "2026-11-06T13:15:52+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -48,6 +48,10 @@
     "2026-11-05": {
       "title": "Kynnys 3 × 8 min, 8,3 km",
       "text": "Kynnys 3 × 8 min meni täsmälleen suunnitelman mukaan, vaikka tuntuma oli hakusessa. Vedot 5:28, 5:24 ja 5:22/km – kaikki 5:15–5:35-haarukassa ja 3. veto nopein, eli ei hyytymistä. Almgrenin sääntö piti: mukavan kovaa, ei ahnehdittu. Tuntuma ja numerot eivät aina kohtaa, etenkin kun päätä särkee ja kahvi puuttuu – siksi vauhti kellosta oli hyvä valinta. Seuraavaksi: juo vettä, syö kunnolla ennen iltavuoroa. Huomisen kotipiiri ennallaan; jos päänsärky jatkuu tai olo on tukkoinen, tee kevennetty (2 kierrosta) tai kävely."
+    },
+    "2026-11-06": {
+      "title": "Kotipiiri 3 kierrosta – leuat 6-6-6",
+      "text": "Kotipiiri 3 kierrosta tehty, 42:35 – suunnitelma ~30 min, mutta lämmittely ja venyttely olivat mukana, eli kokonaisuus ok ennen iltavuoroa. Leuanvedot 6-6-6: tavoite oli 3–5 ja hakkasit sen joka kierroksella. Ab wheel 12/15/14 yli 8–10-tavoitteen, lankut tasan 40 s, punnerrukset 17→16→15 pysyi haarukassa. Korjattavaa: 3. kierros hajosi askelkyykkyihin (25→23→6) ja face pulleihin (14→15→5). Älä anna viimeisen kierroksen muuttua sähläämiseksi – hidasta tempoa, heikompi oikea puoli ensin, pidä toistot. Käsipainosoudun kelloluvut eivät luoteta; laske itse 10/puoli. Huomenna kävely/lepo, sunnuntaina pitkä kevyt 11 km – pidä se kevyenä."
     }
   },
   "done": {
