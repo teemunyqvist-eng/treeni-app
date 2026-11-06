@@ -1,6 +1,9 @@
 {
-  "version": 41,
-  "updatedAt": "2026-11-05T15:17:01+02:00",
+  "version": 42,
+  "updatedAt": "2026-11-06T13:13:50+02:00",
+  "flags": {
+    "shoulderRehab": false
+  },
   "feedback": {
     "2026-10-22": {
       "title": "Kävely 4,3 km",
@@ -193,11 +196,19 @@
         "source": "garmin",
         "id": "g62424f9ef7"
       }
+    ],
+    "2026-11-06": [
+      {
+        "type": "strength",
+        "min": 42.6,
+        "source": "garmin",
+        "id": "gbf9f3d078f"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-05T13:08:35+02:00",
+    "updatedAt": "2026-11-06T13:13:50+02:00",
     "complete": true,
     "totalKm": 51.53,
     "runs": 6,
@@ -226,19 +237,6 @@
     }
   },
   "days": [
-    {
-      "date": "2026-10-22",
-      "type": "kavely",
-      "title": "Lepo / kävely",
-      "details": "Nuku yövuoron jälkeen. Kävely 20–40 min tai 15 min liikkuvuus.",
-      "options": [
-        {
-          "label": "Pelkkä lepo",
-          "details": "Jos uni jäi alle 6 h: täysi lepo. Uni on tänään se treeni."
-        }
-      ],
-      "note": "Uni ensin. Lepo ei ole tekosyy, se on osa suunnitelmaa – huomenna juostaan."
-    },
     {
       "date": "2026-10-23",
       "type": "juoksu",
@@ -1063,8 +1061,5 @@
       ],
       "note": "Kevennysviikon pisin – iltavuoropäivänä. Ensi viikosta (14.12.) taas kuormitusviikot. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee."
     }
-  ],
-  "flags": {
-    "shoulderRehab": false
-  }
+  ]
 }
