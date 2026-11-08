@@ -1,6 +1,6 @@
 {
-  "version": 46,
-  "updatedAt": "2026-11-08T10:09:20+02:00",
+  "version": 47,
+  "updatedAt": "2026-11-08T10:10:02+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -52,6 +52,10 @@
     "2026-11-06": {
       "title": "Kotipiiri 3 kierrosta – leuat 3×5",
       "text": "Kotipiiri 3 kierrosta tehty, 42:35 – suunnitelma ~30 min, mutta lämmittely ja venyttely olivat mukana, eli kokonaisuus ok ennen iltavuoroa. Leuanvedot 3×5 (oma laskenta): tavoite oli 3–5 ja viimeiset jo tiukkoja – pidä sama tavoite seuraavallakin. Kellon 6-6-6 ja muut toistoluvut epäluotettavia; oma laskenta menee edelle. Älä lisää vielä. Ab wheel ja lankku pysykööt tutulla, selälle sopivalla liikeradalla. Huomenna kävely/lepo, sunnuntaina pitkä kevyt 11 km – pidä se kevyenä."
+    },
+    "2026-11-08": {
+      "title": "Pitkä kevyt 11 km – kuri piti",
+      "text": "11,2 km 1:20:00, keskivauhti 7:08/km mäkisellä reitillä. Juuri näin pitkä kevyt kuuluu juosta: pysyit koko matkan kevyellä alueella, eikä vauhti karannut edes lopussa, kun jalat alkoivat väsyä. Ylämäet hölkättiin rauhassa ja alamäet tulivat itsestään. Vauhti oli suunniteltua 6:45:tä hitaampi, ja se on täysin ok, koska tuntuma ratkaisee eikä kello. Korjattavaa: askel on vielä pitkä ja raskas. Lyhennä askelta ja nopeuta tahtia, varsinkin ylämäissä. Nyt ruokaa ja torkut ennen yövuoroa. Kuormitusviikko on paketissa, ja ensi viikko on kevennys."
     }
   },
   "done": {
