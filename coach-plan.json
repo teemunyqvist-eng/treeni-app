@@ -1,6 +1,6 @@
 {
-  "version": 45,
-  "updatedAt": "2026-11-06T16:04:17+02:00",
+  "version": 46,
+  "updatedAt": "2026-11-08T10:09:20+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -208,14 +208,24 @@
         "source": "garmin",
         "id": "gbf9f3d078f"
       }
+    ],
+    "2026-11-08": [
+      {
+        "type": "run",
+        "km": 11.23,
+        "min": 80.0,
+        "pace": "7:08",
+        "source": "garmin",
+        "id": "g0048a8be25"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-06T13:13:50+02:00",
+    "updatedAt": "2026-11-08T10:09:20+02:00",
     "complete": true,
-    "totalKm": 51.53,
-    "runs": 6,
+    "totalKm": 62.76,
+    "runs": 7,
     "skiKm": 0,
     "skiMin": 0,
     "skis": 0,
@@ -226,9 +236,9 @@
         "longest": 11.01
       },
       "2026-11": {
-        "km": 24.35,
-        "runs": 3,
-        "longest": 10.0
+        "km": 35.58,
+        "runs": 4,
+        "longest": 11.23
       }
     },
     "days": {
@@ -237,49 +247,11 @@
       "2026-10-28": 9.21,
       "2026-11-01": 10.0,
       "2026-11-02": 6.02,
-      "2026-11-05": 8.33
+      "2026-11-05": 8.33,
+      "2026-11-08": 11.23
     }
   },
   "days": [
-    {
-      "date": "2026-10-23",
-      "type": "juoksu",
-      "subtype": "long",
-      "title": "Pitkä lenkki 10–12 km",
-      "distanceKm": 11,
-      "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
-      "details": "Pitkä lenkki 10–12 km kevyesti ~6:45/km, syke ~140 (pystyt puhumaan).\nTasainen vauhti alusta loppuun. Juo ennen lähtöä, ota vettä mukaan jos yli 75 min.",
-      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "distanceKm": 8,
-          "details": "8 km kevyesti ~6:45/km, syke ~140. Sama lämmittely ja venyttely."
-        },
-        {
-          "label": "Kovennettu",
-          "distanceKm": 12,
-          "details": "12 km kevyesti ~6:45/km, syke ~140; viimeinen km hieman rauhallista vauhtia nopeammin – ei kuitenkaan kova (pystyt yhä puhumaan lyhyin lausein)."
-        }
-      ],
-      "note": "Kevyt tarkoittaa kevyttä. Ego kotiin – 32 km seinä Turussa kaadetaan näillä hitailla kilometreillä, ei sankaroinnilla."
-    },
-    {
-      "date": "2026-10-24",
-      "type": "koti",
-      "title": "Kotikuntopiiri ~30 min",
-      "durationMin": 30,
-      "warmup": "5 min: kävely paikallaan / hyppynaru kevyesti, käsien pyöritykset, kyykyt ilman painoa, lantion pyöritykset.",
-      "details": "Kotikuntopiiri ~30 min ennen saunaa – 3 kierrosta:\n• Leuanveto 3–5\n• Punnerrus 12–15\n• Käsipainosoutu 10 / puoli\n• Askelkyykky tai step-up 10 / jalka\n• Kuminauha face pull 15\n• Ab wheel 8–10\n• Lankku 40 s\nLepo kierrosten välissä 1–2 min.",
-      "cooldown": "Venyttely ~5–10 min: rinta, selkä, lonkankoukistajat, takareidet.",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "details": "2 kierrosta samaa piiriä. Lämmittely ja venyttely kuten normaalisti."
-        }
-      ],
-      "note": "Piiri ensin, sitten sauna ja kaljat."
-    },
     {
       "date": "2026-10-25",
       "type": "juoksu",
