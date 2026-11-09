@@ -1,6 +1,6 @@
 {
-  "version": 48,
-  "updatedAt": "2026-11-09T14:01:38+02:00",
+  "version": 49,
+  "updatedAt": "2026-11-09T16:15:03+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -222,11 +222,21 @@
         "source": "garmin",
         "id": "g0048a8be25"
       }
+    ],
+    "2026-11-09": [
+      {
+        "type": "walk",
+        "km": 2.97,
+        "min": 38.7,
+        "pace": "13:01",
+        "source": "garmin",
+        "id": "g85c7859a59"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-08T10:09:20+02:00",
+    "updatedAt": "2026-11-09T16:15:03+02:00",
     "complete": true,
     "totalKm": 62.76,
     "runs": 7,
@@ -256,22 +266,6 @@
     }
   },
   "days": [
-    {
-      "date": "2026-10-25",
-      "type": "juoksu",
-      "subtype": "easy",
-      "title": "Kevyt 4–5 km tai kävely",
-      "distanceKm": 4.5,
-      "details": "Kevyt 4–5 km tai kävely, miten olo antaa. Vauhti täysin rento.",
-      "cooldown": "Liikkuvuus ~10 min: lonkat, nilkat, rintaranka, pohkeet.",
-      "options": [
-        {
-          "label": "Kävely",
-          "details": "30–45 min kävely + sama liikkuvuus."
-        }
-      ],
-      "note": "Kuuntele kehoa – mutta erota väsymys tekosyystä."
-    },
     {
       "date": "2026-10-26",
       "type": "kavely",
