@@ -1,6 +1,6 @@
 {
-  "version": 49,
-  "updatedAt": "2026-11-09T16:15:03+02:00",
+  "version": 50,
+  "updatedAt": "2026-11-09T16:17:25+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -56,6 +56,10 @@
     "2026-11-08": {
       "title": "Pitkä kevyt 11 km – kuri piti",
       "text": "11,2 km 1:20:00, keskivauhti 7:08/km mäkisellä reitillä. Juuri näin pitkä kevyt kuuluu juosta: pysyit koko matkan kevyellä alueella, eikä vauhti karannut edes lopussa, kun jalat alkoivat väsyä. Ylämäet hölkättiin rauhassa ja alamäet tulivat itsestään. Vauhti oli suunniteltua 6:45:tä hitaampi, ja se on täysin ok, koska tuntuma ratkaisee eikä kello. Korjattavaa: askel on vielä pitkä ja raskas. Lyhennä askelta ja nopeuta tahtia, varsinkin ylämäissä. Nyt ruokaa ja torkut ennen yövuoroa. Kuormitusviikko on paketissa, ja ensi viikko on kevennys."
+    },
+    "2026-11-09": {
+      "title": "Palauttava kävely – just eikä enempää",
+      "text": "Kävely 3,0 km, 38 min yövuorojen välissä. Suunnitelmassa oli 20 min, tuplasit sen, mutta tempo pysyi oikeasti kevyenä, joten tämä on palautumista eikä treeniä. Hyvä. Nyt ei mitään lisää: syö, lepää ja mene toiseen yövuoroon niin levänneenä kuin pystyt. Huomenna aamuvuoro yövuoron perään, joten se on lepopäivä. Seuraava juoksu on keskiviikon kevyt 5 km."
     }
   },
   "done": {
