@@ -44,8 +44,8 @@
   };
   const LEGS = [
     { key: 'bss', ex: 'bulgarian_split_squat', name: 'Bulgarialainen askelkyykky', dose: '2 × 8–10 / jalka', cue: 'Takajalka tuolille, etupolvi varpaiden suuntaan. 2–3 toistoa varaan. ' + SIDE_CUE, legs: true },
-    { key: 'calf', ex: 'calf_raise', name: 'Yhden jalan pohjenosto rappusella', dose: '2 × 12–15 / jalka', cue: 'Täysi liike: kanta alas venytykseen, ylös varpaille. Hitaasti alas (3 s). ' + SIDE_CUE, legs: true },
-    { key: 'bridge', ex: 'sl_glute_bridge', name: 'Yhden jalan lantionnosto', dose: '2 × 10–12 / jalka (+1 kireämmällä)', cue: 'Työnnä kantapäällä, purista pakaraa ylhäällä 1–2 s, lantio vaakatasossa. Aloita kireämmältä/heikommalta; tee sille +1 toisto. ' + SIDE_CUE, legs: true },
+    { key: 'calf', ex: 'calf_raise', name: 'Yhden jalan pohjenosto rappusella', dose: '2 × 12–15 / jalka', cue: 'Oikea ensin. Täysi liike: kanta alas venytykseen, ylös varpaille. Hitaasti alas (3 s). ' + SIDE_CUE, legs: true },
+    { key: 'bridge', ex: 'sl_glute_bridge', name: 'Yhden jalan lantionnosto', dose: '2 × 10–12 / jalka (+1 oikealle)', cue: 'Oikea ensin; tee oikealle +1 toisto. Työnnä kantapäällä, purista pakaraa ylhäällä 1–2 s, lantio vaakatasossa. ' + SIDE_CUE, legs: true },
     { key: 'lunge', ex: 'lunge', name: 'Askelkyykky taaksepäin', dose: '2 × 10 / jalka', cue: 'Askel taakse, etupolvi nilkan päällä, rinta pystyssä. ' + SIDE_CUE, legs: true }
   ];
   const BALANCE = [
@@ -69,9 +69,9 @@
 
   // Ilta: venyttely + liikkuvuus (pohkeet/akilles, takareidet, lonkankoukistajat, pakarat, selkä)
   const PM_STRETCH = [
-    { key: 'pm_calf', ex: 'calf_stretch', name: 'Pohje- ja akillesvenytys', dose: '2 × 30–45 s / puoli (suora + koukku)', cue: 'Seinää vasten: ensin takapolvi suorana, sitten koukussa (soleus). Halutessa kevyt rullaus/hieronta 1–2 min. ' + SIDE_CUE },
-    { key: 'pm_ham', ex: 'hamstring_stretch', name: 'Takareiden venytys (selin, hihna/pyyhe)', dose: '2 × 30–45 s / puoli', cue: 'Selinmakuu, hihna/pyyhe jalkaterän ympäri. Nosta jalka suoraksi pehmeästi – ei pakota. Kireämpi puoli ensin ja hieman pidempään. ' + SIDE_CUE },
-    { key: 'pm_glide', ex: 'hamstring_nerve_glide', name: 'Takareiden liukuliike (istuen)', dose: '10 hidasta / puoli', cue: 'Istu ryhdikkäästi. Ojenna polvea samalla kun nostat päätä; palaa koukkuun samalla kun lasket päätä. Rauhallinen, kivuton liike. Kireämpi puoli ensin; toinen puoli vapaaehtoinen. ' + SIDE_CUE },
+    { key: 'pm_calf', ex: 'calf_stretch', name: 'Pohje- ja akillesvenytys', dose: '2 × 30–45 s / puoli (suora + koukku)', cue: 'Oikea ensin. Seinää vasten: ensin takapolvi suorana, sitten koukussa (soleus). Halutessa kevyt rullaus/hieronta 1–2 min. ' + SIDE_CUE },
+    { key: 'pm_ham', ex: 'hamstring_stretch', name: 'Takareiden venytys (selin, hihna/pyyhe)', dose: '2 × 30–45 s / puoli', cue: 'Oikea ensin ja hieman pidempään. Selinmakuu, hihna/pyyhe jalkaterän ympäri. Nosta jalka suoraksi pehmeästi – ei pakota. ' + SIDE_CUE },
+    { key: 'pm_glide', ex: 'hamstring_nerve_glide', name: 'Takareiden liukuliike (istuen)', dose: '10 rauhallista (oikea; vasen vapaaehtoinen)', cue: 'Istu ryhdikkäästi. Ojenna polvea samalla kun nostat päätä; palaa koukkuun samalla kun lasket päätä. 10 rauhallista, oikea puoli; vasen vapaaehtoinen. Ei kipua. ' + SIDE_CUE },
     { key: 'pm_hipflex', ex: 'hip_flexor_stretch', name: 'Lonkankoukistajan venytys (polviseisonta)', dose: '2 × 30–40 s / puoli', cue: 'Polviseisonta, purista takajalan pakaraa ja työnnä lantiota eteen – ei notkoa. ' + SIDE_CUE },
     { key: 'pm_glute', ex: 'figure4_stretch', name: 'Pakaravenytys (kyyhky / figure-4)', dose: '2 × 40 s / puoli', cue: 'Nilkka vastakkaisen polven päälle, vedä reittä rintaa kohti. Lantio tasaisena. ' + SIDE_CUE },
     { key: 'pm_quad', ex: 'quad_stretch', name: 'Etureiden venytys', dose: '2 × 30 s / puoli', cue: 'Seisten tai kyljellään, vedä kantapäätä pakaraan. Lantio eteen. ' + SIDE_CUE },
@@ -83,7 +83,7 @@
   const PM_CLAM = {
     key: 'pm_clam', ex: 'clamshell', name: 'Simpukka (kylkimakuu)',
     dose: '2 × 10–12 / puoli',
-    cue: 'Kylkimakuu, polvet koukussa. Avaa ylapolvea pitäen nilkat yhdessä. Lantio vakaa. ' + SIDE_CUE, legs: true
+    cue: 'Oikea ensin. Kylkimakuu, polvet koukussa. Avaa yläpolvea pitäen nilkat yhdessä. Lantio vakaa. ' + SIDE_CUE, legs: true
   };
 
   // Vanha STRETCH-alias (testit / recovery-yhteensopivuus)
@@ -315,29 +315,21 @@
       } else {
         items.push(BALANCE[((n % 4) + 4) % 4]);
       }
+      // Jalkojen pohje-/pakaraosio menee illan rutiinin alkuun (ei boostiin)
       if (!deload || !shoulderOk) {
-        if (legsOk) {
-          // Sopiva päivä → pohjenousot + yhden jalan lantionnosto (~2–3×/vk)
-          items.push(Object.assign({}, LEGS.find((x) => x.key === 'calf') || LEGS[1]));
-          items.push(Object.assign({}, LEGS.find((x) => x.key === 'bridge') || LEGS[2]));
-          if (!shoulderOk) {
-            const extra = LEGS.filter((x) => x.key !== 'calf' && x.key !== 'bridge');
-            items.push(extra[((n + 2) % extra.length + extra.length) % extra.length]);
-          }
-        } else {
+        if (!legsOk) {
           const b = BALANCE.filter((x) => x.key !== 'bal2');
           let pick = b[((n % 3) + 3) % 3];
           if (items.some((x) => x.key === pick.key)) pick = b[((n + 1) % 3 + 3) % 3];
           items.push(pick);
+        } else if (!shoulderOk) {
+          const extra = LEGS.filter((x) => x.key !== 'calf' && x.key !== 'bridge');
+          items.push(extra[((n + 2) % extra.length + extra.length) % extra.length]);
         }
-      } else if (legsOk) {
-        // Kevennysviikko: kevyt pohje- ja pakaraosio
-        items.push(Object.assign({}, LEGS.find((x) => x.key === 'calf') || LEGS[1]));
-        items.push(Object.assign({}, LEGS.find((x) => x.key === 'bridge') || LEGS[2]));
       }
       let reason = 'Kevyt lisävoima: submaksimaalinen, ei koskaan uupumukseen. Täysi ote leuoissa (peukalo tangon alle).';
       if (!legsOk) reason += ' Huomenna kova/pitkä → ei jalkaliikkeitä tänään.';
-      if (deload && shoulderOk) reason += ' Kevennysviikko → vain 2 liikettä.';
+      if (deload && shoulderOk) reason += ' Kevennysviikko → kevyt GtG; jalkojen vahvistus illan rutiinissa.';
       if (!shoulderOk) reason += ' Olkapäätila: ei veto-/työntöliikkeitä.';
       boost = {
         title: 'Kevyt lisävoima (GtG)',
@@ -347,18 +339,20 @@
       };
     }
 
-    // Light-/boost-vapailla sopivina päivinä: pohje + lantionnosto (+ simpukka) illan loppuun (~2–3×/vk)
-    const calfInBoost = !!(boost && boost.items && boost.items.some((x) => x.key === 'calf'));
+    // Sopivina päivinä: jalkojen vahvistus ILLAN ALUSSA (ennen venytyksiä), ~2–3×/vk
     const canCalf = calfDayOk(kind, s, nextKind, nextS);
-    const lightCalfOk = !calfInBoost && canCalf
+    const sideStrengthOk = canCalf
       && (kind === 'easy' || kind === 'walk' || kind === 'rest' || kind === 'mobility');
-    if (lightCalfOk && pm && Array.isArray(pm.items)) {
-      // Pidä ilta ~10–12 min: tiputa tasapaino, lisää vahvistus
-      pm.items = pm.items.filter((x) => !x.balance);
-      pm.items.push(Object.assign({}, LEGS.find((x) => x.key === 'calf') || LEGS[1]));
-      pm.items.push(Object.assign({}, LEGS.find((x) => x.key === 'bridge') || LEGS[2]));
-      pm.items.push(Object.assign({}, PM_CLAM));
-      pm.minutes = '10–12 min';
+    if (sideStrengthOk && pm && Array.isArray(pm.items)) {
+      pm.items = pm.items.filter((x) => !x.balance && x.key !== 'calf' && x.key !== 'bridge' && x.key !== 'pm_clam');
+      const strength = [
+        Object.assign({}, LEGS.find((x) => x.key === 'calf') || LEGS[1]),
+        Object.assign({}, LEGS.find((x) => x.key === 'bridge') || LEGS[2]),
+        Object.assign({}, PM_CLAM)
+      ];
+      pm.items = strength.concat(pm.items);
+      pm.minutes = '10–14 min';
+      pm.title = 'Illan vahvistus + venyttely';
     }
 
     const mode = boost ? 'boost' : 'light';

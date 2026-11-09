@@ -42,7 +42,7 @@
     garmin: null, // täyttyy varmuuskopion tuonnista (vanha Garmin-yhteenveto)
     dayOverrides: {}, // iso -> { status, completed, session, note, completedAt }
     log: [],
-    routineLog: {}, // Päivärutiini: iso -> { am:true, pm:true, liikeavain: true, pullSets: n }
+    routineLog: {}, // Päivärutiini: iso -> { am?:true, pm?:true, liikeavain: true, pullSets: n } — am/pm = vanha lohkokuittaus; liikkeet erikseen
     garminApplied: {}, // done-merkinnän id -> { date, kind } (idempotentti Garmin ✓ Valmis)
     planCache: null,
     health: {
@@ -1452,18 +1452,25 @@
         </li>`;
     }).join('');
   }
+  function mobilityBlockDone(items, lg, which) {
+    // Vanha tapa: lg.am / lg.pm = koko lohko. Uusi: jokainen liike erikseen.
+    if (lg[which]) return true;
+    return !!(items && items.length && items.every((it) => lg[it.key]));
+  }
   function renderMobilityBlock(iso, which, block, lg) {
     if (!block || !block.items || !block.items.length) return '';
-    const done = !!lg[which];
+    const items = block.items;
+    const doneCount = items.filter((it) => lg[which] || lg[it.key]).length;
+    const allDone = mobilityBlockDone(items, lg, which);
     const icon = which === 'am' ? '🌅' : '🌙';
     const label = which === 'am' ? 'Aamu' : 'Ilta';
-    return `<div class="card routine-card rt-mob rt-${which}${done ? ' rt-all-done' : ''}" data-routine="${esc(iso)}" data-rt-block="${which}">
+    return `<div class="card routine-card rt-mob rt-${which}${allDone ? ' rt-all-done' : ''}" data-routine="${esc(iso)}" data-rt-block="${which}">
         <div class="rt-head">
           <span class="rt-title">${icon} ${label} · ${esc(block.title)}</span>
-          <label class="rt-block-done"><input type="checkbox" data-rt-block-done="${which}"${done ? ' checked' : ''} /> <span>${done ? '✓ Tehty' : 'Merkitse tehdyksi'}</span></label>
+          <span class="rt-count">${allDone ? '✓ Tehty' : doneCount + '/' + items.length}</span>
         </div>
-        <div class="rt-meta">${esc(block.minutes)}</div>
-        <ul class="rt-list">${renderRoutineItems(block.items, lg, { blockToggle: true, blockDone: done })}</ul>
+        <div class="rt-meta">${esc(block.minutes)} · kuittaus per liike</div>
+        <ul class="rt-list">${renderRoutineItems(items, lg, { blockDone: !!lg[which] })}</ul>
       </div>`;
   }
   function renderBoostBlock(iso, boost, lg) {
@@ -1505,10 +1512,17 @@
       const fresh = tmp.firstElementChild;
       if (fresh) { wrap.replaceWith(fresh); bindRoutineCard(fresh.parentNode, iso); bindExerciseTaps(fresh); }
     };
+    // Vanha data-rt-block-done säilyy jos DOM:ssa vielä (ei enää renderöidä)
     wrap.querySelectorAll('[data-rt-block-done]').forEach((cb) => {
       cb.addEventListener('change', () => {
         const which = cb.getAttribute('data-rt-block-done');
-        setRoutineLog(iso, { [which]: cb.checked });
+        const r = routineFor(iso);
+        const block = which === 'am' ? (r && r.am) : (r && r.pm);
+        const patch = { [which]: cb.checked };
+        if (block && block.items) {
+          block.items.forEach((it) => { patch[it.key] = cb.checked; });
+        }
+        setRoutineLog(iso, patch);
         refresh();
         if (cb.checked) toast(which === 'am' ? 'Aamun liikkuvuus tehty 🌅' : 'Illan venyttely tehty 🌙');
       });
@@ -1516,12 +1530,23 @@
     wrap.querySelectorAll('[data-rt]').forEach((cb) => {
       cb.addEventListener('change', () => {
         const key = cb.getAttribute('data-rt');
-        setRoutineLog(iso, { [key]: cb.checked });
+        const patch = { [key]: cb.checked };
+        // Jos yksittäinen liike puretaan, pura myös vanha lohkokuittaus
+        if (!cb.checked) {
+          const r0 = routineFor(iso);
+          if (r0 && r0.am && r0.am.items && r0.am.items.some((it) => it.key === key)) patch.am = false;
+          if (r0 && r0.pm && r0.pm.items && r0.pm.items.some((it) => it.key === key)) patch.pm = false;
+        }
+        setRoutineLog(iso, patch);
         refresh();
         const lg = routineLogFor(iso);
         const r = routineFor(iso);
         const boostItems = (r && r.boost && r.boost.items) || (r && r.items) || [];
         if (cb.checked && boostItems.length && boostItems.every((it) => lg[it.key])) toast('Boost tehty 💪');
+        if (cb.checked && r && r.am && r.am.items && r.am.items.some((it) => it.key === key)
+            && mobilityBlockDone(r.am.items, lg, 'am')) toast('Aamun liikkuvuus tehty 🌅');
+        if (cb.checked && r && r.pm && r.pm.items && r.pm.items.some((it) => it.key === key)
+            && mobilityBlockDone(r.pm.items, lg, 'pm')) toast('Illan rutiini tehty 🌙');
       });
     });
     wrap.querySelectorAll('[data-rt-set]').forEach((b) => {
