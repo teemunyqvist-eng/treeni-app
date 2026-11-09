@@ -1895,6 +1895,30 @@
       ],
       video: { type: 'link', url: ytSearch('chair dips proper form'), label: 'Katso video (YouTube-haku)' }
     },
+    glute_bridge: {
+      id: 'glute_bridge',
+      name: 'Lantionnosto kahdella jalalla',
+      category: 'voima',
+      equipment: [],
+      benefits: [
+        'Pakaran aktivointi ilman yhden jalan kuormaa',
+        'Tukee lantion vakautta juoksussa',
+        'Sopii illan vahvistukseen'
+      ],
+      cues: [
+        'Selinmakuu, molemmat jalat koukussa, kantapäät kauempana pakarasta',
+        'Paina kantapäillä, nosta lantio – pakara tekee työn',
+        'Pito ylhäällä 2–3 s, 2 × 12',
+        'Jos takareisi kiristyy: lopeta, suorista jalka ja venytä kevyesti',
+        'Eteneminen: nosto kahdella, lasku hitaasti yhdellä jalalla'
+      ],
+      mistakes: [
+        'Kantapäät liian lähellä pakaroita (takareisi ottaa yli)',
+        'Nosto alaselällä (notko)',
+        'Liian nopea tempo ilman pitoa'
+      ],
+      video: { type: 'link', url: ytSearch('glute bridge heels away form'), label: 'Katso video (YouTube-haku)' }
+    },
     sl_glute_bridge: {
       id: 'sl_glute_bridge',
       name: 'Yhden jalan lantionnosto lattialla',

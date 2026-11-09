@@ -45,7 +45,7 @@
   const LEGS = [
     { key: 'bss', ex: 'bulgarian_split_squat', name: 'Bulgarialainen askelkyykky', dose: '2 × 8–10 / jalka', cue: 'Takajalka tuolille, etupolvi varpaiden suuntaan. 2–3 toistoa varaan. ' + SIDE_CUE, legs: true },
     { key: 'calf', ex: 'calf_raise', name: 'Yhden jalan pohjenosto rappusella', dose: '2 × 12–15 / jalka', cue: 'Oikea ensin. Täysi liike: kanta alas venytykseen, ylös varpaille. Hitaasti alas (3 s). ' + SIDE_CUE, legs: true },
-    { key: 'bridge', ex: 'sl_glute_bridge', name: 'Yhden jalan lantionnosto', dose: '2 × 10–12 / jalka (+1 oikealle)', cue: 'Oikea ensin; tee oikealle +1 toisto. Työnnä kantapäällä, purista pakaraa ylhäällä 1–2 s, lantio vaakatasossa. ' + SIDE_CUE, legs: true },
+    { key: 'bridge', ex: 'glute_bridge', name: 'Lantionnosto kahdella jalalla', dose: '2 × 12, pito 2–3 s', cue: 'Kantapäät kauempana pakarasta, paina kantapäillä – pakara tekee työn. Jos takareisi kiristyy: lopeta, suorista jalka ja venytä kevyesti. Eteneminen: kun menee ilman kiristystä, nosto kahdella ja lasku hitaasti oikealla jalalla.', legs: true },
     { key: 'lunge', ex: 'lunge', name: 'Askelkyykky taaksepäin', dose: '2 × 10 / jalka', cue: 'Askel taakse, etupolvi nilkan päällä, rinta pystyssä. ' + SIDE_CUE, legs: true }
   ];
   const BALANCE = [
