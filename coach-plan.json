@@ -1,6 +1,6 @@
 {
   "version": 50,
-  "updatedAt": "2026-11-09T16:17:25+02:00",
+  "updatedAt": "2026-11-09T16:17:54+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -488,7 +488,7 @@
       "type": "lepo",
       "title": "Kevennysviikko · yövuorojen välissä: unta",
       "details": "Nuku kunnolla yövuoron jälkeen. Halutessa 20 min kävely. Toinen yövuoro 22–06.",
-      "note": "KEVENNYSVIIKKO 9.–15.11.: aamuvuoroja, yövuorojen jälkeistä väsymystä, iltaisin ja viikonloppuna lapset kotona. Lyhyet 20–40 min treenit, siirrä vapaasti viikon sisällä. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin)."
+      "note": "KEVENNYSVIIKKO 9.–15.11.: aamuvuoroja, yövuorojen jälkeistä väsymystä, iltaisin ja viikonloppuna lapset kotona. Lyhyet 20–40 min treenit, siirrä vapaasti viikon sisällä. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
       "date": "2026-11-10",
@@ -525,7 +525,7 @@
           "details": "30–40 min reipas kävely, jos yövuoroväsymys vielä painaa."
         }
       ],
-      "note": "Kevennysviikko – ei kovaa laatua. Siirrä toiseen päivään, jos tämä ei sovi. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin)."
+      "note": "Kevennysviikko – ei kovaa laatua. Siirrä toiseen päivään, jos tämä ei sovi. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
       "date": "2026-11-12",
@@ -539,7 +539,7 @@
           "details": "Aamuvuoro + lapset: lepo on ok."
         }
       ],
-      "note": "Kevennysviikko – lyhyt ja joustava. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin)."
+      "note": "Kevennysviikko – lyhyt ja joustava. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
       "date": "2026-11-13",
@@ -634,14 +634,14 @@
       "type": "lepo",
       "title": "Yövuorojen välissä: unta + lyhyt kävely",
       "details": "Nuku kunnolla. Halutessa 20–30 min kävely. Toinen yövuoro 22–06.",
-      "note": "Uni on treeniä. Torstaista sunnuntaihin vapaat. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin)."
+      "note": "Uni on treeniä. Torstaista sunnuntaihin vapaat. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
       "date": "2026-11-19",
       "type": "kavely",
       "title": "Palautuskävely yövuoron jälkeen",
       "details": "Unet ensin, sitten 30–45 min kävely + 10 min liikkuvuus: lonkat, nilkat, rintaranka.",
-      "note": "Yövuoron jälkeen ei juosta väkisin – lauantaina 5 km testi, jalat tuoreiksi. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin).",
+      "note": "Yövuoron jälkeen ei juosta väkisin – lauantaina 5 km testi, jalat tuoreiksi. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä.",
       "options": [
         {
           "label": "Pelkkä lepo",
@@ -793,14 +793,14 @@
       "type": "lepo",
       "title": "Yövuorojen välissä: unta + lyhyt kävely",
       "details": "Nuku kunnolla. Halutessa 20–30 min kävely. Toinen yövuoro 22–06.",
-      "note": "Uni on treeniä. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin)."
+      "note": "Uni on treeniä. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
       "date": "2026-11-28",
       "type": "kavely",
       "title": "Lauantai yövuoron jälkeen: palautuskävely",
       "details": "Unet ensin, sitten kävely lasten kanssa 30–60 min + 10 min liikkuvuus.",
-      "note": "Yövuoron jälkeen + lapset kotona: kevyt päivä. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin).",
+      "note": "Yövuoron jälkeen + lapset kotona: kevyt päivä. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä.",
       "options": [
         {
           "label": "Pelkkä lepo",
@@ -816,7 +816,7 @@
       "distanceKm": 4,
       "details": "Kun järjestyy: 4 km rauhallisesti, syke 115–138.",
       "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
-      "note": "Lyhyt ja joustava – lapset kotona. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin).",
+      "note": "Lyhyt ja joustava – lapset kotona. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä.",
       "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
       "options": [
         {
@@ -833,7 +833,7 @@
       "distanceKm": 6,
       "details": "Vapaa arkipäivä, lapset hoidossa/koulussa: 6 km rauhallisesti ~6:45/km, syke 115–138.",
       "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
-      "note": "Kuormitusviikko 3/3. Vuoro vahvistettu (vapaa). Uusi työtehtävä voi muuttaa myöhempiä vuoroja. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin).",
+      "note": "Kuormitusviikko 3/3. Vuoro vahvistettu (vapaa). Uusi työtehtävä voi muuttaa myöhempiä vuoroja. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä.",
       "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
       "options": [
         {
@@ -901,7 +901,7 @@
       "type": "lihashuolto",
       "title": "Iltavuoroaamu: liikkuvuus 20 min / kävely",
       "details": "20 min liikkuvuus (lonkat, pakarat, takareidet, pohkeet, rintaranka) tai 30–40 min kävely.",
-      "note": "Jalat lepää ennen sunnuntain pitkää. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin)."
+      "note": "Jalat lepää ennen sunnuntain pitkää. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
       "date": "2026-12-05",
@@ -938,7 +938,7 @@
       "type": "lepo",
       "title": "Kevennysviikko · yövuorojen välissä: unta",
       "details": "Nuku kunnolla yövuoron jälkeen. Halutessa 20 min kävely. Toinen yövuoro 22–06.",
-      "note": "KEVENNYSVIIKKO 7.–13.12.: yövuoro, kaksi aamuvuoroa, viikonloppuna iltavuorot, yövuorojen jälkeistä väsymystä, iltaisin ja viikonloppuna lapset kotona. Lyhyet 20–40 min treenit, siirrä vapaasti viikon sisällä. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin)."
+      "note": "KEVENNYSVIIKKO 7.–13.12.: yövuoro, kaksi aamuvuoroa, viikonloppuna iltavuorot, yövuorojen jälkeistä väsymystä, iltaisin ja viikonloppuna lapset kotona. Lyhyet 20–40 min treenit, siirrä vapaasti viikon sisällä. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
       "date": "2026-12-08",
@@ -962,7 +962,7 @@
       "distanceKm": 5,
       "details": "Vapaa arkiaamu: 5 km rauhallisesti ~6:45/km, syke 115–138. Halutessa lopuksi 4 × 15–20 s rennot vedot (ei kova).",
       "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
-      "note": "Kevennysviikko – ei kovaa laatua. Siirrä toiseen päivään, jos ei sovi. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin).",
+      "note": "Kevennysviikko – ei kovaa laatua. Siirrä toiseen päivään, jos ei sovi. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä.",
       "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
       "options": [
         {
@@ -981,7 +981,7 @@
       "type": "lihashuolto",
       "title": "Kevennysviikko · aamuvuoro: liikkuvuus 15–20 min",
       "details": "Kun sopii: lonkankoukistajat, pakarat, takareidet, pohkeet, rintaranka, nilkat. Tai 20–30 min kävely.",
-      "note": "Kevennysviikko – lyhyt ja joustava. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin).",
+      "note": "Kevennysviikko – lyhyt ja joustava. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä.",
       "options": [
         {
           "label": "Pelkkä lepo",

@@ -1031,10 +1031,10 @@
         'Auttaa palautumisessa'
       ],
       cues: [
-        'Seisten tai selinmakuulla hihnalla/pyyhkeellä',
-        'Pidä selkä neutraalina – älä pyöristä voimakkaasti',
-        '20–30 s / puoli',
-        'Kevyt jännitys ok, kipu ei'
+        'Selinmakuu: hihna tai pyyhe jalkaterän ympäri',
+        'Nosta jalka suoraksi pehmeästi, selkä neutraalina',
+        '2 × 30–45 s / puoli – kireämpi puoli ensin ja hieman pidempään',
+        'Kevyt jännitys ok, kipu ei – älä pakota'
       ],
       mistakes: [
         'Pyöristää selän kasaan',
@@ -1042,6 +1042,52 @@
         'Venyttää liian aggressiivisesti heti treenin jälkeen'
       ],
       video: { type: 'link', url: ytSearch('hamstring stretch lying strap'), label: 'Katso video (YouTube-haku)' }
+    },
+    hamstring_nerve_glide: {
+      id: 'hamstring_nerve_glide',
+      name: 'Takareiden liukuliike (istuen)',
+      category: 'liikkuvuus',
+      equipment: [],
+      benefits: [
+        'Pehmeä liike takaketjulle ilman voimakasta venytystä',
+        'Sopii illan liikkuvuuteen juoksun jälkeen',
+        'Auttaa kireän takareiden tuntumaan'
+      ],
+      cues: [
+        'Istu ryhdikkäästi tuolilla tai lattialla',
+        'Ojenna polvea samalla kun nostat päätä kevyesti',
+        'Palaa polvi koukkuun samalla kun lasket päätä',
+        '10 hidasta toistoa – kivuton, ei nykäise'
+      ],
+      mistakes: [
+        'Pakottaa ääriasentoon',
+        'Liian nopea tempo',
+        'Jatkaa, jos tuntuu terävältä kivulta'
+      ],
+      video: { type: 'link', url: ytSearch('seated hamstring nerve glide slider'), label: 'Katso video (YouTube-haku)' }
+    },
+    clamshell: {
+      id: 'clamshell',
+      name: 'Simpukka (kylkimakuu)',
+      category: 'voima',
+      equipment: [],
+      benefits: [
+        'Keskimmäisen pakaralihaksen aktivointi',
+        'Tukee lantion vakautta juoksussa',
+        'Kevyt – sopii illan vahvistukseen'
+      ],
+      cues: [
+        'Kylkimakuu, polvet koukussa, nilkat yhdessä',
+        'Avaa yläpolvea pitäen nilkat yhdessä',
+        'Lantio vakaa – älä kaadu taaksepäin',
+        '2 × 10–12 / puoli, aloita kireämmältä/heikommalta'
+      ],
+      mistakes: [
+        'Kiertää lantiota auki',
+        'Nilkat irtoavat toisistaan',
+        'Liian nopea heilunta'
+      ],
+      video: { type: 'link', url: ytSearch('clamshell exercise glute med'), label: 'Katso video (YouTube-haku)' }
     },
     quad_stretch: {
       id: 'quad_stretch',
@@ -1862,8 +1908,8 @@
       cues: [
         'Selinmakuu, yksi jalka koukussa maassa, toinen polvi rintaa kohti',
         'Työnnä kantapäällä lantio ylös, purista pakaraa 1–2 s',
-        'Lantio pysyy vaakatasossa',
-        'Laske hallitusti'
+        '2 × 10–12 / jalka – aloita kireämmältä/heikommalta, +1 toisto sille',
+        'Lantio vaakatasossa, laske hallitusti'
       ],
       mistakes: [
         'Nosto alaselällä (notko)',
