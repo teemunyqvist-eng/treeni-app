@@ -44,7 +44,7 @@
   };
   const LEGS = [
     { key: 'bss', ex: 'bulgarian_split_squat', name: 'Bulgarialainen askelkyykky', dose: '2 × 8–10 / jalka', cue: 'Takajalka tuolille, etupolvi varpaiden suuntaan. 2–3 toistoa varaan. ' + SIDE_CUE, legs: true },
-    { key: 'calf', ex: 'calf_raise', name: 'Yhden jalan pohjenosto rappusella', dose: '2 × 15 / jalka', cue: 'Täysi liike: kanta alas venytykseen, ylös varpaille. Hitaasti alas (3 s). ' + SIDE_CUE, legs: true },
+    { key: 'calf', ex: 'calf_raise', name: 'Yhden jalan pohjenosto rappusella', dose: '2 × 12–15 / jalka', cue: 'Täysi liike: kanta alas venytykseen, ylös varpaille. Hitaasti alas (3 s). ' + SIDE_CUE, legs: true },
     { key: 'bridge', ex: 'sl_glute_bridge', name: 'Yhden jalan lantionnosto', dose: '2 × 10 / jalka', cue: 'Työnnä kantapäällä, purista pakaraa ylhäällä 1–2 s, lantio vaakatasossa. ' + SIDE_CUE, legs: true },
     { key: 'lunge', ex: 'lunge', name: 'Askelkyykky taaksepäin', dose: '2 × 10 / jalka', cue: 'Askel taakse, etupolvi nilkan päällä, rinta pystyssä. ' + SIDE_CUE, legs: true }
   ];
@@ -69,7 +69,7 @@
 
   // Ilta: venyttely + liikkuvuus (pohkeet/akilles, takareidet, lonkankoukistajat, pakarat, selkä)
   const PM_STRETCH = [
-    { key: 'pm_calf', ex: 'calf_stretch', name: 'Pohje- ja akillesvenytys', dose: '2 × 30 s / puoli (suora + koukku)', cue: 'Seinää vasten: ensin takapolvi suorana, sitten koukussa. ' + SIDE_CUE },
+    { key: 'pm_calf', ex: 'calf_stretch', name: 'Pohje- ja akillesvenytys', dose: '2 × 30–45 s / puoli (suora + koukku)', cue: 'Seinää vasten: ensin takapolvi suorana, sitten koukussa (soleus). Halutessa kevyt rullaus/hieronta 1–2 min. ' + SIDE_CUE },
     { key: 'pm_ham', ex: 'hamstring_stretch', name: 'Takareiden venytys', dose: '2 × 30–40 s / puoli', cue: 'Selkä suorana, kallistu lonkasta. Venytys reiden takaosaan. ' + SIDE_CUE },
     { key: 'pm_hipflex', ex: 'hip_flexor_stretch', name: 'Lonkankoukistajan venytys', dose: '2 × 40 s / puoli', cue: 'Polviseisonta, purista takajalan pakaraa ja työnnä lantiota eteen – ei notkoa. ' + SIDE_CUE },
     { key: 'pm_glute', ex: 'figure4_stretch', name: 'Pakaravenytys (kyyhky / figure-4)', dose: '2 × 40 s / puoli', cue: 'Nilkka vastakkaisen polven päälle, vedä reittä rintaa kohti. Lantio tasaisena. ' + SIDE_CUE },
@@ -82,7 +82,7 @@
   // Vanha STRETCH-alias (testit / recovery-yhteensopivuus)
   const STRETCH = [
     { key: 'hipflex', ex: 'hip_flexor_stretch', name: 'Lonkankoukistajan venytys', dose: '2 × 40 s / puoli', cue: 'Polviseisonta, purista takajalan pakaraa ja työnnä lantiota eteen – ei notkoa.' },
-    { key: 'calfst', ex: 'calf_stretch', name: 'Pohje- ja akillesvenytys', dose: '2 × 30 s / puoli (suora + koukku)', cue: 'Seinää vasten: ensin takapolvi suorana, sitten koukussa (akilles/leveä kantalihas).' },
+    { key: 'calfst', ex: 'calf_stretch', name: 'Pohje- ja akillesvenytys', dose: '2 × 30–45 s / puoli (suora + koukku)', cue: 'Seinää vasten: ensin takapolvi suorana, sitten koukussa (akilles/leveä kantalihas). Halutessa kevyt rullaus/hieronta 1–2 min.' },
     { key: 'ham', ex: 'hamstring_stretch', name: 'Takareiden venytys', dose: '2 × 30–40 s / puoli', cue: 'Selkä suorana, kallistu lonkasta. Venytys reiden takaosaan, ei polvitaipeeseen.' },
     { key: 'glute', ex: 'figure4_stretch', name: 'Pakaravenytys (kyyhky / figure-4)', dose: '2 × 40 s / puoli', cue: 'Nilkka vastakkaisen polven päälle, vedä reittä rintaa kohti. Lantio tasaisena.' },
     { key: 'thor', ex: 'thoracic_opener', name: 'Rintarangan kierto', dose: '8 / puoli', cue: 'Nelinkontin, käsi niskan taakse ja kierrä kyynärpää kattoa kohti. Uloshengitys avauksessa.' },
@@ -181,6 +181,14 @@
     return 'AM: dynaaminen liikkuvuus aamulla. PM: venyttely illalla.';
   }
 
+  /** Kevyt pohjeosio (illan loppu): ei samana päivänä kova/säbä/pitkä/kuntopiiri; ei juuri ennen kovaa/pitkää. */
+  function calfDayOk(kind, s, nextKind, nextS) {
+    if (kind === 'hard' || kind === 'long' || kind === 'strength') return false;
+    if (s && s.subtype === 'salibandy') return false;
+    if (nextKind === 'hard' || nextKind === 'long' || (nextS && nextS.type === 'race')) return false;
+    return true;
+  }
+
   function pickRotated(pool, n, count, step) {
     const out = [];
     const len = pool.length;
@@ -203,10 +211,17 @@
     return out.map((x) => Object.assign({}, x));
   }
 
+  // Aamun kiinteä alku: nilkkapumput sängyssä / ennen ylösnousua
+  const AM_ANKLE_PUMPS = {
+    key: 'am_pumps', ex: 'ankle_pumps', name: 'Nilkkapumput (varpaat kohti)',
+    dose: '10–15 / jalka',
+    cue: 'Ennen ylösnousua tai aamun aluksi: vedä varpaita kohti itseä, sitten ojenna. Rauhallinen rytmi. ' + SIDE_CUE
+  };
+
   function buildAm(iso) {
     const n = dayNum(iso);
-    // 4 dynaamista liikettä (~5–8 min)
-    const items = pickRotated(AM_POOL, n, 4, 2);
+    // Kiinteä alku + 3–4 dynaamista (~5–8 min)
+    const items = [Object.assign({}, AM_ANKLE_PUMPS)].concat(pickRotated(AM_POOL, n, 3, 2));
     return {
       title: 'Aamun liikkuvuus',
       minutes: '5–8 min',
@@ -216,8 +231,10 @@
 
   function buildPm(iso, includeBalance) {
     const n = dayNum(iso);
-    // 5 venytystä (~8–12 min); askel 2 → eri setti peräkkäisinä päivinä
-    const items = pickRotated(PM_STRETCH, n, 5, 2);
+    // Pohjevenytys joka ilta + 4 muuta (~8–12 min); askel 2 → muu setti vaihtuu
+    const calf = PM_STRETCH.find((x) => x.key === 'pm_calf') || PM_STRETCH[0];
+    const restPool = PM_STRETCH.filter((x) => x.key !== 'pm_calf');
+    const items = [Object.assign({}, calf)].concat(pickRotated(restPool, n, 4, 2));
     if (includeBalance) {
       items.push(Object.assign({}, BALANCE[((n % 4) + 4) % 4]));
     }
@@ -289,15 +306,21 @@
       }
       if (!deload || !shoulderOk) {
         if (legsOk) {
-          const pool = LEGS.concat([BALANCE[((n >> 1) % 4 + 4) % 4]]);
-          items.push(pool[((n % 5) + 5) % 5]);
-          if (!shoulderOk) items.push(LEGS[((n + 2) % 4 + 4) % 4]);
+          // Sopiva päivä → pohjenousot (tavoite ~2–3×/vk; legsOk rajaa kovat/säbä/pitkät)
+          items.push(Object.assign({}, LEGS.find((x) => x.key === 'calf') || LEGS[1]));
+          if (!shoulderOk) {
+            const extra = LEGS.filter((x) => x.key !== 'calf');
+            items.push(extra[((n + 2) % extra.length + extra.length) % extra.length]);
+          }
         } else {
           const b = BALANCE.filter((x) => x.key !== 'bal2');
           let pick = b[((n % 3) + 3) % 3];
           if (items.some((x) => x.key === pick.key)) pick = b[((n + 1) % 3 + 3) % 3];
           items.push(pick);
         }
+      } else if (legsOk) {
+        // Kevennysviikko: kevyt pohjeosio (vain pohjenousot)
+        items.push(Object.assign({}, LEGS.find((x) => x.key === 'calf') || LEGS[1]));
       }
       let reason = 'Kevyt lisävoima: submaksimaalinen, ei koskaan uupumukseen. Täysi ote leuoissa (peukalo tangon alle).';
       if (!legsOk) reason += ' Huomenna kova/pitkä → ei jalkaliikkeitä tänään.';
@@ -309,6 +332,16 @@
         reason: reason,
         items: items.map((x) => Object.assign({}, x))
       };
+    }
+
+    // Light-/boost-vapailla sopivina päivinä: pohjeosio illan loppuun (~2–3×/vk)
+    const calfInBoost = !!(boost && boost.items && boost.items.some((x) => x.key === 'calf'));
+    const canCalf = calfDayOk(kind, s, nextKind, nextS);
+    // Sopivina light-päivinä aina (kovat/säbä/pitkät jo pois calfDayOk:ssa) → tyypillisesti 2–3×/vk
+    const lightCalfOk = !calfInBoost && canCalf
+      && (kind === 'easy' || kind === 'walk' || kind === 'rest' || kind === 'mobility');
+    if (lightCalfOk && pm && Array.isArray(pm.items)) {
+      pm.items.push(Object.assign({}, LEGS.find((x) => x.key === 'calf') || LEGS[1]));
     }
 
     const mode = boost ? 'boost' : 'light';
@@ -334,7 +367,7 @@
   const RECOVERY_CORE = [
     { key: 'hipflex', id: 'hip_flexor_stretch', sets: '2 × 30 s / puoli', ex: 'hip_flexor_stretch' },
     { key: 'ham', id: 'hamstring_stretch', sets: '2 × 30 s / puoli', ex: 'hamstring_stretch' },
-    { key: 'calfst', id: 'calf_stretch', sets: '30 s suora + 30 s koukku / puoli', ex: 'calf_stretch' },
+    { key: 'calfst', id: 'calf_stretch', sets: '30–45 s suora + 30–45 s koukku / puoli', ex: 'calf_stretch' },
     { key: 'glute', id: 'figure4_stretch', sets: '2 × 30 s / puoli', ex: 'figure4_stretch' },
     { key: 'thor', id: 'thoracic_opener', sets: '8 / puoli', ex: 'thoracic_opener' },
     { key: 'catcow', id: 'cat_cow', sets: '10 hidasta', ex: 'cat_cow' }
@@ -412,6 +445,6 @@
 
   global.TreeniRoutine = {
     buildRoutine, recoveryMobility, sessionKind, nightHeavy, pullDose, dayNum,
-    timingTip, STRETCH, BALANCE, LEGS, UPPER, AM_POOL, PM_STRETCH
+    timingTip, calfDayOk, STRETCH, BALANCE, LEGS, UPPER, AM_POOL, PM_STRETCH, AM_ANKLE_PUMPS
   };
 })(typeof window !== 'undefined' ? window : global);

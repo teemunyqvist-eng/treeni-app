@@ -703,10 +703,10 @@
         'Auttaa akilles-/pohjekestävyydessä'
       ],
       cues: [
-        'Päkiät stepillä, kannat vapaana',
-        'Nouse täyteen ojennukseen',
-        'Laske hallitusti venytykseen',
-        'Pidä polvet pehmeinä, ei lukittuna'
+        'Päkiät stepillä tai rappusella, kannat vapaana',
+        'Nouse täyteen ojennukseen, aloita heikommalta puolelta',
+        'Laske hitaasti (~3 s) venytykseen',
+        '2 × 12–15 / jalka, polvet pehmeinä'
       ],
       mistakes: [
         'Pomppu ilman täyttä liikettä',
@@ -832,6 +832,29 @@
         'Liian aggressiivinen paine'
       ],
       video: { type: 'link', url: ytSearch('ankle mobility dorsiflexion drill'), label: 'Katso video (YouTube-haku)' }
+    },
+    ankle_pumps: {
+      id: 'ankle_pumps',
+      name: 'Nilkkapumput',
+      category: 'liikkuvuus',
+      equipment: [],
+      benefits: [
+        'Herättää pohkeen ja nilkan aamulla',
+        'Lieventää aamujäykkyyden tuntua',
+        'Kevyt verenkierto ennen ylösnousua'
+      ],
+      cues: [
+        'Sängyssä tai istuen: vedä varpaita kohti itseä',
+        'Ojenna sitten jalkaterää rauhallisesti',
+        '10–15 toistoa / jalka, aloita kireämmältä puolelta',
+        'Ei kipua – vain kevyt liike'
+      ],
+      mistakes: [
+        'Liian nopea pumpaus',
+        'Pakottaa ääriasentoa',
+        'Hyppää suoraan seisomaan ilman avausta'
+      ],
+      video: { type: 'link', url: ytSearch('ankle pumps dorsiflexion morning'), label: 'Katso video (YouTube-haku)' }
     },
     thoracic_opener: {
       id: 'thoracic_opener',
@@ -963,7 +986,7 @@
       ],
       cues: [
         'Seinää vasten: takajalka suorana (gastroc) ja polvi koukussa (soleus)',
-        'Pidä 20–30 s / asento / puoli',
+        'Pidä 30–45 s / asento / puoli',
         'Kantapää maassa, lantio eteen',
         'Hengitä rauhallisesti – ei pompita'
       ],
