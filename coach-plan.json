@@ -1,6 +1,6 @@
 {
-  "version": 53,
-  "updatedAt": "2026-11-10T22:15:26+02:00",
+  "version": 54,
+  "updatedAt": "2026-11-10T22:16:10+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -60,6 +60,10 @@
     "2026-11-09": {
       "title": "Palauttava kävely – just eikä enempää",
       "text": "Kävely 3,0 km, 38 min yövuorojen välissä. Suunnitelmassa oli 20 min, tuplasit sen, mutta tempo pysyi oikeasti kevyenä, joten tämä on palautumista eikä treeniä. Hyvä. Nyt ei mitään lisää: syö, lepää ja mene toiseen yövuoroon niin levänneenä kuin pystyt. Huomenna aamuvuoro yövuoron perään, joten se on lepopäivä. Seuraava juoksu on keskiviikon kevyt 5 km."
+    },
+    "2026-11-10": {
+      "title": "Säbä: kova päivä hoidettu",
+      "text": "Säbä tunti täysillä kävelyiden välissä, ja kävelit rauhassa sinne ja takaisin. Kova päivä tehtiin kunnolla, ja se riittää. Kevennysviikolla tämä on viikon ainoa kova pala, joten huomenna kevyt 5 km oikeasti kevyesti ilman rentoja vetoja. Jos jalat ovat tukossa, valitse 4 km tai kävely. Illalla venyttelyt ja pohkeet, oikea puoli ensin."
     }
   },
   "done": {
