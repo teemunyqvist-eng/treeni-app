@@ -1,6 +1,6 @@
 {
-  "version": 55,
-  "updatedAt": "2026-11-11T16:17:04+02:00",
+  "version": 56,
+  "updatedAt": "2026-11-11T16:18:12+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -64,6 +64,10 @@
     "2026-11-10": {
       "title": "Säbä: kova päivä hoidettu",
       "text": "Säbä tunti täysillä kävelyiden välissä, ja kävelit rauhassa sinne ja takaisin. Kova päivä tehtiin kunnolla, ja se riittää. Kevennysviikolla tämä on viikon ainoa kova pala, joten huomenna kevyt 5 km oikeasti kevyesti ilman rentoja vetoja. Jos jalat ovat tukossa, valitse 4 km tai kävely. Illalla venyttelyt ja pohkeet, oikea puoli ensin."
+    },
+    "2026-11-11": {
+      "title": "Kevyt 5 km – kuri piti",
+      "text": "Kevyt 5 km 33:21, keskivauhti 6:40/km. Kilometrit 6:33, 6:41, 6:54, 6:27 ja 6:46 – tasaista ja rauhallista, mäet huomioiden juuri oikein. Toisella kilometrillä vauhti meinasi hetkeksi karata, mutta loppumatka pysyit kevyellä alueella. Vedot jätettiin pois kuten pitikin säbän jälkeen. Tällainen kevennysviikon lenkki rakentaa pohjaa eikä vie palautumista. Torstaina liikkuvuus, perjantaina lyhyt kotipiiri."
     }
   },
   "done": {
