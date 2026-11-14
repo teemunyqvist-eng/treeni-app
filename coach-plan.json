@@ -1,6 +1,6 @@
 {
-  "version": 57,
-  "updatedAt": "2026-11-14T10:16:34+02:00",
+  "version": 58,
+  "updatedAt": "2026-11-14T10:17:24+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -68,6 +68,10 @@
     "2026-11-11": {
       "title": "Kevyt 5 km – kuri piti",
       "text": "Kevyt 5 km 33:21, keskivauhti 6:40/km. Kilometrit 6:33, 6:41, 6:54, 6:27 ja 6:46 – tasaista ja rauhallista, mäet huomioiden juuri oikein. Toisella kilometrillä vauhti meinasi hetkeksi karata, mutta loppumatka pysyit kevyellä alueella. Vedot jätettiin pois kuten pitikin säbän jälkeen. Tällainen kevennysviikon lenkki rakentaa pohjaa eikä vie palautumista. Torstaina liikkuvuus, perjantaina lyhyt kotipiiri."
+    },
+    "2026-11-14": {
+      "title": "Kevyt 4 km + lyhyt kotipiiri ✅",
+      "text": "Kevyt 4,02 km 27:44 (6:54/km), km:t 6:37/6:49/7:14/6:57 mäkisellä reitillä. Pysyit pääosin kevyellä alueella ja vauhti oli tasainen – juuri näin kevennysviikolla. Pieni piikki ylärajalla 2.–3. km:n ylämäissä: niissä kävelyaskel tai lyhyempi askel, älä puske. Perään lyhyt kotipiiri ~17 min (punnerrus, face pull, leuat, askelkyykky, soutu, lankku) – kevyesti tehty, hyvä bonus. Huomenna kevennetty pitkä 8 km rauhassa, ylämäet hölkäten tai kävellen."
     }
   },
   "done": {
