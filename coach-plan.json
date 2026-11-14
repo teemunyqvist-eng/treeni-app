@@ -1,6 +1,6 @@
 {
-  "version": 56,
-  "updatedAt": "2026-11-11T16:18:12+02:00",
+  "version": 57,
+  "updatedAt": "2026-11-14T10:16:34+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -278,14 +278,30 @@
         "source": "garmin",
         "id": "ga6a25bfe69"
       }
+    ],
+    "2026-11-14": [
+      {
+        "type": "run",
+        "km": 4.02,
+        "min": 27.7,
+        "pace": "6:54",
+        "source": "garmin",
+        "id": "g830a8aa72c"
+      },
+      {
+        "type": "strength",
+        "min": 17.5,
+        "source": "garmin",
+        "id": "gdcede0c522"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-11T16:17:04+02:00",
+    "updatedAt": "2026-11-14T10:16:34+02:00",
     "complete": true,
-    "totalKm": 67.76,
-    "runs": 8,
+    "totalKm": 71.78,
+    "runs": 9,
     "skiKm": 0,
     "skiMin": 0,
     "skis": 0,
@@ -296,8 +312,8 @@
         "longest": 11.01
       },
       "2026-11": {
-        "km": 40.58,
-        "runs": 5,
+        "km": 44.6,
+        "runs": 6,
         "longest": 11.23
       }
     },
@@ -309,51 +325,11 @@
       "2026-11-02": 6.02,
       "2026-11-05": 8.33,
       "2026-11-08": 11.23,
-      "2026-11-11": 5.0
+      "2026-11-11": 5.0,
+      "2026-11-14": 4.02
     }
   },
   "days": [
-    {
-      "date": "2026-10-28",
-      "type": "juoksu",
-      "subtype": "tempo",
-      "title": "Viikon kova: 3 × 8 min kynnys ennen iltavuoroa",
-      "details": "15 min verryttely, 3 × 8 min kynnysvauhti (~5:20–5:30/km, syke ~160–165), palautus 2 min hölkkä, 10 min loppuverkka. Yhteensä ~8–9 km.",
-      "distanceKm": 9,
-      "warmup": "15 min verryttely + 3 vetoa",
-      "cooldown": "10 min hölkkä + venyttely",
-      "note": "Säbän tilalla. Tää korvaa sen kovan päivän, joten älä lepsuile.",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "details": "2 × 8 min kynnys"
-        },
-        {
-          "label": "Kovennettu",
-          "details": "4 × 8 min kynnys"
-        }
-      ]
-    },
-    {
-      "date": "2026-10-29",
-      "type": "koti",
-      "title": "Lyhyt kotipiiri ennen yövuoroa",
-      "details": "2–3 kierrosta: leuat 3–5, punnerrukset 12–15, käsipainosoutu 10/puoli, askelkyykky 10/jalka, face pull 15, lankku 40 s. Iltapäivällä torkut ennen yövuoroa 22–06.",
-      "durationMin": 25,
-      "options": [
-        {
-          "label": "Kevennetty",
-          "details": "Pelkkä 20 min liikkuvuus"
-        }
-      ]
-    },
-    {
-      "date": "2026-10-30",
-      "type": "lepo",
-      "title": "Yövuorojen välissä: unta + lyhyt kävely",
-      "details": "Nuku kunnolla. Halutessa 20–30 min kävely. Toinen yövuoro 22–06.",
-      "note": "Uni on treeniä. Ei sohvalla vaan sängyssä."
-    },
     {
       "date": "2026-10-31",
       "type": "kavely",
