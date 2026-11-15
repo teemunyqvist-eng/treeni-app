@@ -1,6 +1,6 @@
 {
-  "version": 58,
-  "updatedAt": "2026-11-14T10:17:24+02:00",
+  "version": 59,
+  "updatedAt": "2026-11-15T10:16:36+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -298,14 +298,24 @@
         "source": "garmin",
         "id": "gdcede0c522"
       }
+    ],
+    "2026-11-15": [
+      {
+        "type": "run",
+        "km": 8.01,
+        "min": 55.4,
+        "pace": "6:55",
+        "source": "garmin",
+        "id": "g85a5975f2f"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-14T10:16:34+02:00",
+    "updatedAt": "2026-11-15T10:16:36+02:00",
     "complete": true,
-    "totalKm": 71.78,
-    "runs": 9,
+    "totalKm": 79.79,
+    "runs": 10,
     "skiKm": 0,
     "skiMin": 0,
     "skis": 0,
@@ -316,8 +326,8 @@
         "longest": 11.01
       },
       "2026-11": {
-        "km": 44.6,
-        "runs": 6,
+        "km": 52.61,
+        "runs": 7,
         "longest": 11.23
       }
     },
@@ -330,17 +340,11 @@
       "2026-11-05": 8.33,
       "2026-11-08": 11.23,
       "2026-11-11": 5.0,
-      "2026-11-14": 4.02
+      "2026-11-14": 4.02,
+      "2026-11-15": 8.01
     }
   },
   "days": [
-    {
-      "date": "2026-10-31",
-      "type": "kavely",
-      "title": "Palautuskävely yövuoron jälkeen",
-      "details": "Unet ensin, sitten 40–60 min kävely + 10 min liikkuvuus.",
-      "note": "Pitkä lenkki siirtyy sunnuntaille 1.11. jos vuorot sallii."
-    },
     {
       "date": "2026-11-01",
       "type": "juoksu",
