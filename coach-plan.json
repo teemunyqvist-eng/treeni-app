@@ -1,6 +1,6 @@
 {
-  "version": 61,
-  "updatedAt": "2026-11-16T19:23:11+02:00",
+  "version": 62,
+  "updatedAt": "2026-11-16T19:24:10+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -76,6 +76,10 @@
     "2026-11-15": {
       "title": "Pitkä kevyt 8 km – kurinalaista",
       "text": "Kevennysviikon pisin tehty: 8,01 km 55:24, keskivauhti 6:55/km mäkisellä reitillä. Pysyit koko matkan kevyellä alueella eikä loppua lähdetty kiristämään – juuri näin pitkä kevyt kuuluu juosta. Eka puolikas hyvin rauhallinen, toisella puolikkaalla ylämäissä pari kertaa ihan vähän yli kevyen ylärajan: ylämäessä lyhennä askelta ja anna vauhdin pudota, kävely on sallittu. Kevennysviikko on nyt paketissa. Huomenna aamuvuoron jälkeen kevyt 5 km rauhallisesti, ja lauantain 5 km testiin mennään tuorein jaloin."
+    },
+    "2026-11-16": {
+      "title": "Kevyt 5 km – kurinalainen ja tasainen",
+      "text": "Kevyt 5,02 km 35:10 (7:01/km) aamuvuoron jälkeen. Kilsat 7:07/6:55/7:00/6:55/7:05 – tasaista kuin viivoittimella, mäet mukaan lukien. Pysyit kevyellä alueella koko lenkin, et ahnehtinut kertaakaan. Juuri tätä kuria kevennysviikolla haetaan. Seuraavaksi: lepoa ja tuoreet jalat lauantain 5 km testiin – siellä saa sitten painaa."
     }
   },
   "done": {
