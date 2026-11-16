@@ -1,6 +1,6 @@
 {
-  "version": 60,
-  "updatedAt": "2026-11-15T10:17:20+02:00",
+  "version": 61,
+  "updatedAt": "2026-11-16T19:23:11+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -312,14 +312,24 @@
         "source": "garmin",
         "id": "g85a5975f2f"
       }
+    ],
+    "2026-11-16": [
+      {
+        "type": "run",
+        "km": 5.02,
+        "min": 35.2,
+        "pace": "7:01",
+        "source": "garmin",
+        "id": "g054bd45f66"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-15T10:16:36+02:00",
+    "updatedAt": "2026-11-16T19:23:11+02:00",
     "complete": true,
-    "totalKm": 79.79,
-    "runs": 10,
+    "totalKm": 84.81,
+    "runs": 11,
     "skiKm": 0,
     "skiMin": 0,
     "skis": 0,
@@ -330,8 +340,8 @@
         "longest": 11.01
       },
       "2026-11": {
-        "km": 52.61,
-        "runs": 7,
+        "km": 57.63,
+        "runs": 8,
         "longest": 11.23
       }
     },
@@ -345,33 +355,11 @@
       "2026-11-08": 11.23,
       "2026-11-11": 5.0,
       "2026-11-14": 4.02,
-      "2026-11-15": 8.01
+      "2026-11-15": 8.01,
+      "2026-11-16": 5.02
     }
   },
   "days": [
-    {
-      "date": "2026-11-01",
-      "type": "juoksu",
-      "subtype": "long",
-      "title": "Pitkä kevyt 10 km (siirretty 31.10.)",
-      "distanceKm": 10,
-      "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
-      "details": "Lauantailta siirretty pitkä lenkki: 10 km kevyesti ~6:45/km, syke 115–138 – pitkällä yläpää ok. Tasainen vauhti alusta loppuun, vettä mukaan jos yli 75 min.\nVapaapäivä, mutta sunnuntai ja lapset kotona – sovi lenkkiaika etukäteen (esim. aamupäivä tai päiväunien aikaan).",
-      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "distanceKm": 8,
-          "details": "8 km kevyesti, sama ohje. Valitse tämä, jos yövuorojen väsymys vielä painaa."
-        },
-        {
-          "label": "Kovennettu",
-          "distanceKm": 11,
-          "details": "11 km kevyesti – ei vauhdinnostoa."
-        }
-      ],
-      "note": "Toinen vapaa yövuorojen jälkeen – unet ensin, sitten lenkki. Kevyt tarkoittaa kevyttä."
-    },
     {
       "date": "2026-11-02",
       "type": "juoksu",
