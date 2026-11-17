@@ -1,6 +1,6 @@
 {
-  "version": 62,
-  "updatedAt": "2026-11-16T19:24:10+02:00",
+  "version": 63,
+  "updatedAt": "2026-11-17T22:25:09+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -326,11 +326,35 @@
         "source": "garmin",
         "id": "g054bd45f66"
       }
+    ],
+    "2026-11-17": [
+      {
+        "type": "walk",
+        "km": 1.69,
+        "min": 21.5,
+        "pace": "12:45",
+        "source": "garmin",
+        "id": "g30406b595e"
+      },
+      {
+        "type": "floorball",
+        "min": 66.0,
+        "source": "garmin",
+        "id": "g97ad8caf48"
+      },
+      {
+        "type": "walk",
+        "km": 1.73,
+        "min": 25.3,
+        "pace": "14:41",
+        "source": "garmin",
+        "id": "gd76d0ca58d"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-16T19:23:11+02:00",
+    "updatedAt": "2026-11-17T22:25:09+02:00",
     "complete": true,
     "totalKm": 84.81,
     "runs": 11,
@@ -364,24 +388,6 @@
     }
   },
   "days": [
-    {
-      "date": "2026-11-02",
-      "type": "juoksu",
-      "subtype": "easy",
-      "title": "Kevyt 6 km (vapaapäivä)",
-      "distanceKm": 6,
-      "warmup": "5 min reipas kävely + dynaamiset liikkeet ~5 min.",
-      "details": "Vapaa arkipäivä – lapset hoidossa/koulussa, aamupäivä vapaa.\n6 km rauhallisesti ~6:45/km, syke 115–138 (pystyt puhumaan).",
-      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, lonkankoukistajat.",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "distanceKm": 4,
-          "details": "4 km kevyesti, sama lämmittely ja venyttely."
-        }
-      ],
-      "note": "Kuormitusviikko 1/3 ennen kevennystä. Vapaa arkiaamu = treeniaamu."
-    },
     {
       "date": "2026-11-03",
       "type": "kavely",
