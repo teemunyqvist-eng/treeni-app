@@ -1,6 +1,6 @@
 {
-  "version": 63,
-  "updatedAt": "2026-11-17T22:25:09+02:00",
+  "version": 64,
+  "updatedAt": "2026-11-17T22:25:59+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -80,6 +80,10 @@
     "2026-11-16": {
       "title": "Kevyt 5 km – kurinalainen ja tasainen",
       "text": "Kevyt 5,02 km 35:10 (7:01/km) aamuvuoron jälkeen. Kilsat 7:07/6:55/7:00/6:55/7:05 – tasaista kuin viivoittimella, mäet mukaan lukien. Pysyit kevyellä alueella koko lenkin, et ahnehtinut kertaakaan. Juuri tätä kuria kevennysviikolla haetaan. Seuraavaksi: lepoa ja tuoreet jalat lauantain 5 km testiin – siellä saa sitten painaa."
+    },
+    "2026-11-17": {
+      "title": "Säbä: kova päivä hoidettu",
+      "text": "Säbä 66 min täysillä + kävelyt hallille ja takaisin (n. 1,7 km suuntaansa). Kova päivä hoidettu niin kuin kuuluukin: tämä oli viikon kovin kuorma, enemmän kuin yksikään juoksu kevennysviikolla. Kotipiiri jäi tänään väliin, ja se on ok: säbä oli jo tarpeeksi. Nyt kaksi päivää pelkkää palautumista: keskiviikkona lepo + kävely, torstaina ja perjantaina kävely + liikkuvuus. Ei mitään ylimääräistä kovaa, jotta lauantain 5 km testiin tullaan tuorein jaloin. Uni ensin."
     }
   },
   "done": {
