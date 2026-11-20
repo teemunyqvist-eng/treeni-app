@@ -1335,3 +1335,10 @@ details.today-fold-card[open] > .today-fold-sum::before { content: '▾ '; }
 .session-block.is-recovery-done { border-left: 3px solid var(--accent); background: var(--accent-soft); }
 .session-block.is-recovery-done .ex-name { text-decoration: line-through; opacity: 0.8; }
 .badge.recovery-badge { background: var(--accent-soft); color: var(--accent-light); }
+
+/* Piirin ja venytyslistan kuittaukset (kierros/sarja per liike) */
+.coach-circuit { margin-top: 12px; }
+.coach-circuit .rt-meta { margin-bottom: 8px; }
+.circuit-list .rt-sets { margin-left: 0; }
+.stretch-checks { margin: 0; padding: 0; }
+.stretch-checks .cue-chip-row { margin-top: 4px; }

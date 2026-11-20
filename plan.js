@@ -2333,6 +2333,21 @@
           };
         })
       };
+      if (d.circuit && typeof d.circuit === 'object') {
+        const rounds = Number(d.circuit.rounds);
+        const exercises = Array.isArray(d.circuit.exercises) ? d.circuit.exercises.slice(0, 12).map(function (ex) {
+          if (!ex || typeof ex !== 'object') return null;
+          return {
+            key: coachStr(ex.key, 40),
+            ex: coachStr(ex.ex, 40),
+            name: coachStr(ex.name, 80),
+            dose: coachStr(ex.dose, 80)
+          };
+        }).filter(function (ex) { return ex && (ex.key || ex.name); }) : [];
+        if (rounds >= 1 && rounds <= 8 && exercises.length) {
+          day.circuit = { rounds: rounds, rest: coachStr(d.circuit.rest, 120), exercises: exercises };
+        }
+      }
       seen[day.date] = day; // viimeinen voittaa
     });
     Object.keys(seen).sort().forEach(function (k) { days.push(seen[k]); });
@@ -2519,6 +2534,7 @@
     });
     if (day.distanceKm) s.distanceKm = day.distanceKm;
     if (day.durationMin) s.durationMin = day.durationMin;
+    if (day.circuit) s.coach.circuit = day.circuit;
     if (/^(boost|light|none)$/.test(day.routine || '')) s.coach.routine = day.routine; // Päivärutiini-ohitus
     if (coachSalibandy(day, saliDow)) { s.salibandyDay = true; s.coach.salibandy = true; } // 🏒 iltasessio
     return s;

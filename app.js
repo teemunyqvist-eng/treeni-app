@@ -42,7 +42,7 @@
     garmin: null, // täyttyy varmuuskopion tuonnista (vanha Garmin-yhteenveto)
     dayOverrides: {}, // iso -> { status, completed, session, note, completedAt }
     log: [],
-    routineLog: {}, // Päivärutiini: iso -> { am?:true, pm?:true, liikeavain: true, pullSets: n } — am/pm = vanha lohkokuittaus; liikkeet erikseen
+    routineLog: {}, // Päivärutiini: iso -> { am?:true, pm?:true, liikeavain: true, pullSets: n, sets:{key:n}, circuit:{key:n}, rec_*:true, recovery?:true } — am/pm = vanha lohkokuittaus; liikkeet erikseen; pullSets säilyy yhteensopivuuteen
     garminApplied: {}, // done-merkinnän id -> { date, kind } (idempotentti Garmin ✓ Valmis)
     planCache: null,
     health: {
@@ -933,7 +933,27 @@
     return html;
   }
 
-  function renderPrepBlock(block, kind) {
+  function stretchItemKey(ex, prefix) {
+    return (prefix || 'rec_') + (ex.key || ex.id);
+  }
+  function renderStretchChecks(exercises, iso, lg, prefix, blockDone) {
+    prefix = prefix || 'rec_';
+    lg = lg || {};
+    return '<ul class="rt-list stretch-checks">' + (exercises || []).map((ex) => {
+      const key = stretchItemKey(ex, prefix);
+      const on = !!(blockDone || lg[key]);
+      const lib = EX.getExercise(ex.id);
+      const name = (lib && lib.name) || ex.label || ex.id;
+      const dose = ex.sets || ex.dose || '';
+      const chip = ex.id ? `<div class="cue-chip-row"><button type="button" class="cue-chip" data-ex="${esc(ex.id)}">${esc(name)} ›</button></div>` : '';
+      return `<li class="rt-item${on ? ' on' : ''}">
+          <label class="rt-check"><input type="checkbox" data-rec-stretch="${esc(key)}" data-rec-iso="${esc(iso || '')}"${on ? ' checked' : ''} />
+            <span class="rt-name">${esc(name)}</span><span class="rt-dose">${esc(String(dose))}</span></label>
+          ${chip}
+        </li>`;
+    }).join('') + '</ul>';
+  }
+  function renderPrepBlock(block, kind, iso) {
     if (!block || !block.exercises || !block.exercises.length) return '';
     const optional = !!block.optional;
     const title = block.label || (kind === 'warmup' ? 'Lämmittely' : 'Liikkuvuus');
@@ -958,10 +978,10 @@
     if (optional) {
       html += `<details class="optional-details"${kind === 'mobility' && block.id === 'mobility_gentle' ? ' open' : ''}>`;
       html += `<summary>Näytä liikkeet</summary>`;
-      html += renderExList(block.exercises, { optional: true });
+      html += (kind === 'mobility' || kind === 'rehab' || rec) ? renderStretchChecks(block.exercises, iso || block.iso, iso ? routineLogFor(iso || block.iso) : {}, rec ? 'rec_' : ((kind || 'mob') + '_'), rec && block.done) : renderExList(block.exercises, { optional: true });
       html += `</details>`;
     } else {
-      html += renderExList(block.exercises);
+      html += (kind === 'mobility' || kind === 'rehab' || rec) ? renderStretchChecks(block.exercises, iso || block.iso, iso ? routineLogFor(iso || block.iso) : {}, rec ? 'rec_' : ((kind || 'mob') + '_'), rec && block.done) : renderExList(block.exercises);
     }
     if (rec) {
       html += `<button type="button" class="btn sm block recovery-done-btn${block.done ? ' on' : ''}" data-recovery-done="${esc(block.iso)}" aria-pressed="${block.done ? 'true' : 'false'}">${block.done ? '✓ Liikkuvuus tehty' : '✓ Kuittaa liikkuvuus tehdyksi'}</button>`;
@@ -973,9 +993,10 @@
   function renderSessionBody(s, opts) {
     opts = opts || {};
     if (!s) return '';
+    const iso = opts.iso || (s.coach && s.coach.date) || '';
     let html = '';
     // Warm-up first (run + strength)
-    if (s.warmup) html += renderPrepBlock(s.warmup, 'warmup');
+    if (s.warmup) html += renderPrepBlock(s.warmup, 'warmup', iso);
 
     const canEdit = !!opts.editable && !s.coach && (s.type === 'strength' || s.type === 'mobility');
     if (s.coach && !(s.exercises && s.exercises.length)) {
@@ -1026,10 +1047,103 @@
     }
 
     if (s.shoulderNote) html += `<div class="alert warn shoulder-note">🩹 ${esc(s.shoulderNote)}</div>`;
-    if (s.rehabBlock) html += renderPrepBlock(s.rehabBlock, 'rehab');
+    if (s.rehabBlock) html += renderPrepBlock(s.rehabBlock, 'rehab', iso);
     // Optional mobility / cooldown / gentle
-    if (s.mobility) html += renderPrepBlock(s.mobility, 'mobility');
+    if (s.mobility) html += renderPrepBlock(s.mobility, 'mobility', iso);
     return html;
+  }
+
+
+  function itemSetTotal(it) {
+    return (it && typeof it.sets === 'number' && it.sets > 0) ? it.sets : 0;
+  }
+  function loggedSetCount(lg, key, it) {
+    const bag = (lg && lg.sets && typeof lg.sets === 'object') ? lg.sets : {};
+    if (typeof bag[key] === 'number') return bag[key];
+    if (key === 'pull' || (it && /^(pullup|chin_up|pull_up)$/.test(it.ex || ''))) return lg.pullSets || 0;
+    return 0;
+  }
+  function patchItemSets(iso, key, next, it) {
+    const lg = routineLogFor(iso);
+    const bag = Object.assign({}, (lg.sets && typeof lg.sets === 'object') ? lg.sets : {});
+    if (next) bag[key] = next; else delete bag[key];
+    const patch = { sets: Object.keys(bag).length ? bag : false };
+    if (key === 'pull' || (it && /^(pullup|chin_up|pull_up)$/.test(it.ex || ''))) {
+      patch.pullSets = next || false;
+      if (it && typeof it.sets === 'number') patch.pull = next >= it.sets;
+    } else if (it && typeof it.sets === 'number') {
+      patch[key] = next >= it.sets;
+    }
+    setRoutineLog(iso, patch);
+  }
+  function loggedCircuitCount(lg, key) {
+    const bag = (lg && lg.circuit && typeof lg.circuit === 'object') ? lg.circuit : {};
+    return typeof bag[key] === 'number' ? bag[key] : 0;
+  }
+  function patchCircuitRound(iso, key, next) {
+    const lg = routineLogFor(iso);
+    const bag = Object.assign({}, (lg.circuit && typeof lg.circuit === 'object') ? lg.circuit : {});
+    if (next) bag[key] = next; else delete bag[key];
+    setRoutineLog(iso, { circuit: Object.keys(bag).length ? bag : false });
+  }
+  const CIRCUIT_EX_MAP = [
+    { re: /leuanveto/i, key: 'pull_up', ex: 'pullup' },
+    { re: /punnerrus/i, key: 'push_up', ex: 'push_up' },
+    { re: /käsipainosoutu|kulmasoutu/i, key: 'row', ex: 'bent_over_row' },
+    { re: /askelkyykky|step-up/i, key: 'lunge', ex: 'lunge' },
+    { re: /face\s*pull/i, key: 'face_pull', ex: 'band_row' },
+    { re: /ab\s*wheel/i, key: 'ab_wheel', ex: 'ab_wheel' },
+    { re: /lankku/i, key: 'plank', ex: 'plank' }
+  ];
+  function parseCircuitFromDetails(details) {
+    const text = String(details || '');
+    const m = text.match(/(?:^|\n)\s*(\d+)\s*kierrosta\s*[:\n]/i);
+    if (!m) return null;
+    const rounds = Number(m[1]);
+    const exercises = [];
+    text.split('\n').forEach((line) => {
+      if (!/^\s*[•\-\*]/.test(line)) return;
+      const label = line.replace(/^\s*[•\-\*]\s*/, '').trim();
+      if (!label) return;
+      const hit = CIRCUIT_EX_MAP.find((x) => x.re.test(label));
+      const parts = label.split(/\s{2,}|,\s*(?=\d)|(?<=\D)\s+(?=\d)/);
+      const name = hit ? (hit.key === 'face_pull' ? 'Kuminauha face pull' : null) : parts[0];
+      const dose = label.replace(/^[^\d]+/, '').trim() || '';
+      exercises.push({
+        key: (hit && hit.key) || ('ex_' + exercises.length),
+        ex: (hit && hit.ex) || '',
+        name: name || (hit && hit.key) || label,
+        dose: dose || label
+      });
+      if (hit && !name) exercises[exercises.length - 1].name = label.replace(dose, '').trim() || label;
+    });
+    if (exercises.length < 2) return null;
+    return { rounds, exercises };
+  }
+  function renderCircuitChecks(circuit, iso, lg) {
+    const rounds = Number(circuit.rounds) || 0;
+    if (!rounds || !circuit.exercises || !circuit.exercises.length) return '';
+    const rest = circuit.rest ? `<div class="hint">${esc(circuit.rest)}</div>` : '';
+    const rows = circuit.exercises.map((ex) => {
+      const key = ex.key || ex.ex || ex.name;
+      const c = Math.min(loggedCircuitCount(lg, key), rounds);
+      const lib = ex.ex ? EX.getExercise(ex.ex) : null;
+      const name = ex.name || (lib && lib.name) || key;
+      const btns = Array.from({ length: rounds }, (_, i) =>
+        `<button type="button" class="rt-set${i < c ? ' on' : ''}" data-circuit-key="${esc(key)}" data-circuit-round="${i + 1}" data-circuit-iso="${esc(iso || '')}" aria-label="${esc(name)}, kierros ${i + 1}">${i + 1}</button>`
+      ).join('');
+      const chip = ex.ex ? `<div class="cue-chip-row"><button type="button" class="cue-chip" data-ex="${esc(ex.ex)}">${esc((lib && lib.name) || name)} ›</button></div>` : '';
+      return `<li class="rt-item${c >= rounds ? ' on' : ''}">
+          <div class="rt-check"><span class="rt-name">${esc(name)}</span><span class="rt-dose">${esc(ex.dose || '')}</span></div>
+          <div class="rt-sets" aria-label="Kierrokset">Kierrokset: ${btns}</div>
+          ${chip}
+        </li>`;
+    }).join('');
+    return `<div class="coach-circuit" data-circuit-block="${esc(iso || '')}">
+        <div class="rt-meta">Kuittaus per liike ja kierros</div>
+        ${rest}
+        <ul class="rt-list circuit-list">${rows}</ul>
+      </div>`;
   }
 
   function renderCoachBlock(s, opts) {
@@ -1039,6 +1153,12 @@
       (c.selected ? `<div class="block-badges"><span class="badge mod">${esc(c.selected)}</span></div>` : '') + '</div>';
     if (c.warmup) html += `<div class="coach-sub"><strong>Lämmittely:</strong> ${esc(c.warmup)}</div>`;
     html += `<div class="session-details">${esc(s.details || '')}</div>`;
+    const circuit = c.circuit || parseCircuitFromDetails(s.details || '');
+    if (circuit && circuit.exercises && circuit.exercises.length) {
+      const isoC = (opts && opts.iso) || c.date || '';
+      const lgC = isoC ? routineLogFor(isoC) : {};
+      html += renderCircuitChecks(circuit, isoC, lgC);
+    }
     if (c.cooldown) html += `<div class="coach-sub"><strong>Lopuksi:</strong> ${esc(c.cooldown)}</div>`;
     if (c.salibandy) html += '<div class="coach-sub coach-sali">🏒 <strong>Illalla salibandy</strong> – lasketaan kovaksi treeniksi. Ei laatua huomisaamuna.</div>';
     if (c.options && c.options.length) {
@@ -1404,8 +1524,67 @@
         if (b) { b.textContent = on ? '✓ Liikkuvuus tehty' : '✓ Kuittaa liikkuvuus tehdyksi'; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }
         const badge = blk.querySelector('.recovery-badge');
         if (badge) badge.style.display = on ? '' : 'none';
+        blk.querySelectorAll('[data-rec-stretch]').forEach((cb) => {
+          cb.checked = on;
+          const li = cb.closest('.rt-item');
+          if (li) li.classList.toggle('on', on);
+        });
       });
       if (on) toast('Liikkuvuus tehty 🧘');
+    });
+    document.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest && e.target.closest('[data-circuit-key][data-circuit-round]');
+      if (!btn) return;
+      e.preventDefault(); e.stopPropagation();
+      const iso = btn.getAttribute('data-circuit-iso');
+      const key = btn.getAttribute('data-circuit-key');
+      const i = Number(btn.getAttribute('data-circuit-round'));
+      if (!iso || !key || !i) return;
+      const cur = loggedCircuitCount(routineLogFor(iso), key);
+      const next = cur === i ? i - 1 : i;
+      patchCircuitRound(iso, key, next);
+      const root = btn.closest('[data-circuit-block]');
+      const c = next;
+      if (root) {
+        root.querySelectorAll('[data-circuit-key="' + key + '"]').forEach((b) => {
+          const r = Number(b.getAttribute('data-circuit-round'));
+          b.classList.toggle('on', r <= c);
+        });
+        const li = btn.closest('.rt-item');
+        if (li) {
+          const total = root.querySelectorAll('[data-circuit-key="' + key + '"]').length;
+          li.classList.toggle('on', c >= total);
+        }
+      }
+    });
+    document.addEventListener('change', (e) => {
+      const cb = e.target && e.target.closest && e.target.closest('[data-rec-stretch]');
+      if (!cb) return;
+      const iso = cb.getAttribute('data-rec-iso');
+      const key = cb.getAttribute('data-rec-stretch');
+      if (!iso || !key) return;
+      const patch = { [key]: cb.checked };
+      if (!cb.checked && recoveryDone(iso)) {
+        // Lohkokuittaus puretaan, muut liikkeet säilyvät kuitattuina
+        const box = cb.closest('[data-recovery-block], .session-block');
+        (box ? box.querySelectorAll('[data-rec-stretch]') : []).forEach((other) => {
+          const k = other.getAttribute('data-rec-stretch');
+          if (k && k !== key) patch[k] = true;
+        });
+        patch.recovery = RECOVERY_DONE_SEED[iso] ? 'off' : false;
+      }
+      setRoutineLog(iso, patch);
+      if (cb.checked) {
+        const box = cb.closest('[data-recovery-block], .session-block');
+        const all = box ? Array.from(box.querySelectorAll('[data-rec-stretch]')) : [];
+        const lg = routineLogFor(iso);
+        if (all.length && all.every((el) => lg[el.getAttribute('data-rec-stretch')])) {
+          setRecoveryDone(iso, true);
+        }
+      }
+      const li = cb.closest('.rt-item');
+      if (li) li.classList.toggle('on', cb.checked);
+      if (cb.checked && recoveryDone(iso)) toast('Liikkuvuus tehty 🧘');
     });
   }
   function routineLogFor(iso) {
@@ -1432,10 +1611,12 @@
         return lib ? `<button type="button" class="cue-chip" data-ex="${esc(id)}">${esc(lib.name)} ›</button>` : '';
       }).join('');
       let sets = '';
-      if (it.sets && !opts.blockToggle) {
-        const c = Math.min(lg.pullSets || 0, it.sets);
-        sets = `<div class="rt-sets" aria-label="Sarjat">Sarjat: ${Array.from({ length: it.sets }, (_, i) =>
-          `<button type="button" class="rt-set${i < c ? ' on' : ''}" data-rt-set="${i + 1}" aria-label="Sarja ${i + 1}">${i + 1}</button>`).join('')}</div>`;
+      const setN = itemSetTotal(it);
+      if (setN && !opts.blockToggle) {
+        const c = Math.min(loggedSetCount(lg, it.key, it), setN);
+        const isoAttr = opts.iso ? ` data-rt-iso="${esc(opts.iso)}"` : '';
+        sets = `<div class="rt-sets" aria-label="Sarjat">Sarjat: ${Array.from({ length: setN }, (_, i) =>
+          `<button type="button" class="rt-set${i < c ? ' on' : ''}" data-rt-set="${i + 1}" data-rt-set-key="${esc(it.key)}"${isoAttr} aria-label="Sarja ${i + 1}: ${esc(it.name || it.key)}">${i + 1}</button>`).join('')}</div>`;
       }
       const check = opts.blockToggle
         ? ''
@@ -1470,7 +1651,7 @@
           <span class="rt-count">${allDone ? '✓ Tehty' : doneCount + '/' + items.length}</span>
         </div>
         <div class="rt-meta">${esc(block.minutes)} · kuittaus per liike</div>
-        <ul class="rt-list">${renderRoutineItems(items, lg, { blockDone: !!lg[which] })}</ul>
+        <ul class="rt-list">${renderRoutineItems(items, lg, { blockDone: !!lg[which], iso })}</ul>
       </div>`;
   }
   function renderBoostBlock(iso, boost, lg) {
@@ -1484,7 +1665,7 @@
         </div>
         <div class="rt-meta">${esc(boost.minutes)}</div>
         <p class="rt-reason">${esc(boost.reason)}</p>
-        <ul class="rt-list">${renderRoutineItems(boost.items, lg)}</ul>
+        <ul class="rt-list">${renderRoutineItems(boost.items, lg, { iso })}</ul>
       </div>`;
   }
   function renderRoutineCard(iso) {
@@ -1552,21 +1733,22 @@
     wrap.querySelectorAll('[data-rt-set]').forEach((b) => {
       b.addEventListener('click', () => {
         const i = Number(b.getAttribute('data-rt-set'));
-        const lg = routineLogFor(iso);
-        const cur = lg.pullSets || 0;
-        const next = cur === i ? i - 1 : i;
+        const key = b.getAttribute('data-rt-set-key') || 'pull';
         const r = routineFor(iso);
-        const boostItems = (r && r.boost && r.boost.items) || (r && r.items) || [];
-        const pull = boostItems.find((it) => it.key === 'pull');
-        const patch = { pullSets: next };
-        if (pull) patch.pull = next >= pull.sets;
-        setRoutineLog(iso, patch);
+        const all = []
+          .concat((r && r.boost && r.boost.items) || (r && r.items) || [])
+          .concat((r && r.am && r.am.items) || [])
+          .concat((r && r.pm && r.pm.items) || []);
+        const it = all.find((x) => x.key === key) || { key, sets: itemSetTotal({ sets: i }) };
+        const cur = loggedSetCount(routineLogFor(iso), key, it);
+        const next = cur === i ? i - 1 : i;
+        patchItemSets(iso, key, next, it);
         refresh();
       });
     });
   }
   if (typeof window !== 'undefined') {
-    window.TreeniRoutineUI = { routineFor: (iso) => routineFor(iso), log: (iso) => routineLogFor(iso) };
+    window.TreeniRoutineUI = { routineFor: (iso) => routineFor(iso), log: (iso) => routineLogFor(iso), parseCircuitFromDetails, itemSetTotal, loggedSetCount, loggedCircuitCount };
   }
 
   function renderToday() {
@@ -1689,7 +1871,7 @@
         <div class="session-title today-title">${esc(s.name)}</div>
         <div class="session-meta">${sessionBadges(day)}</div>
         ${guidance}
-        ${renderSessionBody(withRecoveryMobility(iso, s), { editable: !day.completed && !s.coach && (s.type === 'strength' || s.type === 'mobility'), coachActions: !day.completed })}
+        ${renderSessionBody(withRecoveryMobility(iso, s), { iso, editable: !day.completed && !s.coach && (s.type === 'strength' || s.type === 'mobility'), coachActions: !day.completed })}
         ${voiceBtn}
 
         <button class="btn primary block done-btn" data-act="done"${day.completed ? ' disabled' : ''}>${day.completed ? '✓ Tehty' : '✓ Valmis'}</button>
@@ -2670,7 +2852,7 @@
       `<div class="session-title">${esc(s.name)}</div>
        <div class="session-meta" style="margin:8px 0">${sessionBadges(day)}</div>
        ${milestoneAlertHtml(iso)}
-       ${renderSessionBody(withRecoveryMobility(iso, s))}
+       ${renderSessionBody(withRecoveryMobility(iso, s), { iso })}
        ${renderRoutineCard(iso)}
        ${renderFeedbackCard(feedbackFor(iso), { inline: true })}
        <button class="btn primary block" id="d-done" style="margin-top:14px"${day.completed ? ' disabled' : ''}>✓ Merkitse tehdyksi</button>

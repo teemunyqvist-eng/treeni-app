@@ -38,21 +38,21 @@
     };
   }
   const UPPER = {
-    push: { key: 'push', ex: 'push_up', name: 'Punnerrus', dose: '3 × 10', cue: 'Vartalo suorana, kyynärpäät ~45°. Jos 10. toisto hidastuu, tee 8.', shoulder: true },
-    dip: { key: 'dip', ex: 'chair_dip', name: 'Dippi tuolilla', dose: '2 × 8–12', cue: 'Kyynärpäät 90°, ei syvemmälle. Hartiat alhaalla.', shoulder: true },
-    core: { key: 'core', ex: 'plank', exs: ['plank', 'side_plank'], name: 'Lankku + kylkilankku', dose: '3 × 30–45 s + 2 × 20–30 s / puoli', cue: 'Pakarat ja vatsa tiukkana, lantio linjassa. Lopeta kun asento alkaa pettää. ' + SIDE_CUE, shoulder: true }
+    push: { key: 'push', ex: 'push_up', name: 'Punnerrus', dose: '3 × 10', cue: 'Vartalo suorana, kyynärpäät ~45°. Jos 10. toisto hidastuu, tee 8.', shoulder: true, sets: 3 },
+    dip: { key: 'dip', ex: 'chair_dip', name: 'Dippi tuolilla', dose: '2 × 8–12', cue: 'Kyynärpäät 90°, ei syvemmälle. Hartiat alhaalla.', shoulder: true, sets: 2 },
+    core: { key: 'core', ex: 'plank', exs: ['plank', 'side_plank'], name: 'Lankku + kylkilankku', dose: '3 × 30–45 s + 2 × 20–30 s / puoli', cue: 'Pakarat ja vatsa tiukkana, lantio linjassa. Lopeta kun asento alkaa pettää. ' + SIDE_CUE, shoulder: true, sets: 3 }
   };
   const LEGS = [
-    { key: 'bss', ex: 'bulgarian_split_squat', name: 'Bulgarialainen askelkyykky', dose: '2 × 8–10 / jalka', cue: 'Takajalka tuolille, etupolvi varpaiden suuntaan. 2–3 toistoa varaan. ' + SIDE_CUE, legs: true },
-    { key: 'calf', ex: 'calf_raise', name: 'Yhden jalan pohjenosto rappusella', dose: '2 × 12–15 / jalka', cue: 'Oikea ensin. Täysi liike: kanta alas venytykseen, ylös varpaille. Hitaasti alas (3 s). ' + SIDE_CUE, legs: true },
-    { key: 'bridge', ex: 'glute_bridge', name: 'Lantionnosto kahdella jalalla', dose: '2 × 12, pito 2–3 s', cue: 'Kantapäät kauempana pakarasta, paina kantapäillä – pakara tekee työn. Jos takareisi kiristyy: lopeta, suorista jalka ja venytä kevyesti. Eteneminen: kun menee ilman kiristystä, nosto kahdella ja lasku hitaasti oikealla jalalla.', legs: true },
-    { key: 'lunge', ex: 'lunge', name: 'Askelkyykky taaksepäin', dose: '2 × 10 / jalka', cue: 'Askel taakse, etupolvi nilkan päällä, rinta pystyssä. ' + SIDE_CUE, legs: true }
+    { key: 'bss', ex: 'bulgarian_split_squat', name: 'Bulgarialainen askelkyykky', dose: '2 × 8–10 / jalka', cue: 'Takajalka tuolille, etupolvi varpaiden suuntaan. 2–3 toistoa varaan. ' + SIDE_CUE, legs: true, sets: 2 },
+    { key: 'calf', ex: 'calf_raise', name: 'Yhden jalan pohjenosto rappusella', dose: '2 × 12–15 / jalka', cue: 'Oikea ensin. Täysi liike: kanta alas venytykseen, ylös varpaille. Hitaasti alas (3 s). ' + SIDE_CUE, legs: true, sets: 2 },
+    { key: 'bridge', ex: 'glute_bridge', name: 'Lantionnosto kahdella jalalla', dose: '2 × 12, pito 2–3 s', cue: 'Kantapäät kauempana pakarasta, paina kantapäillä – pakara tekee työn. Jos takareisi kiristyy: lopeta, suorista jalka ja venytä kevyesti. Eteneminen: kun menee ilman kiristystä, nosto kahdella ja lasku hitaasti oikealla jalalla.', legs: true, sets: 2 },
+    { key: 'lunge', ex: 'lunge', name: 'Askelkyykky taaksepäin', dose: '2 × 10 / jalka', cue: 'Askel taakse, etupolvi nilkan päällä, rinta pystyssä. ' + SIDE_CUE, legs: true, sets: 2 }
   ];
   const BALANCE = [
-    { key: 'bal1', ex: 'sl_balance', name: 'Yhden jalan seisonta', dose: '3 × 30 s / jalka', cue: 'Paljain jaloin, polvi pehmeänä. Helppoa? Silmät kiinni. ' + SIDE_CUE, balance: true },
-    { key: 'bal2', ex: 'sl_rdl_bw', name: 'Yhden jalan RDL ilman painoja', dose: '2 × 8 / jalka', cue: RDL_CUE, balance: true },
-    { key: 'bal3', ex: 'tandem_stance', name: 'Tandemseisonta', dose: '3 × 30 s', cue: 'Kantapää varpaiden eteen samalle linjalle. Eteneminen: silmät kiinni.', balance: true },
-    { key: 'bal4', ex: 'sl_reach', name: 'Yhden jalan kurotus (tähti)', dose: '2 × 6 / jalka', cue: 'Kurota eteen, sivulle ja taakse – tukipolvi varpaiden linjassa. ' + SIDE_CUE, balance: true }
+    { key: 'bal1', ex: 'sl_balance', name: 'Yhden jalan seisonta', dose: '3 × 30 s / jalka', cue: 'Paljain jaloin, polvi pehmeänä. Helppoa? Silmät kiinni. ' + SIDE_CUE, balance: true, sets: 3 },
+    { key: 'bal2', ex: 'sl_rdl_bw', name: 'Yhden jalan RDL ilman painoja', dose: '2 × 8 / jalka', cue: RDL_CUE, balance: true, sets: 2 },
+    { key: 'bal3', ex: 'tandem_stance', name: 'Tandemseisonta', dose: '3 × 30 s', cue: 'Kantapää varpaiden eteen samalle linjalle. Eteneminen: silmät kiinni.', balance: true, sets: 3 },
+    { key: 'bal4', ex: 'sl_reach', name: 'Yhden jalan kurotus (tähti)', dose: '2 × 6 / jalka', cue: 'Kurota eteen, sivulle ja taakse – tukipolvi varpaiden linjassa. ' + SIDE_CUE, balance: true, sets: 2 }
   ];
 
   // Aamu: dynaaminen liikkuvuus (lonkat, nilkat, rintaranka + kevyt aktivointi)
@@ -83,7 +83,7 @@
   const PM_CLAM = {
     key: 'pm_clam', ex: 'clamshell', name: 'Simpukka (kylkimakuu)',
     dose: '2 × 10–12 / puoli',
-    cue: 'Oikea ensin. Kylkimakuu, polvet koukussa. Avaa yläpolvea pitäen nilkat yhdessä. Lantio vakaa. ' + SIDE_CUE, legs: true
+    cue: 'Oikea ensin. Kylkimakuu, polvet koukussa. Avaa yläpolvea pitäen nilkat yhdessä. Lantio vakaa. ' + SIDE_CUE, legs: true, sets: 2
   };
 
   // Vanha STRETCH-alias (testit / recovery-yhteensopivuus)
@@ -450,7 +450,7 @@
       optional: kind === 'rest',
       note: 'Rauhassa, hengitys pitkänä, ei kipua.' +
         (skipped ? ' Päivän aamu-/iltarutiinissa jo olevat liikkeet on vaihdettu muihin.' : ''),
-      exercises: ex.map((x) => ({ id: x.id, sets: x.sets }))
+      exercises: ex.map((x) => ({ id: x.id, sets: x.sets, key: x.key }))
     };
   }
 
