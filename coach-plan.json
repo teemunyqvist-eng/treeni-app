@@ -1,6 +1,6 @@
 {
-  "version": 65,
-  "updatedAt": "2026-11-18T22:03:01+02:00",
+  "version": 66,
+  "updatedAt": "2026-11-20T12:35:06+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -768,6 +768,54 @@
       "warmup": "5 min: kävely paikallaan, käsien pyöritykset, kyykyt ilman painoa.",
       "details": "3 kierrosta:\n• Leuanveto 3–5\n• Punnerrus 12–15\n• Käsipainosoutu 10 / puoli\n• Askelkyykky tai step-up 10 / jalka\n• Kuminauha face pull 15\n• Ab wheel 8–10, lyhyt liike\n• Lankku 40 s\nLepo kierrosten välissä 1–2 min.",
       "cooldown": "Venyttely 5–10 min.",
+      "circuit": {
+        "rounds": 3,
+        "rest": "1–2 min kierrosten välissä",
+        "exercises": [
+          {
+            "key": "pull_up",
+            "ex": "pullup",
+            "name": "Leuanveto",
+            "dose": "3–5"
+          },
+          {
+            "key": "push_up",
+            "ex": "push_up",
+            "name": "Punnerrus",
+            "dose": "12–15"
+          },
+          {
+            "key": "row",
+            "ex": "bent_over_row",
+            "name": "Käsipainosoutu",
+            "dose": "10 / puoli"
+          },
+          {
+            "key": "lunge",
+            "ex": "lunge",
+            "name": "Askelkyykky tai step-up",
+            "dose": "10 / jalka"
+          },
+          {
+            "key": "face_pull",
+            "ex": "band_row",
+            "name": "Kuminauha face pull",
+            "dose": "15"
+          },
+          {
+            "key": "ab_wheel",
+            "ex": "ab_wheel",
+            "name": "Ab wheel",
+            "dose": "8–10, lyhyt liike"
+          },
+          {
+            "key": "plank",
+            "ex": "plank",
+            "name": "Lankku",
+            "dose": "40 s"
+          }
+        ]
+      },
       "options": [
         {
           "label": "Kevennetty",
@@ -850,10 +898,10 @@
       "date": "2026-11-30",
       "type": "juoksu",
       "subtype": "easy",
-      "title": "Kevyt 6 km (vapaapäivä)",
+      "title": "Kevyt 6 km aamuvuoron jälkeen",
       "distanceKm": 6,
       "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
-      "details": "Vapaa arkipäivä, lapset hoidossa/koulussa: 6 km rauhallisesti ~6:45/km, syke 115–138.",
+      "details": "Aamuvuoron 06–14 jälkeen: 6 km rauhallisesti ~6:45/km, syke 115–138.",
       "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
       "options": [
         {
@@ -862,20 +910,20 @@
           "details": "4 km kevyesti, sama ohje."
         }
       ],
-      "note": "Kuormitusviikko 3/3. Vapaapäivä. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
+      "note": "Aamuvuoro 06–14. Lenkki vuoron jälkeen, ei ennen. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
       "date": "2026-12-01",
       "type": "kavely",
-      "title": "Aamuvuoro 06–14: kävely tai vapaa",
+      "title": "Aamuvuoro 06–14: kävely tai liikkuvuus",
       "details": "Vuoron jälkeen 20–30 min kävely (vaikka lasten kanssa) + 10 min liikkuvuus.",
-      "note": "Aamuvuoropäivät kevyinä. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. Illalla salibandy 🏒 – lasketaan kovaksi treeniksi.",
       "options": [
         {
           "label": "Pelkkä lepo",
-          "details": "Jos väsyttää tai ilta menee lasten kanssa: lepo on ok."
+          "details": "Jos säbäillan jälkeen väsyttää, jätä kävely väliin."
         }
       ],
+      "note": "Aamuvuoro 06–14. Huomenna taas aamuvuoro 06–14, joten illalla ajoissa uneen. Illalla salibandy 🏒 – lasketaan kovaksi treeniksi.",
       "salibandy": true
     },
     {
@@ -884,181 +932,235 @@
       "title": "Aamuvuoro: lyhyt kotipiiri 20–25 min",
       "durationMin": 25,
       "warmup": "5 min: kävely paikallaan, käsien pyöritykset, kyykyt ilman painoa.",
-      "details": "2 kierrosta:\n• Leuanveto 3–5\n• Punnerrus 12–15\n• Käsipainosoutu 10 / puoli\n• Askelkyykky 10 / jalka\n• Kuminauha face pull 15\n• Lankku 40 s\nKun sopii, esim. lasten mentyä nukkumaan.",
+      "details": "2 kierrosta:\n• Leuanveto 3–5\n• Punnerrus 12–15\n• Käsipainosoutu 10 / puoli\n• Askelkyykky 10 / jalka\n• Kuminauha face pull 15\n• Lankku 40 s\nLepo kierrosten välissä 1–2 min. Vuoron 06–14 jälkeen, kun sopii.",
       "cooldown": "Venyttely 5–10 min.",
+      "circuit": {
+        "rounds": 2,
+        "rest": "1–2 min kierrosten välissä",
+        "exercises": [
+          {
+            "key": "pull_up",
+            "ex": "pullup",
+            "name": "Leuanveto",
+            "dose": "3–5"
+          },
+          {
+            "key": "push_up",
+            "ex": "push_up",
+            "name": "Punnerrus",
+            "dose": "12–15"
+          },
+          {
+            "key": "row",
+            "ex": "bent_over_row",
+            "name": "Käsipainosoutu",
+            "dose": "10 / puoli"
+          },
+          {
+            "key": "lunge",
+            "ex": "lunge",
+            "name": "Askelkyykky",
+            "dose": "10 / jalka"
+          },
+          {
+            "key": "face_pull",
+            "ex": "band_row",
+            "name": "Kuminauha face pull",
+            "dose": "15"
+          },
+          {
+            "key": "plank",
+            "ex": "plank",
+            "name": "Lankku",
+            "dose": "40 s"
+          }
+        ]
+      },
       "options": [
         {
           "label": "Kevennetty",
-          "details": "Pelkkä 15 min liikkuvuus."
+          "details": "1 kierros."
         }
       ],
-      "note": "Lyhyt ja joustava. Huomenna iltavuoro = viikon kova aamulla. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee."
+      "note": "Aamuvuoro 06–14. Lyhyt piiri vuoron jälkeen. Ei kovaa juoksua tällä viikolla ennen lauantain pitkää ja sunnuntaina alkavia yövuoroja."
     },
     {
       "date": "2026-12-03",
       "type": "juoksu",
-      "subtype": "tempo",
-      "title": "Viikon kova: 3 × 10 min kynnys ennen iltavuoroa",
-      "distanceKm": 9,
-      "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Aamulla/aamupäivällä: 15 min verryttely (syke 115–138), 3 × 10 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.\nAlmgrenin sääntö: älä ahnehdi. Vedot mukavan kovaa (pystyt puhumaan lyhyitä lauseita). Jos syke nousee vedosta toiseen eikä tasaannu, hidasta seuraavaa vetoa – parempi jäädä vähän vajaaksi kuin mennä yli.",
-      "cooldown": "10 min hölkkä + venyttely.",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "distanceKm": 7,
-          "details": "2 × 10 min kynnys."
-        },
-        {
-          "label": "Kovennettu",
-          "distanceKm": 10,
-          "details": "3 × 12 min kynnys."
-        }
-      ],
-      "note": "Iltavuoroaamu – kuormitusjakson kovin kynnys. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee."
-    },
-    {
-      "date": "2026-12-04",
-      "type": "lihashuolto",
-      "title": "Iltavuoroaamu: liikkuvuus 20 min / kävely",
-      "details": "20 min liikkuvuus (lonkat, pakarat, takareidet, pohkeet, rintaranka) tai 30–40 min kävely.",
-      "note": "Jalat lepää ennen sunnuntain pitkää. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
-    },
-    {
-      "date": "2026-12-05",
-      "type": "kavely",
-      "title": "Lauantai, lapset kotona: ulkoilu",
-      "details": "Ulkoilu lasten kanssa 30–60 min.",
-      "note": "Huomenna pitkä – tänään kevyesti."
-    },
-    {
-      "date": "2026-12-06",
-      "type": "juoksu",
-      "subtype": "long",
-      "title": "Pitkä kevyt 13 km ennen ensimmäistä yövuoroa",
-      "distanceKm": 13,
-      "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
-      "details": "Aamupäivällä 13 km kevyesti ~6:45/km, syke 115–138 – pitkällä yläpää ok. Vettä mukaan. Iltapäivällä torkut ennen yövuoroa 22–06.",
-      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "distanceKm": 10,
-          "details": "10 km kevyesti."
-        },
-        {
-          "label": "Kovennettu",
-          "distanceKm": 14,
-          "details": "14 km kevyesti – ei vauhdinnostoa."
-        }
-      ],
-      "note": "Ensimmäinen yövuoropäivä = hyvä treenipäivä. Kuormitusjakson pisin ennen kevennysviikkoa. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee."
-    },
-    {
-      "date": "2026-12-07",
-      "type": "lepo",
-      "title": "Kevennysviikko · yövuorojen välissä: unta",
-      "details": "Nuku kunnolla yövuoron jälkeen. Halutessa 20 min kävely. Toinen yövuoro 22–06.",
-      "note": "KEVENNYSVIIKKO 7.–13.12.: yövuoro, kaksi aamuvuoroa, viikonloppuna iltavuorot, yövuorojen jälkeistä väsymystä, iltaisin ja viikonloppuna lapset kotona. Lyhyet 20–40 min treenit, siirrä vapaasti viikon sisällä. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
-    },
-    {
-      "date": "2026-12-08",
-      "type": "kavely",
-      "title": "Kevennysviikko · palautuskävely yövuoron jälkeen",
-      "details": "Unet ensin. Sitten 30 min kävely + 10 min liikkuvuus.",
-      "note": "Kevennysviikko – treenit siirrettävissä viikon sisällä. Illalla salibandy 🏒 – lasketaan kovaksi treeniksi.",
-      "options": [
-        {
-          "label": "Pelkkä lepo",
-          "details": "Jos väsyttää tai ilta menee lasten kanssa: lepo on ok."
-        }
-      ],
-      "salibandy": true
-    },
-    {
-      "date": "2026-12-09",
-      "type": "juoksu",
       "subtype": "easy",
-      "title": "Kevennysviikko · kevyt 5 km (~35 min) + rennot vedot",
-      "distanceKm": 5,
-      "details": "Vapaa arkiaamu: 5 km rauhallisesti ~6:45/km, syke 115–138. Halutessa lopuksi 4 × 15–20 s rennot vedot (ei kova).",
-      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
-      "note": "Kevennysviikko – ei kovaa laatua. Siirrä toiseen päivään, jos ei sovi. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä.",
+      "title": "Kevyt 6 km aamuvuoron jälkeen",
+      "distanceKm": 6,
       "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
+      "details": "Aamuvuoron 06–14 jälkeen: 6 km rauhallisesti ~6:45/km, syke 115–138.",
+      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
       "options": [
         {
           "label": "Kevennetty",
           "distanceKm": 4,
-          "details": "4 km kevyesti, ei vetoja."
+          "details": "4 km kevyesti, sama ohje."
         },
         {
           "label": "Kävely",
-          "details": "30–40 min reipas kävely."
+          "details": "30–40 min kävely, jos jalat pyytävät lepoa."
         }
-      ]
+      ],
+      "note": "Aamuvuoro 06–14. Helppo lenkki – viikon kova ei ole tänään (laatua ei ennen neljää yövuoroa). · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
-      "date": "2026-12-10",
+      "date": "2026-12-04",
       "type": "lihashuolto",
-      "title": "Kevennysviikko · aamuvuoro: liikkuvuus 15–20 min",
-      "details": "Kun sopii: lonkankoukistajat, pakarat, takareidet, pohkeet, rintaranka, nilkat. Tai 20–30 min kävely.",
-      "note": "Kevennysviikko – lyhyt ja joustava. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä.",
+      "title": "Aamuvuoro: liikkuvuus 20 min / kävely",
+      "details": "Vuoron jälkeen 20 min liikkuvuus (lonkat, pakarat, takareidet, pohkeet, rintaranka) tai 30–40 min kävely.",
       "options": [
         {
           "label": "Pelkkä lepo",
-          "details": "Jos väsyttää tai ilta menee lasten kanssa: lepo on ok."
+          "details": "Jos jalat ovat raskaat, riittää illan venyttely."
         }
-      ]
+      ],
+      "note": "Aamuvuoro 06–14, neljän aamuvuoron viimeinen. Jalat lepäävät ennen huomista pitkää. Huomenna vapaa; sunnuntaina ensimmäinen yövuoro. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
-      "date": "2026-12-11",
-      "type": "koti",
-      "title": "Kevennysviikko · lyhyt kotipiiri 20 min",
-      "durationMin": 20,
-      "warmup": "5 min: kävely paikallaan, käsien pyöritykset, kyykyt ilman painoa.",
-      "details": "2 kierrosta, rauhassa:\n• Leuanveto 3\n• Punnerrus 10–12\n• Käsipainosoutu 10 / puoli\n• Askelkyykky 8 / jalka\n• Kuminauha face pull 15\n• Lankku 30–40 s",
-      "cooldown": "Venyttely 5–10 min.",
+      "date": "2026-12-05",
+      "type": "juoksu",
+      "subtype": "long",
+      "title": "Pitkä kevyt 12 km",
+      "distanceKm": 12,
+      "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
+      "details": "Vapaapäivä: 12 km kevyesti ~6:45/km, syke 115–138 – pitkällä yläpää ok. Tasainen vauhti, vettä mukaan. Ei kiristystä lopussa.",
+      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
       "options": [
         {
           "label": "Kevennetty",
-          "details": "2 kierrosta tai 15 min liikkuvuus."
+          "distanceKm": 9,
+          "details": "9 km kevyesti, sama ohje."
+        },
+        {
+          "label": "Kovennettu",
+          "distanceKm": 13,
+          "details": "13 km kevyesti, sama ohje – vain jos olo on kevyt."
         }
       ],
-      "note": "Kevennysviikko – ylläpitoa, ei väsytystä. Siirrettävissä viikon sisällä."
+      "note": "Vahvistettu vapaapäivä. Pitkä tänään, koska huomenna alkaa neljä yövuoroa – ei pitkää ensimmäisen yön alle. Lapset kotona – lenkki kun järjestyy. Iltapäivällä rauhallisesti. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
+    },
+    {
+      "date": "2026-12-06",
+      "type": "kavely",
+      "title": "Ennen ensimmäistä yövuoroa: kevyt kävely tai lepo",
+      "details": "Aamupäivällä enintään 20–30 min kevyt kävely + lyhyt liikkuvuus. Iltapäivällä torkut. Ei pitkää eikä kovaa – ensimmäinen yövuoro 22–06, ja perässä vielä kolme yötä.",
+      "options": [
+        {
+          "label": "Pelkkä lepo",
+          "details": "Torkut ja illan venyttely riittävät."
+        }
+      ],
+      "note": "Yövuoro 22–06. Uni ensin. Neljä peräkkäistä yötä: pidä päivä kevyenä."
+    },
+    {
+      "date": "2026-12-07",
+      "type": "lepo",
+      "title": "Yövuoron jälkeen: unta, halutessa lyhyt kävely",
+      "details": "Nuku kunnolla yövuoron jälkeen. Halutessa 20 min kävely myöhemmin päivällä, ei juoksua eikä laatua. Toinen yövuoro 22–06.",
+      "note": "Yövuoro 22–06. Uni ensin, ei treeniä heti yön jälkeen."
+    },
+    {
+      "date": "2026-12-08",
+      "type": "kavely",
+      "title": "Yövuoron jälkeen: palautuskävely tai lepo",
+      "details": "Unet ensin. Sitten halutessa 20–30 min kävely + 10 min liikkuvuus. Kolmas yövuoro 22–06.",
+      "options": [
+        {
+          "label": "Pelkkä lepo",
+          "details": "Jos olo on raskas, jätä kävely väliin."
+        }
+      ],
+      "salibandy": false,
+      "note": "Yövuoro 22–06. Säbä jää väliin (yövuoro 22–06)."
+    },
+    {
+      "date": "2026-12-09",
+      "type": "lepo",
+      "title": "Yövuoron jälkeen: lepo, ei juoksua",
+      "details": "Unet ensin. Ei juoksua eikä laatua – neljäs ja viimeinen yövuoro 22–06.",
+      "note": "Yövuoro 22–06. Viimeinen yö; huomenna aamulla kotiin ja palautuminen."
+    },
+    {
+      "date": "2026-12-10",
+      "type": "kavely",
+      "title": "Yövuoron jälkeen: palautuminen",
+      "details": "Unet ensin viimeisen yön jälkeen (yövuoro päättyi 06:00). Halutessa 20–40 min rauhallinen kävely + 10 min liikkuvuus myöhemmin päivällä. Ei juoksua eikä kovaa.",
+      "options": [
+        {
+          "label": "Pelkkä lepo",
+          "details": "Nuku ja tee vain illan venyttely."
+        }
+      ],
+      "note": "Listassa ei vuoroa 10.–31.12. (oletettu vapaa, ei vahvistettu). Palautumispäivä neljän yön jälkeen. Ei kovaa tänään."
+    },
+    {
+      "date": "2026-12-11",
+      "type": "juoksu",
+      "subtype": "easy",
+      "title": "Kevyt 5 km, jos palautunut",
+      "distanceKm": 5,
+      "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
+      "details": "Jos olo on palautunut yövuoroista: 5 km rauhallisesti ~6:45/km, syke 115–138. Jos väsyttää, korvaa 30–40 min kävelyllä – huomenna on kynnystesti.",
+      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
+      "options": [
+        {
+          "label": "Kävely",
+          "details": "30–40 min kävely, jos yövuorot vielä painavat."
+        },
+        {
+          "label": "Kevennetty",
+          "distanceKm": 3,
+          "details": "3 km kevyesti."
+        }
+      ],
+      "note": "Oletettu vapaa (ei vahvistettu). Valmistautuminen huomiseen 30 min kynnystestiin: tänään vain helppoa. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
       "date": "2026-12-12",
       "type": "juoksu",
-      "subtype": "easy",
-      "title": "Kevennysviikko · kevyt 4 km (~25–30 min), joustava",
-      "distanceKm": 4,
-      "details": "4 km tai 25–30 min rauhallisesti, syke 115–138. Voi korvata 30 min kävelyllä.",
-      "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
-      "note": "Lauantain vuoro vaihtelee (aamu/ilta): aamuvuorossa juokse/kävele vuoron jälkeen tai siirrä perjantaille, iltavuorossa aamulla ennen vuoroa.",
+      "subtype": "tempo",
+      "title": "Kynnystesti: 30 min kynnys",
+      "distanceKm": 10,
+      "warmup": "15 min verryttely + 3 rentoa vetoa.",
+      "details": "Jos olo on palautunut: 15 min verryttely (syke 115–138), 30 min kynnysvauhti 5:15–5:35/km tasaisesti, 10 min loppuverkka. Yhteensä ~10 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25–5:30. Kellossa vedolle vauhti-tavoite, ei syke.\nAlmgrenin sääntö: älä ahnehdi. Tuntuma mukavan kova (pystyt puhumaan lyhyitä lauseita). Tämä on joulukuun kynnystesti, ei maksimitesti – tasainen 30 min, ei kiriä lopussa. Jos yövuorojen jälkeen jalat ovat vielä raskaat, valitse kevennetty tai siirrä.",
+      "cooldown": "10 min hölkkä + venyttely.",
       "options": [
         {
+          "label": "Kevennetty",
+          "distanceKm": 8,
+          "details": "15 min verryttely, 20 min kynnysvauhti 5:15–5:35/km, 10 min loppuverkka."
+        },
+        {
           "label": "Kävely",
-          "details": "30 min kävely lasten kanssa."
+          "details": "Siirrä testi: 30–40 min kävely tänään, kynnys toisena palautuneena päivänä."
         }
-      ]
+      ],
+      "note": "Oletettu vapaa (ei vahvistettu). Joulukuun 30 min kynnystesti: kaksi päivää viimeisen yön jälkeen. Jos ei ole palautunut, siirrä – älä tee väsyneenä."
     },
     {
       "date": "2026-12-13",
       "type": "juoksu",
-      "subtype": "long",
-      "title": "Kevennysviikko · kevennetty pitkä 9 km ennen iltavuoroa",
-      "distanceKm": 9,
+      "subtype": "easy",
+      "title": "Kevyt 8 km (kevennetty pitkä)",
+      "distanceKm": 8,
       "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
-      "details": "Aamulla/aamupäivällä ennen iltavuoroa 14–22: 9 km kevyesti ~6:45/km, syke 115–138.",
+      "details": "Eilisen kynnyksen jälkeen: 8 km rauhallisesti ~6:45/km, syke 115–138. Ei kiristystä.",
       "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
       "options": [
         {
           "label": "Kevennetty",
-          "distanceKm": 7,
-          "details": "7 km kevyesti (~45 min)."
+          "distanceKm": 5,
+          "details": "5 km kevyesti, sama ohje."
+        },
+        {
+          "label": "Kävely",
+          "details": "30–40 min kävely, jos kynnys vielä painaa."
         }
       ],
-      "note": "Kevennysviikon pisin – iltavuoropäivänä. Ensi viikosta (14.12.) taas kuormitusviikot. Vuoro ennusteen (4 vk kierto) mukaan – tarkistetaan, kun uusi lista tulee."
+      "note": "Oletettu vapaa (ei vahvistettu). Helppo palauttava, ei toista kovaa päivää. 10.–31.12. vuorot vahvistamatta – päivitetään, kun lista täydentyy. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     }
   ]
 }
