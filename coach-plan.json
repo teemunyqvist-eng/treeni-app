@@ -1,6 +1,6 @@
 {
-  "version": 66,
-  "updatedAt": "2026-11-20T12:35:06+02:00",
+  "version": 67,
+  "updatedAt": "2026-11-20T12:55:01+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -1060,28 +1060,28 @@
       "type": "lepo",
       "title": "Yövuoron jälkeen: unta, halutessa lyhyt kävely",
       "details": "Nuku kunnolla yövuoron jälkeen. Halutessa 20 min kävely myöhemmin päivällä, ei juoksua eikä laatua. Toinen yövuoro 22–06.",
-      "note": "Yövuoro 22–06. Uni ensin, ei treeniä heti yön jälkeen."
+      "note": "Yövuoro 22–06. Uni ensin, ei treeniä heti yön jälkeen. Huomenna säbä ennen yövuoroa – tänään hyvin kevyt."
     },
     {
       "date": "2026-12-08",
       "type": "kavely",
-      "title": "Yövuoron jälkeen: palautuskävely tai lepo",
-      "details": "Unet ensin. Sitten halutessa 20–30 min kävely + 10 min liikkuvuus. Kolmas yövuoro 22–06.",
+      "title": "Yövuoron jälkeen: kevyt päivä, illalla säbä ennen yövuoroa",
+      "details": "Unet ensin. Päivällä enintään 20–30 min kävely + 10 min liikkuvuus, ei juoksua eikä laatua. Illalla salibandy ennen yövuoroa 22–06.",
       "options": [
         {
-          "label": "Pelkkä lepo",
-          "details": "Jos olo on raskas, jätä kävely väliin."
+          "label": "Pelkkä lepo päivällä",
+          "details": "Jos olo on raskas, jätä päiväkävely väliin; säbä illalla silti ok, jos jaksat."
         }
       ],
-      "salibandy": false,
-      "note": "Yövuoro 22–06. Säbä jää väliin (yövuoro 22–06)."
+      "salibandy": true,
+      "note": "Yövuoro 22–06. Päivä pidetään kevyenä; säbä ennen vuoroa. Uni ennen vuoroa omalla harkinnalla."
     },
     {
       "date": "2026-12-09",
       "type": "lepo",
       "title": "Yövuoron jälkeen: lepo, ei juoksua",
-      "details": "Unet ensin. Ei juoksua eikä laatua – neljäs ja viimeinen yövuoro 22–06.",
-      "note": "Yövuoro 22–06. Viimeinen yö; huomenna aamulla kotiin ja palautuminen."
+      "details": "Unet ensin. Ei juoksua eikä laatua – neljäs ja viimeinen yövuoro 22–06. Eilisen säbän jälkeen pidä päivä hyvin kevyenä.",
+      "note": "Yövuoro 22–06. Viimeinen yö; huomenna aamulla kotiin ja palautuminen. Eilisen säbän jälkeen tänään hyvin kevyt."
     },
     {
       "date": "2026-12-10",
@@ -1094,7 +1094,7 @@
           "details": "Nuku ja tee vain illan venyttely."
         }
       ],
-      "note": "Listassa ei vuoroa 10.–31.12. (oletettu vapaa, ei vahvistettu). Palautumispäivä neljän yön jälkeen. Ei kovaa tänään."
+      "note": "Vuorot tulevat kahden viikon pätkissä; 10.12. alkaen vuoro oletettu (ei vahvistettu), kunnes seuraava lista tulee. Palautumispäivä neljän yön jälkeen. Ei kovaa tänään."
     },
     {
       "date": "2026-12-11",
@@ -1116,7 +1116,7 @@
           "details": "3 km kevyesti."
         }
       ],
-      "note": "Oletettu vapaa (ei vahvistettu). Valmistautuminen huomiseen 30 min kynnystestiin: tänään vain helppoa. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
+      "note": "Vuorot tulevat kahden viikon pätkissä; 10.12. alkaen vuoro oletettu (ei vahvistettu), kunnes seuraava lista tulee. Valmistautuminen huomiseen 30 min kynnystestiin: tänään vain helppoa. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     },
     {
       "date": "2026-12-12",
@@ -1138,7 +1138,7 @@
           "details": "Siirrä testi: 30–40 min kävely tänään, kynnys toisena palautuneena päivänä."
         }
       ],
-      "note": "Oletettu vapaa (ei vahvistettu). Joulukuun 30 min kynnystesti: kaksi päivää viimeisen yön jälkeen. Jos ei ole palautunut, siirrä – älä tee väsyneenä."
+      "note": "Vuorot tulevat kahden viikon pätkissä; 10.12. alkaen vuoro oletettu (ei vahvistettu), kunnes seuraava lista tulee. Joulukuun 30 min kynnystesti: kaksi päivää viimeisen yön jälkeen. Jos ei ole palautunut, siirrä – älä tee väsyneenä."
     },
     {
       "date": "2026-12-13",
@@ -1160,7 +1160,7 @@
           "details": "30–40 min kävely, jos kynnys vielä painaa."
         }
       ],
-      "note": "Oletettu vapaa (ei vahvistettu). Helppo palauttava, ei toista kovaa päivää. 10.–31.12. vuorot vahvistamatta – päivitetään, kun lista täydentyy. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
+      "note": "Vuorot tulevat kahden viikon pätkissä; 10.12. alkaen vuoro oletettu (ei vahvistettu), kunnes seuraava lista tulee. Helppo palauttava, ei toista kovaa päivää. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
     }
   ]
 }
