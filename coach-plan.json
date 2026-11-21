@@ -1,6 +1,6 @@
 {
-  "version": 68,
-  "updatedAt": "2026-11-21T10:22:47+02:00",
+  "version": 69,
+  "updatedAt": "2026-11-21T10:23:39+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -84,6 +84,10 @@
     "2026-11-17": {
       "title": "Säbä: kova päivä hoidettu",
       "text": "Säbä 66 min täysillä + kävelyt hallille ja takaisin (n. 1,7 km suuntaansa). Kova päivä hoidettu niin kuin kuuluukin: tämä oli viikon kovin kuorma, enemmän kuin yksikään juoksu kevennysviikolla. Kotipiiri jäi tänään väliin, ja se on ok: säbä oli jo tarpeeksi. Nyt kaksi päivää pelkkää palautumista: keskiviikkona lepo + kävely, torstaina ja perjantaina kävely + liikkuvuus. Ei mitään ylimääräistä kovaa, jotta lauantain 5 km testiin tullaan tuorein jaloin. Uni ensin."
+    },
+    "2026-11-21": {
+      "title": "5 km testi: 22:30 – uusi ennätys",
+      "text": "5 km testi 22:30 (4:30/km) – ennätys 24:04 murskattu puolellatoista minuutilla. Kilsat 4:33, 4:33, 4:35, 4:34 ja viimeinen 4:14: täydellisen tasainen ja viimeinen kovin, juuri niin kuin piti. Kellon ohjelma meni sekaisin verkan jälkeen, mutta pidit pään kylmänä ja teit testin silti. Tästä lähtien tämä on vertailuaika kesäkuun testille. Vauhtia on reilusti alle 4 h maratoniin – nyt rakennetaan kestävyyttä: huomenna kevyt 6 km rauhallisesti, ja kevyet pysyvät kevyinä vaikka jalat tuntuisi nopeilta."
     }
   },
   "done": {
