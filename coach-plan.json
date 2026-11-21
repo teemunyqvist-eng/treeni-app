@@ -1,6 +1,6 @@
 {
-  "version": 67,
-  "updatedAt": "2026-11-20T12:55:01+02:00",
+  "version": 68,
+  "updatedAt": "2026-11-21T10:22:47+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -354,14 +354,24 @@
         "source": "garmin",
         "id": "gd76d0ca58d"
       }
+    ],
+    "2026-11-21": [
+      {
+        "type": "run",
+        "km": 5.01,
+        "min": 22.5,
+        "pace": "4:30",
+        "source": "garmin",
+        "id": "g9c24915432"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-17T22:25:09+02:00",
+    "updatedAt": "2026-11-21T10:22:47+02:00",
     "complete": true,
-    "totalKm": 84.81,
-    "runs": 11,
+    "totalKm": 89.82,
+    "runs": 12,
     "skiKm": 0,
     "skiMin": 0,
     "skis": 0,
@@ -372,8 +382,8 @@
         "longest": 11.01
       },
       "2026-11": {
-        "km": 57.63,
-        "runs": 8,
+        "km": 62.64,
+        "runs": 9,
         "longest": 11.23
       }
     },
@@ -388,81 +398,11 @@
       "2026-11-11": 5.0,
       "2026-11-14": 4.02,
       "2026-11-15": 8.01,
-      "2026-11-16": 5.02
+      "2026-11-16": 5.02,
+      "2026-11-21": 5.01
     }
   },
   "days": [
-    {
-      "date": "2026-11-03",
-      "type": "kavely",
-      "title": "Aamuvuoro 06–14: kävely tai vapaa",
-      "details": "Vuoron jälkeen 20–30 min kävely (vaikka lasten kanssa) + 10 min liikkuvuus: lonkat, nilkat, rintaranka.",
-      "options": [
-        {
-          "label": "Pelkkä lepo",
-          "details": "Jos ilta menee lasten ja ruoan kanssa: lepo on ok."
-        }
-      ],
-      "note": "Aamuvuoropäivät pidetään kevyinä – säästä paukut iltavuoropäiville. Illalla salibandy 🏒 – lasketaan kovaksi treeniksi.",
-      "salibandy": true
-    },
-    {
-      "date": "2026-11-04",
-      "type": "koti",
-      "title": "Aamuvuoro: lyhyt kotipiiri 20–25 min",
-      "durationMin": 25,
-      "details": "2 kierrosta kun sopii (esim. lasten mentyä nukkumaan):\n• Leuanveto 3–5\n• Punnerrus 12–15\n• Käsipainosoutu 10 / puoli\n• Askelkyykky 10 / jalka\n• Kuminauha face pull 15\n• Lankku 40 s",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "details": "Pelkkä 15 min liikkuvuus."
-        }
-      ],
-      "note": "Lyhyt ja joustava. Huomenna iltavuoro = viikon kova treeni aamulla."
-    },
-    {
-      "date": "2026-11-05",
-      "type": "juoksu",
-      "subtype": "tempo",
-      "title": "Viikon kova: 3 × 8 min kynnys ennen iltavuoroa",
-      "distanceKm": 9,
-      "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Aamulla/aamupäivällä lasten viennin jälkeen: 15 min verryttely (syke 115–138), 3 × 8 min kynnysvauhti 5:15–5:35/km, palautus 2 min hölkkä tai kävely, 10 min loppuverkka. Yhteensä ~9 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25, 3. vedon oltava yhtä nopea kuin 1. Kellossa vedoille vauhti-tavoite, ei syke.\nAlmgrenin sääntö: älä ahnehdi. Vedot mukavan kovaa (pystyt puhumaan lyhyitä lauseita). Jos syke nousee vedosta toiseen eikä tasaannu, hidasta seuraavaa vetoa – parempi jäädä vähän vajaaksi kuin mennä yli.",
-      "cooldown": "10 min hölkkä + venyttely.",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "distanceKm": 7,
-          "details": "2 × 8 min kynnys, muuten sama."
-        },
-        {
-          "label": "Kovennettu",
-          "distanceKm": 10,
-          "details": "3 × 10 min kynnys, palautus 2 min."
-        }
-      ],
-      "note": "Iltavuoro 14–22 → aamu on sun. Tämä on viikon tärkein treeni. Treeni on kellossa (Garmin): vedoilla vauhti-tavoite."
-    },
-    {
-      "date": "2026-11-06",
-      "type": "koti",
-      "title": "Kotikuntopiiri ~30 min ennen iltavuoroa",
-      "durationMin": 30,
-      "warmup": "5 min: kävely paikallaan, käsien pyöritykset, kyykyt ilman painoa.",
-      "details": "3 kierrosta:\n• Leuanveto 3–5\n• Punnerrus 12–15\n• Käsipainosoutu 10 / puoli\n• Askelkyykky tai step-up 10 / jalka\n• Kuminauha face pull 15\n• Ab wheel 8–10\n• Lankku 40 s\nLepo kierrosten välissä 1–2 min.",
-      "cooldown": "Venyttely 5–10 min.",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "details": "2 kierrosta."
-        },
-        {
-          "label": "Kävely",
-          "details": "30–40 min reipas kävely, jos jalat painaa eilisestä."
-        }
-      ],
-      "note": "Toinen iltavuoroaamu – voimaa, jalat lepää kynnyksestä."
-    },
     {
       "date": "2026-11-07",
       "type": "kavely",
