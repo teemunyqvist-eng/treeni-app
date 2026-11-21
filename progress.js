@@ -307,7 +307,7 @@
         ]);
       } else if (m.kmPrev7 > 0 && p != null && p >= 10) {
         add('praise', 'km7-up', [
-          `${fmt(m.km7)} km viime 7 päivänä – ${fmt(m.km7 - m.kmPrev7)} km enemmän kuin edellisellä viikolla. Tätä se on: vene kerrallaan.`,
+          `${fmt(m.km7)} km viime 7 päivänä – ${fmt(m.km7 - m.kmPrev7)} km enemmän kuin edellisellä viikolla. Tätä se on: yksi lenkki kerrallaan kohti Turkua.`,
           `Kilometrit nousussa: ${fmt(m.kmPrev7)} → ${fmt(m.km7)} km / 7 pv. Ei juhlita, jatketaan.`
         ]);
       } else if (m.kmPrev7 > 0 && p != null && p <= -30) {

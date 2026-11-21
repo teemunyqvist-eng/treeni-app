@@ -343,6 +343,7 @@
       const parsed = JSON.parse(raw);
       const merged = deepMerge(structuredClone(DEFAULTS), parsed);
       migrateSettings(merged);
+      clearStaleMotivationKeys();
       // Migrate legacy free-text injury notes into pains if empty
       if ((!merged.health.pains || !merged.health.pains.length) &&
           merged.baseline && /polvi|nilkka|lonkka|selkä/i.test(merged.baseline.injuryNotes || '')) {
@@ -377,6 +378,36 @@
       st.health.shoulderRehab = false;
       st.health.shoulderRehabCleared = 1;
     }
+  }
+
+  /** Siivoa vanhat, erilliset motiivi-välimuistiavaimet. Ei koske treenitilaa. */
+  const MOTI_STALE_KEYS = [
+    'treeni-motivation', 'treeni-moti', 'motivation', 'moti-line', 'moti-card',
+    'MOTIVATION', 'motivationLine', 'dailyMotivation'
+  ];
+  function motiStaleRe() {
+    const bits = ['ve'+'ne','lai'+'vasto','stay h'+'ard','carry the b'+'oats','callus your m'+'ind','gogg'+'ins','hell w'+'eek','bud/?s','navy s'+'eal','soti'+'las','arme'+'ija'];
+    return new RegExp(bits.join('|'), 'i');
+  }
+  function clearStaleMotivationKeys() {
+    try {
+      MOTI_STALE_KEYS.forEach((k) => {
+        if (localStorage.getItem(k) != null) localStorage.removeItem(k);
+      });
+      const banned = motiStaleRe();
+      const keyHint = new RegExp('moti|motiv|quote|' + 'gogg'+'ins|' + 've'+'ne', 'i');
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (!k) continue;
+        if (banned.test(k)) { localStorage.removeItem(k); continue; }
+        try {
+          const v = localStorage.getItem(k);
+          if (v && banned.test(v) && k !== STORAGE_KEY && k !== COACH_STORAGE_KEY && !(k || '').startsWith('treeni-app-v') && k !== 'treeni-coach-plan') {
+            if (keyHint.test(k)) localStorage.removeItem(k);
+          }
+        } catch (e) {}
+      }
+    } catch (e) {}
   }
 
   function deepMerge(base, over) {
@@ -1360,12 +1391,13 @@
     }
   ];
 
-  // Goggins-tyylinen kyykytys: kova tekosyille ja mukavuudenhalulle, ei koskaan
-  // kehoa/perhettä/identiteettiä kohtaan. Terveys ensin: sairaus = lepo, kipu = kevennä.
+  // Motiivi juoksusta, Suomen talvesta, vuorotyöstä, Paavo Nurmesta 21.8.2027
+  // ja 40 v päivästä 23.10.2027. Kova tekosyille, ei kehoa kohtaan.
+  // Terveys ensin: sairaus = lepo, kipu = kevennä. Ei vanhaa kuvastoa.
   const MOTIVATION_LINES = [
-    'Stay hard.',
+    'Lenkkarit jalkaan, saatana. Turku ei juokse itseään.',
     'Kiltteys on paskaa. Lenkkarit jalkaan.',
-    "Who's gonna carry the boats? Et ainakaan sinä sohvalta.",
+    'Sohva ei vie sua Turkuun 21.8.2027. Jalat vie. Nouse, perkele.',
     'Sulla on enemmän tekosyitä kuin kilometrejä. Korjataan se tänään.',
     'Kisa on 21.8.2027 Turussa. Jokainen tämän päivän tekosyy maksetaan siellä korkojen kanssa.',
     '32 km kohdalla Turussa seinä ei kysy, olitko vuorossa. Se kysyy, teitkö työt.',
@@ -1379,9 +1411,9 @@
     'Mukavuudenhaluinen mieli neuvottelee aina. Älä kuuntele sitä paskaa.',
     'Motivaatio on paskaa. Kuri on se, joka kantaa maaliin.',
     'Älä neuvottele. Avaa treeni, tee työ, paina Valmis.',
-    'Mieli huutaa "riittää" 40 %:n kohdalla. Sulla on vielä 60 % jäljellä.',
+    'Mieli huutaa "riittää" kesken lenkin. Sulla on vielä matkaa – ja Turku odottaa.',
     'Kukaan ei välitä siitä, miltä susta tuntuu. Välitä siitä, mitä teet.',
-    'Ei kukaan kanna sun veneitä. Kanna ne itse.',
+    'Kukaan ei juokse sun kilometrejä. Ne juostaan itse, perkele.',
     'Huomenna on paskin mahdollinen päivä aloittaa. Tänään on parempi.',
     'Useimmiten et ole loppu. Olet vain tottunut helppoon. Tee lyhyt versio ja katso.',
     'Sade? Pimeä? Tervetuloa Suomeen. Juokse.',
@@ -1390,24 +1422,24 @@
     'Lyhyt tehty treeni voittaa täydellisen suunnitelman, jota et koskaan tee.',
     'Yövuoron jälkeen ei kovaa laatua – se on fiksua, ei pehmeää. Mutta 20 min kävely? Ei tekosyitä.',
     'Maratonin viimeinen kymppi juostaan nyt, näinä paskoina arki-iltoina.',
-    'Stay hard. Ei siksi, että on kivaa – vaan koska kukaan muu ei tee sitä sun puolesta.',
+    'Kukaan muu ei tee tätä sun puolesta. Vuoro, talvi, arki – silti teet sen.',
     'Lopeta fiiliksen odottaminen. Fiilis tulee liikkeessä, ei sohvalla.',
     'Kirjoita tekosyy ylös. Lue se ääneen. Kuulostaako hyvältä? Ei. Lähde.',
     'Turun 32 km seinä on jo olemassa. Tänään rakennat joko tikkaat tai lisää tiiliä.',
     'Mitä vittua "ehkä huomenna" tarkoittaa? Ei mitään. Tänään.',
     'Kipu nivelessä = kevennä. Laiskuus päässä = ei mitään kevennettävää.',
     'Väsymys on tieto, ei käsky. Tee se, mikä tänään on mahdollista – ja tee se kunnolla.',
-    'Callus your mind. Kovetu päästä, jalat seuraa.',
+    'Pää kovaksi suomalaisessa pimeässä. Jalat seuraa. 23.10.2027 täytät 40 – siihen mennessä Paavo Nurmi on juostu.',
     'Sun läheiset näkee, mitä teet – ei sitä, mitä lupaat. Näytä esimerkkiä.'
   ];
 
   // Tilannekohtaiset poolit
   const MOTIVATION_DONE = [
     'Tehty. Hyvä. Älä ala taputtaa itseäsi selkään – huomenna sama uudestaan.',
-    'Yksi vene kannettu. Turussa odottaa koko laivasto.',
+    'Yksi treeni tehty. Turussa 21.8.2027 odottaa koko matka.',
     'Ansaittu. Nyt palautuminen yhtä tosissaan kuin treeni: syö, juo, nuku.',
     'Tänään tekosyy hävisi. Muista miltä se tuntui, kun se seuraavan kerran yrittää.',
-    'Hyvä työ. Ei kehuja enempää – ne tekee pehmeäksi. Stay hard.',
+    'Hyvä työ. Ei kehuja enempää. Huomenna sama, saatana.',
     'Merkitty. Laita tämä päivä talteen – 32 km kohdalla kaivat sen esiin.',
     'Tämä oli se treeni, jonka mukavuudenhaluinen mieli halusi skipata. Et antanut. Hyvä.',
     'Valmis. Paskat fiiliksistä – teit sen silti. Sitä se on.'
@@ -1419,7 +1451,7 @@
     'Kevennetty ei tarkoita skipattua. Tee se.',
     'Jos jokin oikeasti sattuu, kevennä – se on järkeä. Jos vain huvittaa jättää väliin, se on tekosyy.',
     'Deload ei ole loma. Se on osa suunnitelmaa – noudata sitä yhtä kurinalaisesti kuin kovia päiviä.',
-    'Pienempi kuorma, sama asenne. Stay hard myös kevyenä päivänä.'
+    'Pienempi kuorma, sama asenne. Kevytkin päivä vie kohti Turkua.'
   ];
   const MOTIVATION_SICK = [
     'Sairas = lepo. Piste. Tämä ei ole tekosyy, tämä on suunnitelma.',
@@ -1432,7 +1464,7 @@
   const MOTIVATION_REST = [
     'Lepopäivä on osa treeniä. Nuku, syö kunnolla – ja huomenna ei tekosyitä.',
     'Lepo ei tarkoita kaljoja ja sohvaa koko iltaa. Palautuminen on työtä.',
-    'Tänään ladataan. Huomenna kannetaan veneitä taas.',
+    'Tänään ladataan. Huomenna taas kilometrejä, ei tekosyitä.',
     'Lepää kuin tarkoittaisit sitä. Huomenna ei kysytä, oliko kiva.'
   ];
 
@@ -2014,7 +2046,7 @@
         state.health.pendingPainFeedback = true;
       }
       saveState();
-      toast('Tehty. Yksi vene kannettu.');
+      toast('Tehty. Yksi treeni lähempänä Turkua.');
       rerenderActive();
       if (state.health.pendingPainFeedback) {
         setTimeout(() => openPainFeedbackModal(iso), 400);
@@ -3904,6 +3936,7 @@
 
   // ---------- Init ----------
   function init() {
+    clearStaleMotivationKeys();
     if (H) {
       try { H.scrollRestoration = 'manual'; } catch (e) {}
       H.replaceState({ treeni: 1, view: 'today', modal: 0 }, '');
