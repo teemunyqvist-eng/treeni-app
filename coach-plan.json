@@ -1,6 +1,6 @@
 {
-  "version": 70,
-  "updatedAt": "2026-11-21T10:35:59+02:00",
+  "version": 71,
+  "updatedAt": "2026-11-22T17:25:41+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -647,38 +647,32 @@
     },
     {
       "date": "2026-11-22",
+      "type": "lepo",
+      "title": "Lepo · kevyt 6 km siirretty huomiseen",
+      "details": "Kevyt 6 km siirretty maanantaille 23.11., aamulle ennen iltavuoroa. Tänään lepo.",
+      "note": "Siirretty huomiseen, ei jäänyt väliin. Pitkä kevyt 12,5 km on la 28.11."
+    },
+    {
+      "date": "2026-11-23",
       "type": "juoksu",
       "subtype": "easy",
-      "title": "Kevyt 6 km (palautus testin jälkeen)",
+      "title": "Kevyt 6 km ennen iltavuoroa",
       "distanceKm": 6,
       "warmup": "5 min reipas kävely + dynaaminen lämmittely (jalanheilautukset, polvennostot, pakaranavaus, nilkat) ~5 min.",
-      "details": "Eilisen testin jälkeen 6 km rauhallisesti ~6:45/km tai hitaammin, syke 115–138 – tänään alapäässä. Ei pitkää tänään: pitkä kevyt 12,5 km on la 28.11.",
+      "details": "Aamulla/aamupäivällä ennen iltavuoroa 14–22: 6 km rauhallisesti ~6:45/km tai hitaammin, syke 115–138 – alapäässä. Siirretty eiliseltä. Huomenna kynnys, joten tänään oikeasti kevyt.",
       "cooldown": "5 min kävely + venyttely ~10 min: pohkeet, takareidet, etureidet, lonkankoukistajat, pakarat.",
       "options": [
         {
           "label": "Kevennetty",
           "distanceKm": 4,
-          "details": "4 km kevyesti, jos testi tuntuu jaloissa."
+          "details": "4 km kevyesti, sama ohje."
         },
         {
           "label": "Kävely",
-          "details": "40–60 min kävely, jos jalat ovat kipeät."
+          "details": "20–30 min kävely + 10 min liikkuvuus, jos jalat pyytävät lepoa."
         }
       ],
-      "note": "Vapaapäivä. Palautus, ei pitkää testin jälkeisenä päivänä."
-    },
-    {
-      "date": "2026-11-23",
-      "type": "kavely",
-      "title": "Kävely tai liikkuvuus ennen iltavuoroa",
-      "details": "Aamulla ennen iltavuoroa 14–22: 20–30 min kävely + 10 min liikkuvuus.",
-      "options": [
-        {
-          "label": "Pelkkä lepo",
-          "details": "Jos väsyttää tai aamu on kiireinen: lepo on ok."
-        }
-      ],
-      "note": "Iltavuoro 14–22. Viiden peräkkäisen iltavuoron ensimmäinen; kevyt päivä ennen huomista kynnystä."
+      "note": "Iltavuoro 14–22. Viiden peräkkäisen iltavuoron ensimmäinen; kevyt päivä ennen huomista kynnystä. Kevyt 6 km siirretty su 22.11."
     },
     {
       "date": "2026-11-24",
