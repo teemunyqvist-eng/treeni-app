@@ -471,7 +471,7 @@
         distanceKm: round1(clamp(fitness.weekly * 0.22, 6, 14)),
         cueIds: ['tempo_cues', 'easy_run_form'],
         details:
-          '15 min lämmittely (syke 115–138) → 3 × 8 min kynnys, palautus 2 min hölkkä/kävely → 10 min jäähdyttely.\n' +
+          '15 min lämmittely (syke 115–138) + 3 rentoa vetoa, sitten yksi 2 min palautus → 3 × 8 min kynnys, palautus 2 min hölkkä/kävely → 10 min jäähdyttely.\n' +
           THRESHOLD_TIP + '\n' +
           'Kellossa vedoille VAUHTI-tavoite, ei syke (rannesyke laahaa 1–2 min vedon alussa).'
       };
