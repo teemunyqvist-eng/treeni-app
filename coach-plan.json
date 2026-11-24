@@ -1,6 +1,6 @@
 {
-  "version": 71,
-  "updatedAt": "2026-11-22T17:25:41+02:00",
+  "version": 72,
+  "updatedAt": "2026-11-24T10:22:55+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -368,14 +368,24 @@
         "source": "garmin",
         "id": "g9c24915432"
       }
+    ],
+    "2026-11-24": [
+      {
+        "type": "run",
+        "km": 9.47,
+        "min": 59.8,
+        "pace": "6:19",
+        "source": "garmin",
+        "id": "g750b201fe1"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-21T10:22:47+02:00",
+    "updatedAt": "2026-11-24T10:22:55+02:00",
     "complete": true,
-    "totalKm": 89.82,
-    "runs": 12,
+    "totalKm": 99.29,
+    "runs": 13,
     "skiKm": 0,
     "skiMin": 0,
     "skis": 0,
@@ -386,8 +396,8 @@
         "longest": 11.01
       },
       "2026-11": {
-        "km": 62.64,
-        "runs": 9,
+        "km": 72.11,
+        "runs": 10,
         "longest": 11.23
       }
     },
@@ -403,47 +413,11 @@
       "2026-11-14": 4.02,
       "2026-11-15": 8.01,
       "2026-11-16": 5.02,
-      "2026-11-21": 5.01
+      "2026-11-21": 5.01,
+      "2026-11-24": 9.47
     }
   },
   "days": [
-    {
-      "date": "2026-11-07",
-      "type": "kavely",
-      "title": "Lauantai, lapset kotona: kävely / lepo",
-      "details": "Ulkoilu lasten kanssa 30–60 min tai 15 min liikkuvuus. Huomenna pitkä lenkki.",
-      "note": "Viikonloppuna perhe ensin – liike kevyttä."
-    },
-    {
-      "date": "2026-11-08",
-      "type": "juoksu",
-      "subtype": "long",
-      "title": "Pitkä kevyt 11 km ennen ensimmäistä yövuoroa",
-      "distanceKm": 11,
-      "warmup": "5 min reipas kävely + dynaaminen lämmittely ~5 min.",
-      "details": "Aamupäivällä 11 km kevyesti ~6:45/km, syke 115–138 – pitkällä yläpää ok. Tasainen vauhti, vettä mukaan jos yli 75 min.\nIltapäivällä torkut ennen yövuoroa 22–06.",
-      "cooldown": "5 min kävely + venyttely ~10 min.",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "distanceKm": 8,
-          "details": "8 km kevyesti, sama ohje."
-        },
-        {
-          "label": "Kovennettu",
-          "distanceKm": 12,
-          "details": "12 km kevyesti – ei vauhdinnostoa."
-        }
-      ],
-      "note": "Ensimmäinen yövuoropäivä = hyvä treenipäivä. Kuormitusviikon viimeinen isompi treeni ennen kevennystä."
-    },
-    {
-      "date": "2026-11-09",
-      "type": "lepo",
-      "title": "Kevennysviikko · yövuorojen välissä: unta",
-      "details": "Nuku kunnolla yövuoron jälkeen. Halutessa 20 min kävely. Toinen yövuoro 22–06.",
-      "note": "KEVENNYSVIIKKO 9.–15.11.: aamuvuoroja, yövuorojen jälkeistä väsymystä, iltaisin ja viikonloppuna lapset kotona. Lyhyet 20–40 min treenit, siirrä vapaasti viikon sisällä. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
-    },
     {
       "date": "2026-11-10",
       "type": "kavely",
