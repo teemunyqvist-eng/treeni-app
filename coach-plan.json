@@ -1,6 +1,6 @@
 {
-  "version": 72,
-  "updatedAt": "2026-11-24T10:22:55+02:00",
+  "version": 73,
+  "updatedAt": "2026-11-24T10:23:51+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -88,6 +88,10 @@
     "2026-11-21": {
       "title": "5 km testi: 22:30 – uusi ennätys",
       "text": "5 km testi 22:30 (4:30/km) – ennätys 24:04 murskattu puolellatoista minuutilla. Kilsat 4:33, 4:33, 4:35, 4:34 ja viimeinen 4:14: täydellisen tasainen ja viimeinen kovin, juuri niin kuin piti. Kellon ohjelma meni sekaisin verkan jälkeen, mutta pidit pään kylmänä ja teit testin silti. Tästä lähtien tämä on vertailuaika kesäkuun testille. Vauhtia on reilusti alle 4 h maratoniin – nyt rakennetaan kestävyyttä: huomenna kevyt 6 km rauhallisesti, ja kevyet pysyvät kevyinä vaikka jalat tuntuisi nopeilta."
+    },
+    "2026-11-24": {
+      "title": "Kynnys 5×5 min – osui joka veto",
+      "text": "Tehtiin: 9,5 km, 15 min verkka + 5 × 5 min kynnys + loppuverkka. Vedot 5:29, 5:10, 5:13, 5:23 ja 5:04/km eli jokainen tavoitehaarukassa (5:10–5:30). Ylämäkeen vauhti sai hidastua, alamäessä vika veto juoksi itsestään. Ei räjähtänyt alussa, ei hyytynyt lopussa: just näin kynnys tehdään, saatana. Verkka pysyi oikeasti kevyenä. Korjattavaa: loppuverkan alku lähti vähän liian reippaasti, vuoron alla 10 min kunnon hölkkä. Huomenna kotipiiri rauhassa, torstaina vain kävely ja lauantaina pitkä kevyt 12,5 km. Suunnitelma pysyy."
     }
   },
   "done": {
