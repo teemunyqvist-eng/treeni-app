@@ -1,6 +1,6 @@
 {
-  "version": 73,
-  "updatedAt": "2026-11-24T10:23:51+02:00",
+  "version": 74,
+  "updatedAt": "2026-11-24T15:42:43+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -1040,8 +1040,8 @@
       "subtype": "tempo",
       "title": "Kynnystesti: 30 min kynnys",
       "distanceKm": 10,
-      "warmup": "15 min verryttely + 3 rentoa vetoa.",
-      "details": "Jos olo on palautunut: 15 min verryttely (syke 115–138), 30 min kynnysvauhti 5:15–5:35/km tasaisesti, 10 min loppuverkka. Yhteensä ~10 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25–5:30. Kellossa vedolle vauhti-tavoite, ei syke.\nAlmgrenin sääntö: älä ahnehdi. Tuntuma mukavan kova (pystyt puhumaan lyhyitä lauseita). Tämä on joulukuun kynnystesti, ei maksimitesti – tasainen 30 min, ei kiriä lopussa. Jos yövuorojen jälkeen jalat ovat vielä raskaat, valitse kevennetty tai siirrä.",
+      "warmup": "15 min verryttely + 3 rentoa vetoa, sitten yksi 2 min palautus (sen jälkeen testi alkaa).",
+      "details": "Jos olo on palautunut: 15 min verryttely (syke 115–138), 3 rentoa vetoa ja yksi 2 min palautus, 30 min kynnysvauhti 5:15–5:35/km tasaisesti, 10 min loppuverkka. Yhteensä ~10 km.\nTavoite vauhti 5:15–5:35/km, syke vain jälkikäteen seurantaan; ylämäessä tuntuman mukaan, anna vauhdin hidastua; eka kilsa tarkoituksella 5:25–5:30. Kellossa vedolle vauhti-tavoite, ei syke.\nAlmgrenin sääntö: älä ahnehdi. Tuntuma mukavan kova (pystyt puhumaan lyhyitä lauseita). Tämä on joulukuun kynnystesti, ei maksimitesti – tasainen 30 min, ei kiriä lopussa. Jos yövuorojen jälkeen jalat ovat vielä raskaat, valitse kevennetty tai siirrä.",
       "cooldown": "10 min hölkkä + venyttely.",
       "options": [
         {
