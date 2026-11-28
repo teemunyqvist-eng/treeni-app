@@ -1,6 +1,6 @@
 {
-  "version": 75,
-  "updatedAt": "2026-11-28T10:19:29+02:00",
+  "version": 76,
+  "updatedAt": "2026-11-28T10:20:17+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -92,6 +92,10 @@
     "2026-11-24": {
       "title": "Kynnys 5×5 min – osui joka veto",
       "text": "Tehtiin: 9,5 km, 15 min verkka + 5 × 5 min kynnys + loppuverkka. Vedot 5:29, 5:10, 5:13, 5:23 ja 5:04/km eli jokainen tavoitehaarukassa (5:10–5:30). Ylämäkeen vauhti sai hidastua, alamäessä vika veto juoksi itsestään. Ei räjähtänyt alussa, ei hyytynyt lopussa: just näin kynnys tehdään, saatana. Verkka pysyi oikeasti kevyenä. Korjattavaa: loppuverkan alku lähti vähän liian reippaasti, vuoron alla 10 min kunnon hölkkä. Huomenna kotipiiri rauhassa, torstaina vain kävely ja lauantaina pitkä kevyt 12,5 km. Suunnitelma pysyy."
+    },
+    "2026-11-28": {
+      "title": "Pitkä kevyt 12,5 km – kuria koko matkan",
+      "text": "Tehtiin: pitkä kevyt 12,51 km, 1:32, keskivauhti 7:21/km mäkisellä reitillä. Tämä oli juuri sitä mitä pyydettiin: pysyit koko lenkin kevyellä alueella alusta loppuun, ei yhtään karkaamista, eikä loppua kiristetty. Ensimmäisellä kympillä et lähtenyt lentoon, ja viimeiset kilometrit olivat yhtä hallittuja kuin alku – kestävyyspohja kasvaa just näin, saatana. Vauhti jäi suunniteltua 6:45:tä hitaammaksi, ja se on täysin ok: kevyellä lenkillä tuntuma ratkaisee, ei kello. Korjattavaa: muista juoda ja tankata pidemmillä lenkeillä, sillä matkat kasvavat. Huomenna vain kevyt 4 km tai kävely, maanantaina kevyt 6 km aamuvuoron jälkeen. Suunnitelma pysyy."
     }
   },
   "done": {
