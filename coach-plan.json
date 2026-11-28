@@ -1,6 +1,6 @@
 {
-  "version": 74,
-  "updatedAt": "2026-11-24T15:42:43+02:00",
+  "version": 75,
+  "updatedAt": "2026-11-28T10:19:29+02:00",
   "flags": {
     "shoulderRehab": false
   },
@@ -382,14 +382,24 @@
         "source": "garmin",
         "id": "g750b201fe1"
       }
+    ],
+    "2026-11-28": [
+      {
+        "type": "run",
+        "km": 12.51,
+        "min": 92.0,
+        "pace": "7:21",
+        "source": "garmin",
+        "id": "g4828556bd6"
+      }
     ]
   },
   "kmStats": {
     "since": "2026-10-23",
-    "updatedAt": "2026-11-24T10:22:55+02:00",
+    "updatedAt": "2026-11-28T10:19:29+02:00",
     "complete": true,
-    "totalKm": 99.29,
-    "runs": 13,
+    "totalKm": 111.8,
+    "runs": 14,
     "skiKm": 0,
     "skiMin": 0,
     "skis": 0,
@@ -400,9 +410,9 @@
         "longest": 11.01
       },
       "2026-11": {
-        "km": 72.11,
-        "runs": 10,
-        "longest": 11.23
+        "km": 84.62,
+        "runs": 11,
+        "longest": 12.51
       }
     },
     "days": {
@@ -418,75 +428,11 @@
       "2026-11-15": 8.01,
       "2026-11-16": 5.02,
       "2026-11-21": 5.01,
-      "2026-11-24": 9.47
+      "2026-11-24": 9.47,
+      "2026-11-28": 12.51
     }
   },
   "days": [
-    {
-      "date": "2026-11-10",
-      "type": "kavely",
-      "title": "Kevennysviikko · palautuskävely yövuoron jälkeen",
-      "durationMin": 30,
-      "details": "Unet ensin. Sitten 30 min kävely + 10 min liikkuvuus: lonkat, nilkat, rintaranka.",
-      "options": [
-        {
-          "label": "Pelkkä lepo",
-          "details": "Jos väsyttää kovasti: lepo. Uni on tänään se treeni."
-        }
-      ],
-      "note": "Kevennysviikko – treenit siirrettävissä viikon sisällä. Illalla salibandy 🏒 – lasketaan kovaksi treeniksi.",
-      "salibandy": true
-    },
-    {
-      "date": "2026-11-11",
-      "type": "juoksu",
-      "subtype": "easy",
-      "title": "Kevennysviikko · kevyt 5 km (~35 min) + rennot vedot",
-      "distanceKm": 5,
-      "warmup": "5 min kävely + dynaamiset liikkeet.",
-      "details": "Vapaa arkiaamu lasten viennin jälkeen: 5 km rauhallisesti ~6:45/km, syke 115–138. Halutessa lopuksi 4 × 15–20 s rennot vedot (ei kova, vain rento askel).",
-      "cooldown": "5 min kävely + venyttely.",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "distanceKm": 4,
-          "details": "4 km kevyesti, ei vetoja."
-        },
-        {
-          "label": "Kävely",
-          "details": "30–40 min reipas kävely, jos yövuoroväsymys vielä painaa."
-        }
-      ],
-      "note": "Kevennysviikko – ei kovaa laatua. Siirrä toiseen päivään, jos tämä ei sovi. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
-    },
-    {
-      "date": "2026-11-12",
-      "type": "lihashuolto",
-      "title": "Kevennysviikko · aamuvuoro: liikkuvuus 15–20 min",
-      "durationMin": 20,
-      "details": "Kun sopii: lonkankoukistajat, pakarat, takareidet, pohkeet, rintaranka, nilkat. Tai 20–30 min kävely.",
-      "options": [
-        {
-          "label": "Pelkkä lepo",
-          "details": "Aamuvuoro + lapset: lepo on ok."
-        }
-      ],
-      "note": "Kevennysviikko – lyhyt ja joustava. · Pohjeosio: yhden jalan pohjenousot 2 × 12–15 hitaasti (heikompi puoli ensin). · Oikean puolen liikkuvuus ja vahvistus: takareisi (hihna) + liukuliike illalla; lantionnostot samoina päivinä."
-    },
-    {
-      "date": "2026-11-13",
-      "type": "koti",
-      "title": "Kevennysviikko · lyhyt kotipiiri 20 min",
-      "durationMin": 20,
-      "details": "2 kierrosta, rauhassa:\n• Leuanveto 3\n• Punnerrus 10–12\n• Käsipainosoutu 10 / puoli\n• Askelkyykky 8 / jalka\n• Kuminauha face pull 15\n• Lankku 30–40 s",
-      "options": [
-        {
-          "label": "Kevennetty",
-          "details": "Pelkkä 15 min liikkuvuus."
-        }
-      ],
-      "note": "Kevennysviikko – ylläpitoa, ei väsytystä. Siirrettävissä viikon sisällä."
-    },
     {
       "date": "2026-11-14",
       "type": "juoksu",
